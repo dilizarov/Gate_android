@@ -43,11 +43,15 @@ public final class R {
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
         public static final int forgot_password=0x7f050004;
+        public static final int last_used_email=0x7f05000b;
         public static final int log_in=0x7f050005;
+        public static final int login_register_shared_preferences_key=0x7f05000a;
         public static final int register=0x7f050006;
         public static final int terms=0x7f050007;
         public static final int toggle_login=0x7f050009;
         public static final int toggle_registration=0x7f050008;
+        /**  LoginRegisterActivity specific 
+         */
         public static final int user_email_hint=0x7f050002;
         public static final int user_password_hint=0x7f050003;
     }

@@ -3,6 +3,8 @@
 
     <string name="app_name">Gate</string>
     <string name="action_settings">Settings</string>
+    
+    <!-- LoginRegisterActivity specific -->
     <string name="user_email_hint">Email</string>
     <string name="user_password_hint">Password</string>
     <string name="forgot_password">Forgot your password?</string>
@@ -11,5 +13,6 @@
     <string name="terms">Terms</string>
     <string name="toggle_registration">Become a Gatekeeper</string>
     <string name="toggle_login">Already a Gatekeeper?</string>
-
+	<string name="login_register_shared_preferences_key">com.unlock.gate.LOGIN_REGISTER_PREF</string>
+	<string name="last_used_email">last_used_email</string>
 </resources>
