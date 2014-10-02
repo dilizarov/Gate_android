@@ -14,15 +14,19 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 
 public class LoginRegisterActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
-
-	// Check prefs for what email to use. If not there, accountpicker, if not there, blank.
-	// Make sure to store last successfully used email in the prefs.
-	// check profile for full name. If not there, blank.
 	
 	private final static String LOGIN_API_ENDPOINT = "sessions.json";
 	private final static String REGISTER_API_ENDPOINT = "registration.json";
@@ -33,6 +37,20 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	private String mPassword;
 	private String mFullName;
 	
+	private EditText userEmail;
+	private EditText userPassword;
+	private EditText userFullName;
+	
+	private TextView forgotPassword;
+	private TextView terms;
+	private TextView toggleRegistrationLogin;
+	
+	private Button commandButton;
+	
+	private boolean loginViewFlag = true;
+	private AlphaAnimation fadeIn;
+	private AlphaAnimation fadeOut;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,17 +59,133 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		mPreferences = getSharedPreferences(
 				getString(R.string.login_register_shared_preferences_key), MODE_PRIVATE);
 		
-		getEmailAndFullName();		
+		instantiateViews();
+		instantiateAnimations();
+		
+		getAndSetEmail();
+		getAndSetFullName();
+		
+		handleForgotPassword();
+		handleTerms();
+		handleToggleLoginRegistration();
+		handleCommandButton();
+		
+	}
+	
+	public void instantiateViews() {
+		userEmail    = (EditText) findViewById(R.id.userEmail);
+		userPassword = (EditText) findViewById(R.id.userPassword);
+		userFullName = (EditText) findViewById(R.id.userFullName);
+		
+		forgotPassword          = (TextView) findViewById(R.id.forgotPassword);
+		terms                   = (TextView) findViewById(R.id.terms);
+		toggleRegistrationLogin = (TextView) findViewById(R.id.toggleRegistrationLogin);
+		
+		commandButton = (Button) findViewById(R.id.commandButton);
+	}
+	
+	public void instantiateAnimations() {
+		fadeIn = new AlphaAnimation(0.0f, 1.0f);
+		fadeIn.setDuration(1000);
+		
+		fadeOut = new AlphaAnimation(1.0f, 0.0f);
+		fadeOut.setDuration(1000);
+	}
+	
+	public void handleForgotPassword() {
+		forgotPassword.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.v("Click forgot password", "Look, you're clicking me");
+				//Fade out password bar.
+				//Change command to send
+				//Change bottom left to toggle to login
+			}
+		});
+	}
+	
+	public void handleTerms() {
+		terms.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//TODO
+				Log.v("Click terms", "Look, you're clicking me!");
+			}
+		});
+	}
+	
+	public void handleToggleLoginRegistration() {
+		toggleRegistrationLogin.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//IF ON LOGIN
+				////invisible forgot password
+				////Fade in Full name
+				////Change command to register
+				////Change bottom left to toggle login
+				//ELSE IF ON REGISTER
+				////fade out Full name
+				////visible forgot password
+				////change command to login
+				////change button left to toggle register
+				
+				if (loginViewFlag) {
+					forgotPassword.setVisibility(android.view.View.INVISIBLE);
+					userFullName.startAnimation(fadeIn);
+					userFullName.setVisibility(android.view.View.VISIBLE);
+					commandButton.setText(R.string.register);
+					toggleRegistrationLogin.setText(R.string.toggle_login);
+					loginViewFlag = false;
+				} else {
+					
+					AnimationListener listener = new AnimationListener() {
+						
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							forgotPassword.setVisibility(android.view.View.VISIBLE);
+							userFullName.setVisibility(android.view.View.INVISIBLE);
+						}
+						
+						@Override 
+						public void onAnimationRepeat(Animation animation) {
+						}
+						
+						@Override
+						public void onAnimationStart(Animation animation){
+						}
+						
+					};
+					
+					fadeOut.setAnimationListener(listener);
+					userFullName.startAnimation(fadeOut);
+					commandButton.setText(R.string.log_in);
+					toggleRegistrationLogin.setText(R.string.toggle_registration);
+					loginViewFlag = true;
+				}
+			}
+		});
+	}
+	
+	public void handleCommandButton() {
+		commandButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//if send, send email
+				//if login go to that
+				//if register go to that
+			}
+		});
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == EMAIL_REQUEST_INTENT && resultCode == RESULT_OK) {
 			mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+			userEmail.setText(mEmail);
 		}
 	}
 	
-	public void getEmailAndFullName() {
+	public void getAndSetEmail() {
 		mEmail = mPreferences.getString(
 				getString(R.string.last_used_email), null);
 		
@@ -65,7 +199,9 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				Log.v("EMAIL_REQUEST_INTENT", "Activity was not found");
 			}
 		}
-		
+	}
+	
+	public void getAndSetFullName() {
 		// Use ContactContracts.Profile to try to get full name
 		getLoaderManager().initLoader(0, null, this);
 	}
@@ -88,6 +224,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		cursor.moveToFirst();
 		mFullName = cursor.getString(0);
+		userFullName.setText(mFullName);
 	}
 	
 	@Override
@@ -100,5 +237,4 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		//getMenuInflater().inflate(R.menu.login_register, menu);
 		return true;
 	}
-
 }

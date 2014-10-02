@@ -48,6 +48,18 @@
         android:ems="10"
         android:hint="@string/user_email_hint"
         android:inputType="textEmailAddress" />
+    
+    <EditText
+        android:id="@+id/userFullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/userPassword"
+        android:layout_alignRight="@+id/userPassword"
+        android:layout_below="@+id/userPassword"
+        android:ems="10"
+        android:hint="@string/user_full_name_hint"
+        android:inputType="textPersonName"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/terms"
