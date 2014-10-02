@@ -1,6 +1,8 @@
 package com.unlock.gate;
 
 import android.accounts.AccountManager;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
@@ -16,9 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -48,8 +47,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	private Button commandButton;
 	
 	private boolean loginViewFlag = true;
-	private AlphaAnimation fadeIn;
-	private AlphaAnimation fadeOut;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +57,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				getString(R.string.login_register_shared_preferences_key), MODE_PRIVATE);
 		
 		instantiateViews();
-		instantiateAnimations();
+		//instantiateAnimations();
 		
 		getAndSetEmail();
 		getAndSetFullName();
@@ -84,13 +81,20 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		commandButton = (Button) findViewById(R.id.commandButton);
 	}
 	
-	public void instantiateAnimations() {
-		fadeIn = new AlphaAnimation(0.0f, 1.0f);
-		fadeIn.setDuration(1000);
-		
-		fadeOut = new AlphaAnimation(1.0f, 0.0f);
-		fadeOut.setDuration(1000);
-	}
+//	public void instantiateAnimations() {
+//		fadeIn = new ObjectAnimator();
+//		fadeIn.setFloatValues(0.0f, 1.0f);
+//		fadeIn.setPropertyName("alpha");
+//		fadeIn.setDuration(1000);
+//		
+////		fadeOut = new AlphaAnimation(1.0f, 0.0f);
+////		fadeOut.setDuration(1000);
+//		
+//		fadeOut = new ObjectAnimator();
+//		fadeOut.setFloatValues(1.0f, 0.0f);
+//		fadeOut.setPropertyName("alpha");
+//		fadeOut.setDuration(1000);
+//	}
 	
 	public void handleForgotPassword() {
 		forgotPassword.setOnClickListener(new OnClickListener() {
@@ -131,33 +135,71 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				
 				if (loginViewFlag) {
 					forgotPassword.setVisibility(android.view.View.INVISIBLE);
-					userFullName.startAnimation(fadeIn);
-					userFullName.setVisibility(android.view.View.VISIBLE);
+//					fadeIn.setTarget(userFullName);
+//					userFullName.setVisibility(android.view.View.VISIBLE);
+//					fadeIn.start();
+					Fade.show(userFullName);
+					
 					commandButton.setText(R.string.register);
 					toggleRegistrationLogin.setText(R.string.toggle_login);
 					loginViewFlag = false;
 				} else {
 					
-					AnimationListener listener = new AnimationListener() {
-						
-						@Override
-						public void onAnimationEnd(Animation animation) {
-							forgotPassword.setVisibility(android.view.View.VISIBLE);
-							userFullName.setVisibility(android.view.View.INVISIBLE);
-						}
-						
-						@Override 
-						public void onAnimationRepeat(Animation animation) {
-						}
-						
-						@Override
-						public void onAnimationStart(Animation animation){
-						}
-						
-					};
+//					AnimationListener listener = new AnimationListener() {
+//						
+//						@Override
+//						public void onAnimationEnd(Animation animation) {
+//							forgotPassword.setVisibility(android.view.View.VISIBLE);
+//							userFullName.setVisibility(android.view.View.INVISIBLE);
+//						}
+//						
+//						@Override 
+//						public void onAnimationRepeat(Animation animation) {
+//						}
+//						
+//						@Override
+//						public void onAnimationStart(Animation animation){
+//						}
+//						
+//					};
+//					
+//					fadeOut.setAnimationListener(listener);
+//					userFullName.startAnimation(fadeOut);
 					
-					fadeOut.setAnimationListener(listener);
-					userFullName.startAnimation(fadeOut);
+//					AnimatorListener listener = new AnimatorListener() {
+//						@Override
+//						public void onAnimationEnd(Animator animator) {
+//							userFullName.setVisibility(View.INVISIBLE);
+//							forgotPassword.setVisibility(View.VISIBLE);
+//						}
+//						
+//						@Override
+//						public void onAnimationRepeat(Animator animator){
+//						}
+//						
+//						@Override
+//						public void onAnimationStart(Animator animator){
+//						}
+//						
+//						@Override
+//						public void onAnimationCancel(Animator animator){
+//						}
+//					};
+					
+					
+//					fadeOut.setTarget(userFullName);
+//					fadeOut.addListener(listener);
+//					fadeOut.start();
+					Fade.hide(userFullName, new AnimatorListenerAdapter() {
+						public void onAnimationEnd(Animator animation) {
+							userFullName.setAlpha(1);
+							userFullName.setVisibility(View.INVISIBLE);
+							userFullName.animate().setListener(null);
+							forgotPassword.setVisibility(View.VISIBLE);
+						}
+					});
+					
+					
 					commandButton.setText(R.string.log_in);
 					toggleRegistrationLogin.setText(R.string.toggle_registration);
 					loginViewFlag = true;
