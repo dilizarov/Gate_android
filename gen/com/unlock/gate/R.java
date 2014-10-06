@@ -48,9 +48,10 @@ public final class R {
         public static final int log_in=0x7f050006;
         public static final int login_register_shared_preferences_key=0x7f05000b;
         public static final int register=0x7f050007;
+        public static final int send_email=0x7f05000d;
         public static final int terms=0x7f050008;
-        public static final int toggle_login=0x7f05000a;
-        public static final int toggle_registration=0x7f050009;
+        public static final int toggle_login=0x7f050009;
+        public static final int toggle_registration=0x7f05000a;
         /**  LoginRegisterActivity specific 
          */
         public static final int user_email_hint=0x7f050002;

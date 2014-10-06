@@ -9,11 +9,12 @@
     <string name="user_password_hint">Password</string>
     <string name="user_full_name_hint">Full Name</string>
     <string name="forgot_password">Forgot your password?</string>
-    <string name="log_in">Unlock</string>
-    <string name="register">Join the ranks</string>
+    <string name="log_in">Log In</string>
+    <string name="register">Register</string>
     <string name="terms">Terms</string>
-    <string name="toggle_registration">Become a Gatekeeper</string>
-    <string name="toggle_login">Already a Gatekeeper?</string>
+    <string name="toggle_login">Log In</string>
+	<string name="toggle_registration">Register</string>
 	<string name="login_register_shared_preferences_key">com.unlock.gate.LOGIN_REGISTER_PREF</string>
 	<string name="last_used_email">last_used_email</string>
+	<string name="send_email">Send Email</string>
 </resources>

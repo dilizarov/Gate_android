@@ -27,6 +27,10 @@ import com.google.android.gms.common.AccountPicker;
 
 public class LoginRegisterActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 	
+	private enum State {
+		LOGIN, REGISTRATION, FORGOT_PASSWORD
+	}
+	
 	private final static String LOGIN_API_ENDPOINT = "sessions.json";
 	private final static String REGISTER_API_ENDPOINT = "registration.json";
 	private final int EMAIL_REQUEST_INTENT = 1;
@@ -46,7 +50,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	
 	private Button commandButton;
 	
-	private boolean loginViewFlag = true;
+	private State viewState;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				getString(R.string.login_register_shared_preferences_key), MODE_PRIVATE);
 		
 		instantiateViews();
-		//instantiateAnimations();
+		setState(State.LOGIN);
 		
 		getAndSetEmail();
 		getAndSetFullName();
@@ -81,29 +85,26 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		commandButton = (Button) findViewById(R.id.commandButton);
 	}
 	
-//	public void instantiateAnimations() {
-//		fadeIn = new ObjectAnimator();
-//		fadeIn.setFloatValues(0.0f, 1.0f);
-//		fadeIn.setPropertyName("alpha");
-//		fadeIn.setDuration(1000);
-//		
-////		fadeOut = new AlphaAnimation(1.0f, 0.0f);
-////		fadeOut.setDuration(1000);
-//		
-//		fadeOut = new ObjectAnimator();
-//		fadeOut.setFloatValues(1.0f, 0.0f);
-//		fadeOut.setPropertyName("alpha");
-//		fadeOut.setDuration(1000);
-//	}
-	
 	public void handleForgotPassword() {
+		//Fade out password bar.
+		//Change command to send
+		//Change bottom left to toggle to login
+
 		forgotPassword.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Log.v("Click forgot password", "Look, you're clicking me");
-				//Fade out password bar.
-				//Change command to send
-				//Change bottom left to toggle to login
+				forgotPassword.setVisibility(View.INVISIBLE);
+				Fade.hide(userPassword, new AnimatorListenerAdapter() {
+					public void onAnimationEnd(Animator animation) {
+						userPassword.setAlpha(1);
+						userPassword.setVisibility(View.INVISIBLE);
+						userPassword.animate().setListener(null);
+					}
+				});
+				
+				commandButton.setText(R.string.send_email);
+				toggleRegistrationLogin.setText(R.string.toggle_login);
+				setState(State.FORGOT_PASSWORD);
 			}
 		});
 	}
@@ -123,82 +124,37 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 			@Override
 			public void onClick(View v) {
 				//IF ON LOGIN
-				////invisible forgot password
-				////Fade in Full name
+				////hide 'forgot password'
+				////Fade in Full Name
 				////Change command to register
 				////Change bottom left to toggle login
 				//ELSE IF ON REGISTER
-				////fade out Full name
-				////visible forgot password
+				////fade out Full Name
+				////show forgot password
 				////change command to login
 				////change button left to toggle register
 				
 				if (loginViewFlag) {
-					forgotPassword.setVisibility(android.view.View.INVISIBLE);
-//					fadeIn.setTarget(userFullName);
-//					userFullName.setVisibility(android.view.View.VISIBLE);
-//					fadeIn.start();
+					forgotPassword.setVisibility(View.INVISIBLE);
 					Fade.show(userFullName);
 					
 					commandButton.setText(R.string.register);
 					toggleRegistrationLogin.setText(R.string.toggle_login);
 					loginViewFlag = false;
 				} else {
-					
-//					AnimationListener listener = new AnimationListener() {
-//						
-//						@Override
-//						public void onAnimationEnd(Animation animation) {
-//							forgotPassword.setVisibility(android.view.View.VISIBLE);
-//							userFullName.setVisibility(android.view.View.INVISIBLE);
-//						}
-//						
-//						@Override 
-//						public void onAnimationRepeat(Animation animation) {
-//						}
-//						
-//						@Override
-//						public void onAnimationStart(Animation animation){
-//						}
-//						
-//					};
-//					
-//					fadeOut.setAnimationListener(listener);
-//					userFullName.startAnimation(fadeOut);
-					
-//					AnimatorListener listener = new AnimatorListener() {
-//						@Override
-//						public void onAnimationEnd(Animator animator) {
-//							userFullName.setVisibility(View.INVISIBLE);
-//							forgotPassword.setVisibility(View.VISIBLE);
-//						}
-//						
-//						@Override
-//						public void onAnimationRepeat(Animator animator){
-//						}
-//						
-//						@Override
-//						public void onAnimationStart(Animator animator){
-//						}
-//						
-//						@Override
-//						public void onAnimationCancel(Animator animator){
-//						}
-//					};
-					
-					
-//					fadeOut.setTarget(userFullName);
-//					fadeOut.addListener(listener);
-//					fadeOut.start();
-					Fade.hide(userFullName, new AnimatorListenerAdapter() {
-						public void onAnimationEnd(Animator animation) {
-							userFullName.setAlpha(1);
-							userFullName.setVisibility(View.INVISIBLE);
-							userFullName.animate().setListener(null);
-							forgotPassword.setVisibility(View.VISIBLE);
-						}
-					});
-					
+					if (userPassword.getVisibility() == View.INVISIBLE) {
+						Fade.show(userPassword);
+						forgotPassword.setVisibility(View.VISIBLE);
+					} else {
+						Fade.hide(userFullName, new AnimatorListenerAdapter() {
+							public void onAnimationEnd(Animator animation) {
+								userFullName.setAlpha(1);
+								userFullName.setVisibility(View.INVISIBLE);
+								userFullName.animate().setListener(null);
+								forgotPassword.setVisibility(View.VISIBLE);
+							}
+						});
+					}
 					
 					commandButton.setText(R.string.log_in);
 					toggleRegistrationLogin.setText(R.string.toggle_registration);
@@ -212,11 +168,17 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		commandButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				
+				
 				//if send, send email
 				//if login go to that
 				//if register go to that
 			}
 		});
+	}
+	
+	public void setState(State state) {
+		viewState = state;
 	}
 	
 	@Override
