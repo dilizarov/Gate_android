@@ -1,11 +1,9 @@
 package com.unlock.gate;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.*;
 
 public class NetworkClient {
-	private static final String BASE_URL = "http://example.com/api/beta/";
+	private static final String BASE_URL = "http://infinite-river-7560.herokuapp.com";
 	
 	private static AsyncHttpClient client = new AsyncHttpClient();
 	
