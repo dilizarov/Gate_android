@@ -10,6 +10,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -53,7 +54,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	private final int EMAIL_REQUEST_INTENT = 1;
 	
 	private SharedPreferences mActivityPreferences;
-	private SharedPreferences mUserPreferences;
+	private SharedPreferences mSessionPreferences;
 	
 	private String mEmail;
 	private String mPassword;
@@ -79,8 +80,8 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		mActivityPreferences = getSharedPreferences(
 				getString(R.string.login_register_shared_preferences_key), MODE_PRIVATE);
 		
-		mUserPreferences     = getSharedPreferences(
-				getString(R.string.user_shared_preferences_key), MODE_PRIVATE); 
+		mSessionPreferences  = getSharedPreferences(
+				getString(R.string.session_shared_preferences_key), MODE_PRIVATE); 
 		
 		viewState = State.LOGIN;
 		
@@ -233,6 +234,8 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		} else if (!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
 		else {
 			try {
+				final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", "Robots processing information...", false, true);
+				
 				JSONObject user = new JSONObject();
 				user.put("email", mEmail)
 					.put("password", mPassword);
@@ -245,8 +248,12 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
 					@Override
 					public void onResponse(JSONObject response) {
-						//Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
-						//Log.d("Correct stuff", response.toString());
+						
+						storeSessionInformation(response);
+						
+						progressDialog.dismiss();
+						Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
+						Log.d("Correct stuff", response.toString());
 					}
 				};
 			
@@ -254,16 +261,17 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 					@Override
 					public void onErrorResponse(VolleyError error) {
 						if (error.networkResponse != null) {
-//							try {
-//								String responseBody = new String(error.networkResponse.data, "utf-8");
-//								Crouton.showText(LoginRegisterActivity.this, responseBody, Style.ALERT);
-//								Log.d("Wrong stuff", error.networkResponse.data.toString());
-//							} catch (UnsupportedEncodingException uee) {}
+							try {
+								progressDialog.dismiss();
+								String responseBody = new String(error.networkResponse.data, "utf-8");
+								Crouton.showText(LoginRegisterActivity.this, responseBody, Style.ALERT);
+								Log.d("Wrong stuff", error.networkResponse.data.toString());
+							} catch (UnsupportedEncodingException uee) {}
 						}
 					}	
 				};
 			
-				APIRequestManager.getInstance().doRequest().login(params,listener, errorListener);
+				APIRequestManager.getInstance().doRequest().login(params, listener, errorListener);
 			} catch (JSONException ex) {
 				ex.printStackTrace();
 			}
@@ -309,6 +317,26 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	
 	public void processForgotPassword() {
 		
+	}
+	
+	public void storeSessionInformation(JSONObject response) {
+		SharedPreferences.Editor editor = mSessionPreferences.edit();
+		try {
+			JSONObject userData = response.getJSONObject("data").getJSONObject("user");
+			editor.putString(getString(R.string.user_auth_token), userData.getString("auth_token"))
+				  .putString(getString(R.string.user_id),         userData.getString("external_id"))
+				  .putString(getString(R.string.user_email),      userData.getString("email"))
+				  .putString(getString(R.string.user_name),       userData.getString("name"))
+				  .putString(getString(R.string.user_created_at), userData.getString("created_at"))
+				  .commit();
+			
+			Log.d("Auth", mSessionPreferences.getString(getString(R.string.user_auth_token), "No val"));
+			Log.d("ID", mSessionPreferences.getString(getString(R.string.user_id), "Nope"));
+			Log.d("Email", mSessionPreferences.getString(getString(R.string.user_email), "Hahaha"));
+			
+		} catch (JSONException ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	@Override

@@ -45,26 +45,30 @@ public final class R {
         /**  Application Wide 
          */
         public static final int app_name=0x7f050000;
-        public static final int forgot_password=0x7f050007;
-        public static final int improper_email_format=0x7f050011;
-        public static final int last_used_email=0x7f05000f;
-        public static final int log_in=0x7f050008;
-        public static final int login_register_shared_preferences_key=0x7f05000e;
-        public static final int no_email_inputted=0x7f050010;
-        public static final int no_name_inputted=0x7f050013;
-        public static final int no_password_inputted=0x7f050012;
-        public static final int register=0x7f050009;
-        public static final int send_email=0x7f05000a;
-        public static final int terms=0x7f05000b;
-        public static final int toggle_login=0x7f05000c;
-        public static final int toggle_registration=0x7f05000d;
+        public static final int forgot_password=0x7f05000b;
+        public static final int improper_email_format=0x7f050015;
+        public static final int last_used_email=0x7f050013;
+        public static final int log_in=0x7f05000c;
+        public static final int login_register_shared_preferences_key=0x7f050012;
+        public static final int no_email_inputted=0x7f050014;
+        public static final int no_name_inputted=0x7f050017;
+        public static final int no_password_inputted=0x7f050016;
+        public static final int register=0x7f05000d;
+        public static final int send_email=0x7f05000e;
+        public static final int session_shared_preferences_key=0x7f050002;
+        public static final int terms=0x7f05000f;
+        public static final int toggle_login=0x7f050010;
+        public static final int toggle_registration=0x7f050011;
         public static final int user_auth_token=0x7f050003;
+        public static final int user_created_at=0x7f050007;
+        public static final int user_email=0x7f050005;
         /**  LoginRegisterActivity specific 
          */
-        public static final int user_email_hint=0x7f050004;
-        public static final int user_full_name_hint=0x7f050006;
-        public static final int user_password_hint=0x7f050005;
-        public static final int user_shared_preferences_key=0x7f050002;
+        public static final int user_email_hint=0x7f050008;
+        public static final int user_full_name_hint=0x7f05000a;
+        public static final int user_id=0x7f050004;
+        public static final int user_name=0x7f050006;
+        public static final int user_password_hint=0x7f050009;
     }
     public static final class style {
         /** 

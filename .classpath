@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="lib" path="libs/google-play-services.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/davidilizarov/Code/Android/android-async-http-1.4.6/android-async-http-1.4.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="/Users/davidilizarov/Code/Android/Crouton/crouton-1.8.2.jar"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
