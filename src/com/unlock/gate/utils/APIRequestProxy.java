@@ -15,6 +15,7 @@ public class APIRequestProxy {
 	private final String BASE_URL = "http://infinite-river-7560.herokuapp.com/api/v1/";
 	
 	private final String SESSION_ENDPOINT = "sessions.json";
+	private final String REGISTRATION_ENDPOINT = "registrations.json";
 	
 	private RequestQueue mRequestQueue;
 	
@@ -29,6 +30,12 @@ public class APIRequestProxy {
 	public void login(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 		JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(SESSION_ENDPOINT), params, listener, errorListener);
 		
+		mRequestQueue.add(request);
+	}
+	
+	public void register(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+		JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(REGISTRATION_ENDPOINT), params, listener, errorListener);
+	
 		mRequestQueue.add(request);
 	}
 }

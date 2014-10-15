@@ -28,4 +28,12 @@
 	<string name="improper_email_format">This email isn\'t formatted properly</string>
 	<string name="no_password_inputted">Your password is required</string>
 	<string name="no_name_inputted">Your full name is required</string>
+	
+	<!-- VolleyErrorHandler specific -->
+	<string name="volley_network_error">Gatekeeper, we couldn\'t connect to the internet</string>
+	<string name="volley_timeout_error">Gatekeeper, your request timed out\nWe suggest you check your internet connection </string>
+	<string name="volley_no_connection_error">Gatekeeper, check your internet connection</string>
+	<string name="volley_server_error">Gatekeeper, there was a server error\nThe robots are investigating</string>
+	<string name="volley_auth_error">Gatekeeper, you are unauthorized to perform this action</string>
+	<string name="volley_parse_error">Gatekeeper, there was a parsing error</string>
 </resources>

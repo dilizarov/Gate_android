@@ -69,6 +69,14 @@ public final class R {
         public static final int user_id=0x7f050004;
         public static final int user_name=0x7f050006;
         public static final int user_password_hint=0x7f050009;
+        public static final int volley_auth_error=0x7f05001c;
+        /**  VolleyErrorHandler specific 
+         */
+        public static final int volley_network_error=0x7f050018;
+        public static final int volley_no_connection_error=0x7f05001a;
+        public static final int volley_parse_error=0x7f05001d;
+        public static final int volley_server_error=0x7f05001b;
+        public static final int volley_timeout_error=0x7f050019;
     }
     public static final class style {
         /** 

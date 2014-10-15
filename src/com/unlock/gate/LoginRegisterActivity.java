@@ -2,6 +2,7 @@ package com.unlock.gate;
 
 import java.io.UnsupportedEncodingException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,10 +10,12 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -36,7 +39,9 @@ import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.CustomValidator;
 import com.unlock.gate.utils.Fade;
 import com.unlock.gate.utils.SetErrorBugFixer;
+import com.unlock.gate.utils.VolleyErrorHandler;
 
+import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -45,11 +50,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	private enum State {
 		LOGIN, REGISTRATION, FORGOT_PASSWORD
 	}
-	
-	private final static String LOGIN_API_ENDPOINT           = "sessions.json";
-	private final static String REGISTER_API_ENDPOINT        = "registration.json";
-	//Placeholder route
-	private final static String FORGOT_PASSWORD_API_ENDPOINT = "password_reset.json"; 
 	
 	private final int EMAIL_REQUEST_INTENT = 1;
 	
@@ -202,11 +202,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		commandButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
-				//if send, send email
-				//if login go to that
-				//if register go to that
-			
 				switch (viewState) {
 					case LOGIN:
 						processLogin();
@@ -229,12 +224,12 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		mPassword = userPassword.getText().toString();
 		
 		if (mEmail.length() == 0 || mPassword.length() == 0) {
-			if (mEmail.length() == 0) userEmail.setError(getString(R.string.no_email_inputted));
+			if (mEmail.length() == 0)    userEmail.setError(getString(R.string.no_email_inputted));
 			if (mPassword.length() == 0) userPassword.setError(getString(R.string.no_password_inputted));
 		} else if (!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
 		else {
 			try {
-				final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", "Robots processing information...", false, true);
+				final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", "Robots processing...", false, true);
 				
 				JSONObject user = new JSONObject();
 				user.put("email", mEmail)
@@ -260,13 +255,22 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				Response.ErrorListener errorListener = new Response.ErrorListener() {
 					@Override
 					public void onErrorResponse(VolleyError error) {
-						if (error.networkResponse != null) {
-							try {
-								progressDialog.dismiss();
-								String responseBody = new String(error.networkResponse.data, "utf-8");
-								Crouton.showText(LoginRegisterActivity.this, responseBody, Style.ALERT);
-								Log.d("Wrong stuff", error.networkResponse.data.toString());
-							} catch (UnsupportedEncodingException uee) {}
+						progressDialog.dismiss();
+						VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+						
+						if (volleyError.isExpectedError()) {
+							JSONObject errorsJSON = volleyError.getErrors();
+							
+								JSONArray errorsArray = errorsJSON.optJSONArray("errors");
+								String incorrectEmailPassword = errorsArray.optString(0);
+								
+								Crouton.makeText(LoginRegisterActivity.this, incorrectEmailPassword, Style.ALERT)
+										.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+										.show();
+						} else {
+							Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
+									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+									.show();
 						}
 					}	
 				};
@@ -275,31 +279,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 			} catch (JSONException ex) {
 				ex.printStackTrace();
 			}
-			
-			
-//			NetworkClient.post(LOGIN_API_ENDPOINT, params, new JsonHttpResponseHandler() {
-//				@Override
-//				public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//					try {
-//						//SharedPreferences.Editor editor = mUserPreferences.edit();
-//						//editor.putString(getString(R.string.user_auth_token),
-//						//		response.getJSONObject("info").getString("auth_token"));
-//						
-//						Toast.makeText(LoginRegisterActivity.this, "Woot", Toast.LENGTH_LONG).show();
-//						
-//						//Crouton.showText(LoginRegisterActivity.this, "Success!", Style.CONFIRM);
-//						//Here, we do something...
-//					} catch (Exception e) {
-//						//Crouton.showText(LoginRegisterActivity.this, "Welp", Style.ALERT);
-//					}
-//				}
-//				
-//				@Override
-//				public void onFailure(int statusCode, Header[] headers, Throwable thrown, JSONObject errorResponse) {
-//					Crouton.showText(LoginRegisterActivity.this, "Welp", Style.ALERT);
-//					//Toast.makeText(LoginRegisterActivity.this, "Welp", Toast.LENGTH_LONG).show();
-//				}
-//			});
 		}
 	}
 	
@@ -309,11 +288,98 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		mFullName = userFullName.getText().toString();
 	
 		if (mEmail.length() == 0 || mPassword.length() == 0 || mFullName.length() == 0) {
-			if (mEmail.length() == 0) userEmail.setError("Forgot this");
-			if (mPassword.length() == 0) userPassword.setError("Forgot this");
-			if (mFullName.length() == 0) userFullName.setError("Forgot this");
+			if (mEmail.length() == 0)    userEmail.setError(getString(R.string.no_email_inputted));
+			if (mPassword.length() == 0) userPassword.setError(getString(R.string.no_password_inputted));
+			if (mFullName.length() == 0) userFullName.setError(getString(R.string.no_name_inputted));
+		} else if (!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
+		else {
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Are you sure your password is right?\nAre you cool with our privacy policy and terms?");
+			builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();				
+				}
+			});
+			
+			builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					
+					try {
+						
+						final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", "Robots processing...", false, true);
+						
+						JSONObject user = new JSONObject();
+						user.put("email", mEmail)
+							.put("password", mPassword)
+							.put("password_confirmation", mPassword)
+							.put("name", mFullName);
+					
+					
+						JSONObject params = new JSONObject();
+					
+						params.put("user", user);
+					
+						Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+							@Override
+							public void onResponse(JSONObject response) {
+								
+								storeSessionInformation(response);
+								
+								progressDialog.dismiss();
+								Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
+								Log.d("Correct stuff", response.toString());
+							}
+						};
+					
+						Response.ErrorListener errorListener = new Response.ErrorListener() {
+							@Override
+							public void onErrorResponse(VolleyError error) {
+								progressDialog.dismiss();
+								
+								VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+								
+								if (volleyError.isExpectedError()) {
+									JSONObject errorsJSON = volleyError.getErrors();
+									
+									JSONArray errorsArray = errorsJSON.optJSONArray("errors");
+										
+									StringBuilder errorString = new StringBuilder();
+										
+									int j = errorsArray.length();
+									for (int i = 0; i < j; i++) {
+										if (i != 0) errorString.append("\n");
+										errorString.append(errorsArray.optString(i));
+									}
+									
+									Crouton.makeText(LoginRegisterActivity.this, errorString.toString(), Style.ALERT)
+											.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+											.show();
+								} else {
+									Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
+											.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+											.show();
+								}
+							}	
+						};
+					
+						APIRequestManager.getInstance().doRequest().register(params, listener, errorListener);
+					} catch (JSONException ex) {
+						ex.printStackTrace();
+					}
+					
+				}
+			});
+			
+			AlertDialog confirmation = builder.create();
+			confirmation.show();
 		}
-	}
+	}	
 	
 	public void processForgotPassword() {
 		
