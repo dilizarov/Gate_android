@@ -382,7 +382,58 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	}	
 	
 	public void processForgotPassword() {
+		mEmail = userEmail.getText().toString();
 		
+		if (mEmail.length() == 0) userEmail.setError(getString(R.string.no_email_inputted));
+		else if(!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
+		else {
+			try {
+				final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", "Robots processing...", false, true);
+				
+				JSONObject user = new JSONObject();
+				user.put("email", mEmail);
+			
+			
+				JSONObject params = new JSONObject();
+			
+				params.put("user", user);
+			
+				Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+												
+						progressDialog.dismiss();
+						
+						Crouton.makeText(LoginRegisterActivity.this, getString(R.string.forgotton_password_email_sent), Style.CONFIRM)
+								.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+								.show();
+					}
+				};
+			
+				Response.ErrorListener errorListener = new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						progressDialog.dismiss();
+						VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+						
+						if (volleyError.isExpectedError()) {
+							Crouton.makeText(LoginRegisterActivity.this, getString(R.string.forgotton_password_email_not_registered), Style.ALERT)
+									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+									.show();
+						} else {
+							Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
+									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+									.show();
+						}
+					}	
+				};
+			
+				APIRequestManager.getInstance().doRequest().sendForgottonPasswordEmail(params, listener, errorListener);
+			} catch (JSONException ex) {
+				ex.printStackTrace();
+			}
+			
+		}
 	}
 	
 	public void storeSessionInformation(JSONObject response) {
@@ -395,10 +446,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				  .putString(getString(R.string.user_name),       userData.getString("name"))
 				  .putString(getString(R.string.user_created_at), userData.getString("created_at"))
 				  .commit();
-			
-			Log.d("Auth", mSessionPreferences.getString(getString(R.string.user_auth_token), "No val"));
-			Log.d("ID", mSessionPreferences.getString(getString(R.string.user_id), "Nope"));
-			Log.d("Email", mSessionPreferences.getString(getString(R.string.user_email), "Hahaha"));
 			
 		} catch (JSONException ex) {
 			ex.printStackTrace();

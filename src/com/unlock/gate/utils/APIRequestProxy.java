@@ -38,4 +38,8 @@ public class APIRequestProxy {
 	
 		mRequestQueue.add(request);
 	}
+
+	public void sendForgottonPasswordEmail(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+		//TODO: Write this function and the associated server code required to pull it off
+	}
 }

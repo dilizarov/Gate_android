@@ -28,6 +28,8 @@
 	<string name="improper_email_format">This email isn\'t formatted properly</string>
 	<string name="no_password_inputted">Your password is required</string>
 	<string name="no_name_inputted">Your full name is required</string>
+	<string name="forgotton_password_email_sent">Email sent</string>
+	<string name="forgotton_password_email_not_registered">Email not registered</string>
 	
 	<!-- VolleyErrorHandler specific -->
 	<string name="volley_network_error">Gatekeeper, we couldn\'t connect to the internet</string>

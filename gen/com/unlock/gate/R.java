@@ -46,6 +46,8 @@ public final class R {
          */
         public static final int app_name=0x7f050000;
         public static final int forgot_password=0x7f05000b;
+        public static final int forgotton_password_email_not_registered=0x7f050019;
+        public static final int forgotton_password_email_sent=0x7f050018;
         public static final int improper_email_format=0x7f050015;
         public static final int last_used_email=0x7f050013;
         public static final int log_in=0x7f05000c;
@@ -69,14 +71,14 @@ public final class R {
         public static final int user_id=0x7f050004;
         public static final int user_name=0x7f050006;
         public static final int user_password_hint=0x7f050009;
-        public static final int volley_auth_error=0x7f05001c;
+        public static final int volley_auth_error=0x7f05001e;
         /**  VolleyErrorHandler specific 
          */
-        public static final int volley_network_error=0x7f050018;
-        public static final int volley_no_connection_error=0x7f05001a;
-        public static final int volley_parse_error=0x7f05001d;
-        public static final int volley_server_error=0x7f05001b;
-        public static final int volley_timeout_error=0x7f050019;
+        public static final int volley_network_error=0x7f05001a;
+        public static final int volley_no_connection_error=0x7f05001c;
+        public static final int volley_parse_error=0x7f05001f;
+        public static final int volley_server_error=0x7f05001d;
+        public static final int volley_timeout_error=0x7f05001b;
     }
     public static final class style {
         /** 
