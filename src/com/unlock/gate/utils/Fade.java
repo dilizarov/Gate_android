@@ -24,6 +24,15 @@ public class Fade {
 		}
 	}
 	
+	public static void show(View view, AnimatorListenerAdapter listener) {
+		if (view.getVisibility() != View.VISIBLE) {
+			view.setAlpha(0);
+			view.setVisibility(View.VISIBLE);
+			view.animate().setDuration(DURATION);
+			view.animate().alpha(1).setListener(listener);
+		}
+	}
+	
 	// the listener passed in must at some point do:
 	//view.setAlpha(1);
 	//view.setVisibility(View.INVISIBLE);

@@ -133,11 +133,18 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 						userPassword.setVisibility(View.INVISIBLE);
 						userPassword.animate().setListener(null);
 					}
+					
+					public void onAnimationStart(Animator animation) {
+						commandButton.setText(R.string.send_email);
+						toggleRegistrationLogin.setText(R.string.toggle_login);
+						viewState = State.FORGOT_PASSWORD;
+
+					}
 				});
 				
-				commandButton.setText(R.string.send_email);
-				toggleRegistrationLogin.setText(R.string.toggle_login);
-				viewState = State.FORGOT_PASSWORD;
+//				commandButton.setText(R.string.send_email);
+//				toggleRegistrationLogin.setText(R.string.toggle_login);
+//				viewState = State.FORGOT_PASSWORD;
 			}
 		});
 	}
@@ -169,16 +176,28 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				
 				if (viewState == State.LOGIN) {
 					forgotPassword.setVisibility(View.INVISIBLE);
-					Fade.show(userFullName);
+					Fade.show(userFullName, new AnimatorListenerAdapter() {
+						public void onAnimationStart(Animator animation) {
+							commandButton.setText(R.string.register);
+							toggleRegistrationLogin.setText(R.string.toggle_login);
+							viewState = State.REGISTRATION;
+						}
+					});
 					
-					commandButton.setText(R.string.register);
-					toggleRegistrationLogin.setText(R.string.toggle_login);
-					viewState = State.REGISTRATION;
+//					commandButton.setText(R.string.register);
+//					toggleRegistrationLogin.setText(R.string.toggle_login);
+//					viewState = State.REGISTRATION;
 				} else {
-					//The true actions shouldn't even be possible, not sure why I put this here
-					if (userPassword.getVisibility() == View.INVISIBLE) {
-						Fade.show(userPassword);
-						forgotPassword.setVisibility(View.VISIBLE);
+					if (viewState == State.FORGOT_PASSWORD) {
+						Fade.show(userPassword, new AnimatorListenerAdapter() {
+							public void onAnimationStart(Animator animation) {
+								forgotPassword.setVisibility(View.VISIBLE);
+								commandButton.setText(R.string.log_in);
+								toggleRegistrationLogin.setText(R.string.toggle_registration);
+								viewState = State.LOGIN;
+							}
+						});
+//						forgotPassword.setVisibility(View.VISIBLE);
 					} else {
 						Fade.hide(userFullName, new AnimatorListenerAdapter() {
 							public void onAnimationEnd(Animator animation) {
@@ -187,12 +206,18 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 								userFullName.animate().setListener(null);
 								forgotPassword.setVisibility(View.VISIBLE);
 							}
+							
+							public void onAnimationStart(Animator animation) {
+								commandButton.setText(R.string.log_in);
+								toggleRegistrationLogin.setText(R.string.toggle_registration);
+								viewState = State.LOGIN;
+							}
 						});
 					}
 					
-					commandButton.setText(R.string.log_in);
-					toggleRegistrationLogin.setText(R.string.toggle_registration);
-					viewState = State.LOGIN;
+//					commandButton.setText(R.string.log_in);
+//					toggleRegistrationLogin.setText(R.string.toggle_registration);
+//					viewState = State.LOGIN;
 				}
 			}
 		});
