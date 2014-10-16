@@ -141,10 +141,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 
 					}
 				});
-				
-//				commandButton.setText(R.string.send_email);
-//				toggleRegistrationLogin.setText(R.string.toggle_login);
-//				viewState = State.FORGOT_PASSWORD;
 			}
 		});
 	}
@@ -184,9 +180,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 						}
 					});
 					
-//					commandButton.setText(R.string.register);
-//					toggleRegistrationLogin.setText(R.string.toggle_login);
-//					viewState = State.REGISTRATION;
 				} else {
 					if (viewState == State.FORGOT_PASSWORD) {
 						Fade.show(userPassword, new AnimatorListenerAdapter() {
@@ -197,7 +190,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 								viewState = State.LOGIN;
 							}
 						});
-//						forgotPassword.setVisibility(View.VISIBLE);
+
 					} else {
 						Fade.hide(userFullName, new AnimatorListenerAdapter() {
 							public void onAnimationEnd(Animator animation) {
@@ -214,10 +207,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 							}
 						});
 					}
-					
-//					commandButton.setText(R.string.log_in);
-//					toggleRegistrationLogin.setText(R.string.toggle_registration);
-//					viewState = State.LOGIN;
 				}
 			}
 		});
