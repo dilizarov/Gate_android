@@ -262,6 +262,10 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 						progressDialog.dismiss();
 						Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
 						Log.d("Correct stuff", response.toString());
+
+                        Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
 					}
 				};
 			
@@ -349,6 +353,10 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 										progressDialog.dismiss();
 										Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
 										Log.d("Correct stuff", response.toString());
+
+                                        Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
 									}
 								};
 

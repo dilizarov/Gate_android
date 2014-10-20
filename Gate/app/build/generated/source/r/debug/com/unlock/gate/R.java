@@ -120,8 +120,9 @@ containing a value of this type.
     }
     public static final class id {
         public static final int Placeholder=0x7f090007;
-        public static final int action_settings=0x7f09000a;
+        public static final int action_settings=0x7f09000b;
         public static final int commandButton=0x7f090003;
+        public static final int feedView=0x7f09000a;
         public static final int forgotPassword=0x7f090002;
         public static final int pager=0x7f090009;
         public static final int tabs=0x7f090008;
@@ -134,6 +135,7 @@ containing a value of this type.
     public static final class layout {
         public static final int activity_login_register=0x7f030000;
         public static final int activity_main=0x7f030001;
+        public static final int fragment_feed=0x7f030002;
     }
     public static final class menu {
         public static final int login_register=0x7f080000;
@@ -146,34 +148,35 @@ containing a value of this type.
         public static final int forgot_password=0x7f060004;
         public static final int forgotton_password_email_not_registered=0x7f060005;
         public static final int forgotton_password_email_sent=0x7f060006;
-        public static final int improper_email_format=0x7f060007;
-        public static final int last_used_email=0x7f060008;
-        public static final int log_in=0x7f060009;
-        public static final int login_register_shared_preferences_key=0x7f06000a;
-        public static final int no_email_inputted=0x7f06000b;
-        public static final int no_name_inputted=0x7f06000c;
-        public static final int no_password_inputted=0x7f06000d;
-        public static final int progress_dialog_server_processing_request=0x7f06000e;
-        public static final int register=0x7f06000f;
-        public static final int send_email=0x7f060010;
-        public static final int session_shared_preferences_key=0x7f060011;
-        public static final int terms=0x7f060012;
-        public static final int toggle_login=0x7f060013;
-        public static final int toggle_registration=0x7f060014;
-        public static final int user_auth_token_key=0x7f060015;
-        public static final int user_created_at_key=0x7f060016;
-        public static final int user_email_hint=0x7f060017;
-        public static final int user_email_key=0x7f060018;
-        public static final int user_full_name_hint=0x7f060019;
-        public static final int user_id_key=0x7f06001a;
-        public static final int user_name_key=0x7f06001b;
-        public static final int user_password_hint=0x7f06001c;
-        public static final int volley_auth_error=0x7f06001d;
-        public static final int volley_network_error=0x7f06001e;
-        public static final int volley_no_connection_error=0x7f06001f;
-        public static final int volley_parse_error=0x7f060020;
-        public static final int volley_server_error=0x7f060021;
-        public static final int volley_timeout_error=0x7f060022;
+        public static final int hello_blank_fragment=0x7f060007;
+        public static final int improper_email_format=0x7f060008;
+        public static final int last_used_email=0x7f060009;
+        public static final int log_in=0x7f06000a;
+        public static final int login_register_shared_preferences_key=0x7f06000b;
+        public static final int no_email_inputted=0x7f06000c;
+        public static final int no_name_inputted=0x7f06000d;
+        public static final int no_password_inputted=0x7f06000e;
+        public static final int progress_dialog_server_processing_request=0x7f06000f;
+        public static final int register=0x7f060010;
+        public static final int send_email=0x7f060011;
+        public static final int session_shared_preferences_key=0x7f060012;
+        public static final int terms=0x7f060013;
+        public static final int toggle_login=0x7f060014;
+        public static final int toggle_registration=0x7f060015;
+        public static final int user_auth_token_key=0x7f060016;
+        public static final int user_created_at_key=0x7f060017;
+        public static final int user_email_hint=0x7f060018;
+        public static final int user_email_key=0x7f060019;
+        public static final int user_full_name_hint=0x7f06001a;
+        public static final int user_id_key=0x7f06001b;
+        public static final int user_name_key=0x7f06001c;
+        public static final int user_password_hint=0x7f06001d;
+        public static final int volley_auth_error=0x7f06001e;
+        public static final int volley_network_error=0x7f06001f;
+        public static final int volley_no_connection_error=0x7f060020;
+        public static final int volley_parse_error=0x7f060021;
+        public static final int volley_server_error=0x7f060022;
+        public static final int volley_timeout_error=0x7f060023;
     }
     public static final class style {
         /** 
