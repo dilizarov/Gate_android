@@ -120,6 +120,19 @@
                 </string>
                 <string name="session_shared_preferences_key" >com.unlock.gate.CURRENT_SESSION_PREF
                 </string>
+
+                <string-array name="tabs" >
+                    <item>
+Feed
+                    </item>
+                    <item>
+Networks
+                    </item>
+                    <item>
+HQ
+                    </item>
+                </string-array>
+
                 <string name="user_password_hint" >Password
                 </string>
                 <string name="volley_server_error" >Gatekeeper, there was a server error\nThe robots are investigating
@@ -226,6 +239,26 @@
             <file
                 name="fragment_feed"
                 path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_feed.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="feed_item"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/feed_item.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="network_item"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/network_item.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="fragment_hq"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_hq.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="fragment_networks"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_networks.xml"
                 qualifiers=""
                 type="layout" />
         </source>

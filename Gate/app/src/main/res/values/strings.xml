@@ -43,4 +43,11 @@
     <string name="volley_parse_error">Gatekeeper, there was a parsing error</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- MainActivity specific -->
+    <string-array name="tabs">
+        <item>Feed</item>
+        <item>Networks</item>
+        <item>HQ</item>
+    </string-array>
+
 </resources>

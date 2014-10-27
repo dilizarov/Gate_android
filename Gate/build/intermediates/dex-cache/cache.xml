@@ -8,18 +8,6 @@
         revision="20.0.0"
         sha1="afee690af14bd2c32d400cdf78e746fd45c386fa"/>
     <item
-        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/crouton-1.8.2-ddf7f9e78f06fcdcbdabdede8a65f5ab6df9870d.jar"
-        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/libs/crouton-1.8.2.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="ba14b78124a9945dab574c195b8b60633fd61f99"/>
-    <item
-        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/volley_20141013-0832c3047103e9f9af595f3212694b6018c11988.jar"
-        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/libs/volley_20141013.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="29476783cc02754de51a9ebec005716307649b65"/>
-    <item
         dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/gson-2.3-15a90e004f09c3d5a157f86bee32de55da951434.jar"
         jar="/Users/davidilizarov/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3/5fc52c41ef0239d1093a1eb7c3697036183677ce/gson-2.3.jar"
         jumboMode="false"
@@ -37,5 +25,23 @@
         jumboMode="false"
         revision="20.0.0"
         sha1="d71573c9c5ea98a8db47ad6ff993a63d492b3bfa"/>
+    <item
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/crouton-1.8.2-ddf7f9e78f06fcdcbdabdede8a65f5ab6df9870d.jar"
+        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/libs/crouton-1.8.2.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="ba14b78124a9945dab574c195b8b60633fd61f99"/>
+    <item
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/volley_20141013-0832c3047103e9f9af595f3212694b6018c11988.jar"
+        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/libs/volley_20141013.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="29476783cc02754de51a9ebec005716307649b65"/>
+    <item
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/joda-time-2.5-aa193ffc4babc1324ecb96a8a80b1d299c71ab7b.jar"
+        jar="/Users/davidilizarov/.gradle/caches/modules-2/files-2.1/joda-time/joda-time/2.5/c73038a3688525aad5cf33409df483178290cd64/joda-time-2.5.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="c73038a3688525aad5cf33409df483178290cd64"/>
 
 </pre-dex-items>

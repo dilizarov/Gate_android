@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -30,10 +29,10 @@ public class MainActivity extends FragmentActivity {
 
         pager.setAdapter(adapter);
 
-        final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4,
-                                                             getResources().getDisplayMetrics());
-
-        pager.setPageMargin(pageMargin);
+//        final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4,
+//                                                             getResources().getDisplayMetrics());
+//
+//        pager.setPageMargin(pageMargin);
 
         tabs.setViewPager(pager);
 
@@ -41,7 +40,7 @@ public class MainActivity extends FragmentActivity {
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] TITLES = { "Feed", "Networks", "HQ" };
+        private final String[] TITLES = getResources().getStringArray(R.array.tabs);
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -59,7 +58,13 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return FeedFragment.newInstance(position);
+            switch(position) {
+                case 0:  return FeedFragment.newInstance(position);
+                case 1:  return NetworksFragment.newInstance(position);
+                case 2:  return HQFragment.newInstance(position);
+            }
+
+            return null;
         }
     }
 

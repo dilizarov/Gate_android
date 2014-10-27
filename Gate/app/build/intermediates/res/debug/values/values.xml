@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- From: file:/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/values/strings.xml -->
+    <eat-comment />
+
+    <string-array name="tabs">
+        <item>Feed</item>
+        <item>Networks</item>
+        <item>HQ</item>
+    </string-array>
     <!-- From: file:/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.astuetz/pagerslidingtabstrip/1.0.1/res/values/values.xml -->
     <eat-comment />
 
