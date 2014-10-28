@@ -6,6 +6,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -29,13 +33,7 @@ public class MainActivity extends FragmentActivity {
 
         pager.setAdapter(adapter);
 
-//        final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4,
-//                                                             getResources().getDisplayMetrics());
-//
-//        pager.setPageMargin(pageMargin);
-
         tabs.setViewPager(pager);
-
     }
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
@@ -66,6 +64,49 @@ public class MainActivity extends FragmentActivity {
 
             return null;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_create:
+                switch (pager.getCurrentItem()) {
+                    case 0: createPost(); break;
+                    case 1: createNetwork(); break;
+                    case 2: createKey(); break;
+                }
+                return true;
+            case R.id.action_offer_advice:
+                return true;
+            case R.id.action_logout:
+                logout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void logout() {
+        Toast.makeText(this, "Logging out", Toast.LENGTH_SHORT).show();
+    }
+
+    public void createPost() {
+        Toast.makeText(this, "Making post", Toast.LENGTH_SHORT).show();
+    }
+
+    public void createNetwork() {
+        Toast.makeText(this, "Making network", Toast.LENGTH_SHORT).show();
+    }
+
+    public void createKey() {
+        Toast.makeText(this, "Making key", Toast.LENGTH_SHORT).show();
     }
 
 }
