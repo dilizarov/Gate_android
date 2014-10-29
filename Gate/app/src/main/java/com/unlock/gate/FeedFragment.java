@@ -69,13 +69,21 @@ public class FeedFragment extends ListFragment {
         listAdapter = new FeedListAdapter(getActivity(), feedItems);
         feed.setAdapter(listAdapter);
 
-        for (int i = 0; i < 9; i++) {
-            FeedItem item = new FeedItem("123" + i, "David Ilibaba", "Hi, this is message number AP" + i, "Network " + i, "2014-10-24T22:3" + i + ":24.642Z");
+        new Thread(new Runnable() {
+            public void run() {
+                for (int i = 0; i < 9; i++) {
+                    FeedItem item = new FeedItem("123" + i, "David Ilibaba", "Hi, this is message number AP" + i, "Network " + i, "2014-10-24T22:3" + i + ":24.642Z");
 
-            feedItems.add(item);
-        }
+                    feedItems.add(item);
+                }
 
-        listAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        listAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event

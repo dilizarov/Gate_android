@@ -4,13 +4,14 @@ package com.unlock.gate.models;
  * Created by davidilizarov on 10/27/14.
  */
 public class Network {
-    private String id, name;
+    private String id, name, creator;
 
     public Network(){}
 
-    public Network(String id, String name) {
+    public Network(String id, String name, String creator) {
         this.id = id;
         this.name = name;
+        this.creator = creator;
     }
 
     public String getId() {
@@ -27,5 +28,13 @@ public class Network {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 }

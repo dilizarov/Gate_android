@@ -1,9 +1,5 @@
 package com.unlock.gate;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -38,6 +34,10 @@ import com.unlock.gate.utils.CustomValidator;
 import com.unlock.gate.utils.Fade;
 import com.unlock.gate.utils.SetErrorBugFixer;
 import com.unlock.gate.utils.VolleyErrorHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -463,7 +463,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	private void storeSessionInformation(JSONObject response) {
 		SharedPreferences.Editor editor = mSessionPreferences.edit();
 		try {
-			JSONObject userData = response.getJSONObject("data").getJSONObject("user");
+			JSONObject userData = response.getJSONObject("user");
 			editor.putString(getString(R.string.user_auth_token_key), userData.getString("auth_token"))
 				  .putString(getString(R.string.user_id_key),         userData.getString("external_id"))
 				  .putString(getString(R.string.user_email_key),      userData.getString("email"))
