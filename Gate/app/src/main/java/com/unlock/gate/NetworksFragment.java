@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -95,6 +96,8 @@ public class NetworksFragment extends ListFragment {
             listAdapter = new NetworksListAdapter(getActivity(), networkItems);
             networks.setAdapter(listAdapter);
 
+            final LinearLayout progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.networkProgressBarHolder);
+
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
                     .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
@@ -121,6 +124,7 @@ public class NetworksFragment extends ListFragment {
 
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
+                                    progressBarHolder.setVisibility(View.GONE);
                                     listAdapter.notifyDataSetChanged();
                                 }
                             });

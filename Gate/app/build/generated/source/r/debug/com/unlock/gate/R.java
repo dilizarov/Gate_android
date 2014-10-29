@@ -125,16 +125,17 @@ containing a value of this type.
     }
     public static final class id {
         public static final int Placeholder=0x7f0a0007;
-        public static final int action_create=0x7f0a0012;
-        public static final int action_logout=0x7f0a0010;
-        public static final int action_offer_advice=0x7f0a0011;
-        public static final int action_settings=0x7f0a000f;
+        public static final int action_create=0x7f0a0013;
+        public static final int action_logout=0x7f0a0011;
+        public static final int action_offer_advice=0x7f0a0012;
+        public static final int action_settings=0x7f0a0010;
         public static final int commandButton=0x7f0a0003;
         public static final int forgotPassword=0x7f0a0002;
         public static final int message=0x7f0a000d;
         public static final int name=0x7f0a000a;
-        public static final int networkItemName=0x7f0a000e;
+        public static final int networkItemName=0x7f0a000f;
         public static final int networkName=0x7f0a000b;
+        public static final int networkProgressBarHolder=0x7f0a000e;
         public static final int pager=0x7f0a0009;
         public static final int tabs=0x7f0a0008;
         public static final int terms=0x7f0a0005;
