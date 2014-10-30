@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -26,7 +28,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 /**
  * A fragment representing a list of Items.
@@ -35,7 +39,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class NetworksFragment extends ListFragment {
+public class NetworksFragment extends ListFragment implements OnRefreshListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,6 +49,7 @@ public class NetworksFragment extends ListFragment {
     private List<Network> networkItems;
     private SharedPreferences mSessionPreferences;
     private ProgressBar loadingNetworksProgressBar;
+    private PullToRefreshLayout mPullToRefreshLayout;
 
     private int position;
 
@@ -80,6 +85,20 @@ public class NetworksFragment extends ListFragment {
                              Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_networks, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ViewGroup viewGroup = (ViewGroup) view;
+        mPullToRefreshLayout = new PullToRefreshLayout(viewGroup.getContext());
+
+        ActionBarPullToRefresh.from(getActivity())
+                .insertLayoutInto(viewGroup)
+                .theseChildrenArePullable(getListView(), getListView().getEmptyView())
+                .listener(this)
+                .setup(mPullToRefreshLayout);
     }
 
     @Override
@@ -158,6 +177,23 @@ public class NetworksFragment extends ListFragment {
     * "http://developer.android.com/training/basics/fragments/communicating.html"
     * >Communicating with Other Fragments</a> for more information.
     */
+
+    @Override
+    public void onRefreshStarted(View view) {
+        new Thread(new Runnable() {
+            public void run() {
+                try { Thread.sleep(4000); } catch (InterruptedException e) {}
+
+                getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        mPullToRefreshLayout.setRefreshComplete();
+                        Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }).start();
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);

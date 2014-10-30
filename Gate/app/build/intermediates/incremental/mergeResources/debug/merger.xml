@@ -1,6 +1,522 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merger version="2" >
 
+    <dataSet config="0.4.0" >
+        <source path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.castorflex.smoothprogressbar/library/0.4.0/res" >
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.castorflex.smoothprogressbar/library/0.4.0/res/values/values.xml"
+                qualifiers="" >
+                <integer name="spb_default_interpolator" >
+0
+                </integer>
+
+                <bool name="spb_default_mirror_mode" >
+false
+                </bool>
+
+                <color name="spb_default_color" >#33b5e5
+                </color>
+
+                <style
+                    name="Theme.SmoothProgressBarDefaults"
+                    parent="android:Theme" >
+                    <item name="spbStyle">
+@style/SmoothProgressBar
+                    </item>
+                </style>
+
+                <bool name="spb_default_reversed" >
+false
+                </bool>
+
+                <dimen name="spb_default_stroke_separator_length" >4dp
+                </dimen>
+
+                <integer name="spb_default_sections_count" >
+4
+                </integer>
+
+                <bool name="spb_default_progressiveStart_activated" >
+false
+                </bool>
+
+                <item
+                    name="spb_default_speed"
+                    format="float"
+                    type="string">
+1.0
+                </item>
+
+                <dimen name="spb_default_stroke_width" >4dp
+                </dimen>
+
+                <style
+                    name="SmoothProgressBar"
+                    parent="android:Widget.ProgressBar.Horizontal" >
+                    <item name="spb_color">
+@color/spb_default_color
+                    </item>
+                    <item name="spb_sections_count">
+@integer/spb_default_sections_count
+                    </item>
+                    <item name="spb_speed">
+@string/spb_default_speed
+                    </item>
+                    <item name="spb_stroke_width">
+@dimen/spb_default_stroke_width
+                    </item>
+                    <item name="spb_stroke_separator_length">
+@dimen/spb_default_stroke_separator_length
+                    </item>
+                    <item name="spb_reversed">
+@bool/spb_default_reversed
+                    </item>
+                    <item name="spb_mirror_mode">
+@bool/spb_default_mirror_mode
+                    </item>
+                    <item name="spb_progressiveStart_activated">
+@bool/spb_default_progressiveStart_activated
+                    </item>
+                    <item name="spb_background">
+@null
+                    </item>
+                    <item name="spb_generate_background_with_colors">
+false
+                    </item>
+                </style>
+
+                <declare-styleable name="SmoothProgressBar" >
+                    <attr
+                        name="spbStyle"
+                        format="reference" />
+                    <attr
+                        name="spb_color"
+                        format="color" />
+                    <attr
+                        name="spb_stroke_width"
+                        format="dimension" />
+                    <attr
+                        name="spb_stroke_separator_length"
+                        format="dimension" />
+                    <attr
+                        name="spb_sections_count"
+                        format="integer" />
+                    <attr
+                        name="spb_speed"
+                        format="float" />
+                    <attr
+                        name="spb_progressiveStart_speed"
+                        format="float" />
+                    <attr
+                        name="spb_progressiveStop_speed"
+                        format="float" />
+                    <attr
+                        name="spb_interpolator"
+                        format="enum" >
+                        <enum
+                            name="spb_interpolator_accelerate"
+                            value="0" />
+                        <enum
+                            name="spb_interpolator_linear"
+                            value="1" />
+                        <enum
+                            name="spb_interpolator_acceleratedecelerate"
+                            value="2" />
+                        <enum
+                            name="spb_interpolator_decelerate"
+                            value="3" />
+                    </attr>
+                    <attr
+                        name="spb_reversed"
+                        format="boolean" />
+                    <attr
+                        name="spb_mirror_mode"
+                        format="boolean" />
+                    <attr
+                        name="spb_colors"
+                        format="reference" />
+                    <attr
+                        name="spb_progressiveStart_activated"
+                        format="boolean" />
+                    <attr
+                        name="spb_background"
+                        format="reference" />
+                    <attr
+                        name="spb_generate_background_with_colors"
+                        format="boolean" />
+                </declare-styleable>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.castorflex.smoothprogressbar/library/0.4.0/res/values-v14/values.xml"
+                qualifiers="v14" >
+
+                <style
+                    name="SmoothProgressBar"
+                    parent="android:Widget.Holo.ProgressBar.Horizontal" >
+                    <item name="spb_color">
+@color/spb_default_color
+                    </item>
+                    <item name="spb_sections_count">
+@integer/spb_default_sections_count
+                    </item>
+                    <item name="spb_speed">
+@string/spb_default_speed
+                    </item>
+                    <item name="spb_stroke_width">
+@dimen/spb_default_stroke_width
+                    </item>
+                    <item name="spb_stroke_separator_length">
+@dimen/spb_default_stroke_separator_length
+                    </item>
+                    <item name="spb_reversed">
+@bool/spb_default_reversed
+                    </item>
+                    <item name="spb_mirror_mode">
+@bool/spb_default_mirror_mode
+                    </item>
+                </style>
+            </file>
+        </source>
+    </dataSet>
+    <dataSet config="0.9.9" >
+        <source path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res" >
+            <file
+                name="default_header"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/layout/default_header.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values/values.xml"
+                qualifiers="" >
+                <item
+                    name="ptr_text"
+                    type="id"/>
+
+                <declare-styleable name="PullToRefreshHeader" >
+
+                    <!-- A drawable to use as the background of the Header View -->
+                    <attr
+                        name="ptrHeaderBackground"
+                        format="reference|color" />
+
+                    <!-- The height of the Header View -->
+                    <attr
+                        name="ptrHeaderHeight"
+                        format="reference|dimension" />
+
+                    <!-- The Text Appearance of the Header View's Title text -->
+                    <attr
+                        name="ptrHeaderTitleTextAppearance"
+                        format="reference" />
+
+                    <!-- The color that the Progress Bar should be tinted with -->
+                    <attr
+                        name="ptrProgressBarColor"
+                        format="reference|color" />
+
+                    <!-- The style of the Progress Bar -->
+                    <attr name="ptrProgressBarStyle" >
+                        <flag
+                            name="inside"
+                            value="0x0" />
+                        <flag
+                            name="outside"
+                            value="0x1" />
+                    </attr>
+
+                    <!-- The height of the Progress Bar -->
+                    <attr
+                        name="ptrProgressBarHeight"
+                        format="reference|dimension" />
+
+                    <!-- Text to show to prompt the user is pull (or keep pulling) -->
+                    <attr
+                        name="ptrPullText"
+                        format="reference|string" />
+
+                    <!-- Text to show to tell the user that a refresh is currently in progress -->
+                    <attr
+                        name="ptrRefreshingText"
+                        format="reference|string" />
+
+                    <!-- Text to show to tell the user has scrolled enough to refresh -->
+                    <attr
+                        name="ptrReleaseText"
+                        format="reference|string" />
+
+                    <!-- indeterminate progressbar style -->
+                    <attr
+                        name="ptrSmoothProgressBarStyle"
+                        format="reference" />
+                </declare-styleable>
+
+                <string name="pull_to_refresh_pull_label" >Pull to refresh…
+                </string>
+
+                <item
+                    name="ptr_progress"
+                    type="id"/>
+
+                <string name="pull_to_refresh_release_label" >Release to refresh…
+                </string>
+
+                <declare-styleable name="PullToRefreshView" >
+
+                    <!-- The class to use as a View's View Delegate. Can be relative path from app's package name -->
+                    <attr
+                        name="ptrViewDelegateClass"
+                        format="reference|string" />
+                </declare-styleable>
+
+                <color name="default_progress_bar_color" >#FF33B5E5
+                </color>
+
+                <string name="pull_to_refresh_refreshing_label" >Loading…
+                </string>
+
+                <item
+                    name="ptr_content"
+                    type="id"/>
+
+                <dimen name="ptr_progress_bar_stroke_width" >4dp
+                </dimen>
+
+                <attr
+                    name="ptrHeaderStyle"
+                    format="reference" />
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-ar/values.xml"
+                qualifiers="ar" >
+                <string name="pull_to_refresh_release_label" >اترك للتحديث…
+                </string>
+                <string name="pull_to_refresh_pull_label" >اسحب للتحديث…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >تحميل…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-cs/values.xml"
+                qualifiers="cs" >
+                <string name="pull_to_refresh_refreshing_label" >Načítání…
+                </string>
+                <string name="pull_to_refresh_release_label" >Uvolněním aktualizujete…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Tažením aktualizujete…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-de/values.xml"
+                qualifiers="de" >
+                <string name="pull_to_refresh_pull_label" >Ziehen zum Aktualisieren…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Laden…
+                </string>
+                <string name="pull_to_refresh_release_label" >Loslassen zum Aktualisieren…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-el/values.xml"
+                qualifiers="el" >
+                <string name="pull_to_refresh_release_label" >Αφήστε για ανανέωση…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Φόρτωση…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Σύρετε προς τα κάτω για ανανέωση…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-es/values.xml"
+                qualifiers="es" >
+                <string name="pull_to_refresh_pull_label" >Desliza el dedo hacia abajo para actualizar.
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Cargando…
+                </string>
+                <string name="pull_to_refresh_release_label" >Soltar para actualizar…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-fi/values.xml"
+                qualifiers="fi" >
+                <string name="pull_to_refresh_refreshing_label" >Päivitetään…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Päivitä vetämällä alas…
+                </string>
+                <string name="pull_to_refresh_release_label" >Päivitä vapauttamalla…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-fr/values.xml"
+                qualifiers="fr" >
+                <string name="pull_to_refresh_pull_label" >Tirez pour rafraîchir…
+                </string>
+                <string name="pull_to_refresh_release_label" >Relâcher pour rafraîchir…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Chargement…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-he/values.xml"
+                qualifiers="he" >
+                <string name="pull_to_refresh_release_label" >שחרר לרענון…
+                </string>
+                <string name="pull_to_refresh_pull_label" >משוך לרענון…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >טוען…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-it/values.xml"
+                qualifiers="it" >
+                <string name="pull_to_refresh_refreshing_label" >Caricamento…
+                </string>
+                <string name="pull_to_refresh_release_label" >Rilascia per aggionare…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Tira per aggiornare…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-iw/values.xml"
+                qualifiers="iw" >
+                <string name="pull_to_refresh_pull_label" >משוך לרענון…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >טוען…
+                </string>
+                <string name="pull_to_refresh_release_label" >שחרר לרענון…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-ja/values.xml"
+                qualifiers="ja" >
+                <string name="pull_to_refresh_pull_label" >画面を引っ張って…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >読み込み中…
+                </string>
+                <string name="pull_to_refresh_release_label" >指を離して更新…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-ko/values.xml"
+                qualifiers="ko" >
+                <string name="pull_to_refresh_refreshing_label" >로드 중…
+                </string>
+                <string name="pull_to_refresh_release_label" >놓아서 새로 고침…
+                </string>
+                <string name="pull_to_refresh_pull_label" >당겨서 새로 고침…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-lt/values.xml"
+                qualifiers="lt" >
+                <string name="pull_to_refresh_release_label" >Paleiskite, kad atnaujinti…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Kraunama…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Traukite, kad atnaujinti…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-nl/values.xml"
+                qualifiers="nl" >
+                <string name="pull_to_refresh_release_label" >Loslaten om te vernieuwen…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Sleep om te vernieuwen…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Laden…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-pl/values.xml"
+                qualifiers="pl" >
+                <string name="pull_to_refresh_refreshing_label" >Wczytywanie…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Pociągnij, aby odświeżyć…
+                </string>
+                <string name="pull_to_refresh_release_label" >Puść, aby odświeżyć…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-pt/values.xml"
+                qualifiers="pt" >
+                <string name="pull_to_refresh_refreshing_label" >A carregar…
+                </string>
+                <string name="pull_to_refresh_release_label" >Liberação para atualizar…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Puxe para atualizar…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-pt-rBR/values.xml"
+                qualifiers="pt-rBR" >
+                <string name="pull_to_refresh_release_label" >Libere para atualizar…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Carregando…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Puxe para atualizar…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-ro/values.xml"
+                qualifiers="ro" >
+                <string name="pull_to_refresh_refreshing_label" >Încărcare…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Trage pentru a reîmprospăta…
+                </string>
+                <string name="pull_to_refresh_release_label" >Eliberează pentru a reîmprospăta…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-ru/values.xml"
+                qualifiers="ru" >
+                <string name="pull_to_refresh_release_label" >отпустите
+                </string>
+                <string name="pull_to_refresh_pull_label" >потяните
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >обновление
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-sk/values.xml"
+                qualifiers="sk" >
+                <string name="pull_to_refresh_refreshing_label" >Načítavanie...
+                </string>
+                <string name="pull_to_refresh_pull_label" >Potiahnite pre načítanie...
+                </string>
+                <string name="pull_to_refresh_release_label" >Uvoľnite pre načítanie...
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-sv/values.xml"
+                qualifiers="sv" >
+                <string name="pull_to_refresh_release_label" >Släpp om du vill uppdatera
+                </string>
+                <string name="pull_to_refresh_pull_label" >Dra nedåt om du vill uppdatera
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Uppdaterar…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-tr/values.xml"
+                qualifiers="tr" >
+                <string name="pull_to_refresh_release_label" >Yenilemek için bırakın…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Yükleniyor…
+                </string>
+                <string name="pull_to_refresh_pull_label" >Yenilemek için kaydırın…
+                </string>
+            </file>
+            <file
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-zh/values.xml"
+                qualifiers="zh" >
+                <string name="pull_to_refresh_release_label" >放开以刷新…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >正在载入…
+                </string>
+                <string name="pull_to_refresh_pull_label" >下拉刷新…
+                </string>
+            </file>
+        </source>
+    </dataSet>
     <dataSet config="1.0.1" >
         <source path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.astuetz/pagerslidingtabstrip/1.0.1/res" >
             <file
@@ -55,9 +571,29 @@
     <dataSet config="main" >
         <source path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res" >
             <file
+                name="ic_action_new"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-hdpi/ic_action_new.png"
+                qualifiers="hdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_action_overflow"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-hdpi/ic_action_overflow.png"
+                qualifiers="hdpi-v4"
+                type="drawable" />
+            <file
                 name="ic_launcher"
                 path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-hdpi/ic_launcher.png"
                 qualifiers="hdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_action_new"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-mdpi/ic_action_new.png"
+                qualifiers="mdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_action_overflow"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-mdpi/ic_action_overflow.png"
+                qualifiers="mdpi-v4"
                 type="drawable" />
             <file
                 name="ic_launcher"
@@ -65,9 +601,29 @@
                 qualifiers="mdpi-v4"
                 type="drawable" />
             <file
+                name="ic_action_new"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xhdpi/ic_action_new.png"
+                qualifiers="xhdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_action_overflow"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xhdpi/ic_action_overflow.png"
+                qualifiers="xhdpi-v4"
+                type="drawable" />
+            <file
                 name="ic_launcher"
                 path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xhdpi/ic_launcher.png"
                 qualifiers="xhdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_action_new"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xxhdpi/ic_action_new.png"
+                qualifiers="xxhdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_action_overflow"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xxhdpi/ic_action_overflow.png"
+                qualifiers="xxhdpi-v4"
                 type="drawable" />
             <file
                 name="ic_launcher"
@@ -85,8 +641,38 @@
                 qualifiers=""
                 type="layout" />
             <file
+                name="feed_item"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/feed_item.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="fragment_feed"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_feed.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="fragment_hq"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_hq.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="fragment_networks"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_networks.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="network_item"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/network_item.xml"
+                qualifiers=""
+                type="layout" />
+            <file
                 name="login_register"
                 path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/menu/login_register.xml"
+                qualifiers=""
+                type="menu" />
+            <file
+                name="main_activity_actions"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/menu/main_activity_actions.xml"
                 qualifiers=""
                 type="menu" />
             <file
@@ -110,15 +696,15 @@
                 </string>
                 <string name="login_register_shared_preferences_key" >com.unlock.gate.LOGIN_REGISTER_PREF
                 </string>
-                <string name="toggle_login" >Log In
+                <string name="user_email_key" >UserEmail
                 </string>
                 <string name="send_email" >Send Email
                 </string>
-                <string name="user_email_key" >UserEmail
-                </string>
-                <string name="no_email_inputted" >Your email is required
+                <string name="toggle_login" >Log In
                 </string>
                 <string name="session_shared_preferences_key" >com.unlock.gate.CURRENT_SESSION_PREF
+                </string>
+                <string name="no_email_inputted" >Your email is required
                 </string>
 
                 <string-array name="tabs" >
@@ -133,9 +719,9 @@ HQ
                     </item>
                 </string-array>
 
-                <string name="user_password_hint" >Password
-                </string>
                 <string name="volley_server_error" >Gatekeeper, there was a server error\nThe robots are investigating
+                </string>
+                <string name="user_password_hint" >Password
                 </string>
                 <string name="volley_auth_error" >Gatekeeper, you are unauthorized to perform this action
                 </string>
@@ -165,21 +751,21 @@ HQ
                 </string>
                 <string name="confirm_registration" >"Tap YES to indicate you have read the Privacy Policy and that you agree to our Terms of Service."
                 </string>
-                <string name="improper_email_format" >This email isn\'t formatted properly
-                </string>
                 <string name="app_name" >Gate
+                </string>
+                <string name="improper_email_format" >This email isn\'t formatted properly
                 </string>
                 <string name="user_auth_token_key" >UserAuthToken
                 </string>
                 <string name="log_in" >Log In
                 </string>
-                <string name="last_used_email" >last_used_email
-                </string>
                 <string name="forgotton_password_email_not_registered" >Email not registered
                 </string>
-                <string name="user_full_name_hint" >Full Name
+                <string name="last_used_email" >last_used_email
                 </string>
                 <string name="volley_network_error" >Gatekeeper, we couldn\'t connect to the internet
+                </string>
+                <string name="user_full_name_hint" >Full Name
                 </string>
                 <string name="user_created_at_key" >UserCreatedAt
                 </string>
@@ -236,76 +822,6 @@ HQ
                     <!-- API 14 theme customizations can go here. -->
                 </style>
             </file>
-            <file
-                name="fragment_feed"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_feed.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="feed_item"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/feed_item.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="network_item"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/network_item.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="fragment_hq"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_hq.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="fragment_networks"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_networks.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="ic_action_new"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xxhdpi/ic_action_new.png"
-                qualifiers="xxhdpi-v4"
-                type="drawable" />
-            <file
-                name="ic_action_new"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-mdpi/ic_action_new.png"
-                qualifiers="mdpi-v4"
-                type="drawable" />
-            <file
-                name="ic_action_new"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xhdpi/ic_action_new.png"
-                qualifiers="xhdpi-v4"
-                type="drawable" />
-            <file
-                name="main_activity_actions"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/menu/main_activity_actions.xml"
-                qualifiers=""
-                type="menu" />
-            <file
-                name="ic_action_new"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-hdpi/ic_action_new.png"
-                qualifiers="hdpi-v4"
-                type="drawable" />
-            <file
-                name="ic_action_overflow"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xhdpi/ic_action_overflow.png"
-                qualifiers="xhdpi-v4"
-                type="drawable" />
-            <file
-                name="ic_action_overflow"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-xxhdpi/ic_action_overflow.png"
-                qualifiers="xxhdpi-v4"
-                type="drawable" />
-            <file
-                name="ic_action_overflow"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-hdpi/ic_action_overflow.png"
-                qualifiers="hdpi-v4"
-                type="drawable" />
-            <file
-                name="ic_action_overflow"
-                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/drawable-mdpi/ic_action_overflow.png"
-                qualifiers="mdpi-v4"
-                type="drawable" />
         </source>
         <source path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/generated/res/rs/debug" />
         <source path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/generated/res/generated/debug" />

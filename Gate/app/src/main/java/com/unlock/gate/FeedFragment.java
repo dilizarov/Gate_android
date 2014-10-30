@@ -66,8 +66,6 @@ public class FeedFragment extends ListFragment {
         feed = getListView();
 
         feedItems = new ArrayList<FeedItem>();
-        listAdapter = new FeedListAdapter(getActivity(), feedItems);
-        feed.setAdapter(listAdapter);
 
         new Thread(new Runnable() {
             public void run() {
@@ -79,6 +77,8 @@ public class FeedFragment extends ListFragment {
 
                 getActivity().runOnUiThread(new Runnable() {
                     public void run() {
+                        listAdapter = new FeedListAdapter(getActivity(), feedItems);
+                        feed.setAdapter(listAdapter);
                         listAdapter.notifyDataSetChanged();
                     }
                 });
