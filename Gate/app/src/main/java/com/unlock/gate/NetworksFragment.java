@@ -45,7 +45,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     private static final String ARG_POSITION = "position";
     private ListView networks;
     private NetworksListAdapter listAdapter;
-    private List<Network> networkItems;
+    private ArrayList<Network> networkItems;
     private SharedPreferences mSessionPreferences;
     private ProgressBar loadingNetworksProgressBar;
     private PullToRefreshLayout mPullToRefreshLayout;
@@ -115,7 +115,16 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.networkProgressBarHolder);
 
-        getNetworksAndPopulateListView(false);
+        if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("networkItems") != null) {
+            networkItems = savedInstanceState.getParcelableArrayList("networkItems");
+
+            progressBarHolder.setVisibility(View.GONE);
+            listAdapter = new NetworksListAdapter(getActivity(), networkItems);
+            networks.setAdapter(listAdapter);
+            listAdapter.notifyDataSetChanged();
+        } else {
+            requestNetworksAndPopulateListView(false);
+        }
     }
     /**
     * This interface must be implemented by activities that contain this
@@ -130,10 +139,10 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
     @Override
     public void onRefreshStarted(View view) {
-        getNetworksAndPopulateListView(true);
+        requestNetworksAndPopulateListView(true);
     }
 
-    private void getNetworksAndPopulateListView(final boolean refreshing) {
+    private void requestNetworksAndPopulateListView(final boolean refreshing) {
         try {
 
             JSONObject params = new JSONObject();
@@ -195,6 +204,13 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList("networkItems", networkItems);
     }
 
     public interface OnFragmentInteractionListener {

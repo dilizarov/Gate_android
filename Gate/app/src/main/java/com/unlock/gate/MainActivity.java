@@ -32,6 +32,7 @@ public class MainActivity extends FragmentActivity {
         adapter = new MyPagerAdapter(getSupportFragmentManager());
 
         pager.setAdapter(adapter);
+        pager.setOffscreenPageLimit(2);
 
         tabs.setViewPager(pager);
     }
