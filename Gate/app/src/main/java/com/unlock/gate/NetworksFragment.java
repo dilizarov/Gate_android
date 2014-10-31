@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +49,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     private SharedPreferences mSessionPreferences;
     private ProgressBar loadingNetworksProgressBar;
     private PullToRefreshLayout mPullToRefreshLayout;
+
+    private LinearLayout progressBarHolder;
 
     private int position;
 
@@ -105,67 +106,16 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        try {
-            mSessionPreferences = this.getActivity().getSharedPreferences(
-                    getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
+        mSessionPreferences = this.getActivity().getSharedPreferences(
+                getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
-            networks = getListView();
+        networks = getListView();
 
-            networkItems = new ArrayList<Network>();
-            listAdapter = new NetworksListAdapter(getActivity(), networkItems);
-            networks.setAdapter(listAdapter);
+        networkItems = new ArrayList<Network>();
 
-            final LinearLayout progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.networkProgressBarHolder);
+        progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.networkProgressBarHolder);
 
-            JSONObject params = new JSONObject();
-            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
-
-            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-
-                    final JSONObject jsonResponse = response;
-
-                    new Thread(new Runnable() {
-
-                        public void run() {
-                            JSONArray jsonNetworks = jsonResponse.optJSONArray("networks");
-                            int len = jsonNetworks.length();
-                            for (int i = 0; i < len; i++) {
-                                JSONObject jsonNetwork = jsonNetworks.optJSONObject(i);
-                                Network network = new Network(jsonNetwork.optString("external_id"),
-                                        jsonNetwork.optString("name"),
-                                        jsonNetwork.optJSONObject("creator").optString("name"));
-
-                                networkItems.add(network);
-                            }
-
-                            getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    progressBarHolder.setVisibility(View.GONE);
-                                    listAdapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-
-                    }).start();
-                }
-            };
-
-            Response.ErrorListener errorListener = new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-
-                    Log.v("Fucked", mSessionPreferences.getString(getString(R.string.user_auth_token_key), "nope"));
-                }
-            };
-
-            APIRequestManager.getInstance().doRequest().getNetworks(params, listener, errorListener);
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-        }
+        getNetworksAndPopulateListView(false);
     }
     /**
     * This interface must be implemented by activities that contain this
@@ -180,18 +130,71 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
     @Override
     public void onRefreshStarted(View view) {
-        new Thread(new Runnable() {
-            public void run() {
-                try { Thread.sleep(4000); } catch (InterruptedException e) {}
+        getNetworksAndPopulateListView(true);
+    }
 
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        mPullToRefreshLayout.setRefreshComplete();
-                        Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }).start();
+    private void getNetworksAndPopulateListView(final boolean refreshing) {
+        try {
+
+            JSONObject params = new JSONObject();
+            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
+                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    final JSONObject jsonResponse = response;
+
+                    new Thread(new Runnable() {
+
+                        public void run() {
+                            networkItems.clear();
+
+                            JSONArray jsonNetworks = jsonResponse.optJSONArray("networks");
+                            int len = jsonNetworks.length();
+                            for (int i = 0; i < len; i++) {
+                                JSONObject jsonNetwork = jsonNetworks.optJSONObject(i);
+                                Network network = new Network(jsonNetwork.optString("external_id"),
+                                        jsonNetwork.optString("name"),
+                                        jsonNetwork.optJSONObject("creator").optString("name"));
+
+                                networkItems.add(network);
+                            }
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    if (refreshing) {
+                                        mPullToRefreshLayout.setRefreshComplete();
+                                        Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        progressBarHolder.setVisibility(View.GONE);
+                                    }
+
+                                    listAdapter = new NetworksListAdapter(getActivity(), networkItems);
+                                    networks.setAdapter(listAdapter);
+                                    listAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+
+                    }).start();
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                    Log.v("Error", mSessionPreferences.getString(getString(R.string.user_auth_token_key), "nope"));
+                }
+            };
+
+            APIRequestManager.getInstance().doRequest().getNetworks(params, listener, errorListener);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public interface OnFragmentInteractionListener {
