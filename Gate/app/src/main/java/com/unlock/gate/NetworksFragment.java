@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -25,7 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
@@ -110,6 +110,15 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                 getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
         networks = getListView();
+
+        networks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+
+                viewFeedForNetwork(networkItems.get(position));
+            }
+        });
 
         networkItems = new ArrayList<Network>();
 
@@ -211,6 +220,10 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         super.onSaveInstanceState(outState);
 
         outState.putParcelableArrayList("networkItems", networkItems);
+    }
+
+    public void viewFeedForNetwork(Network network) {
+        ((MainActivity) getActivity()).showFeed(network);
     }
 
     public interface OnFragmentInteractionListener {

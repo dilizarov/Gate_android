@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.unlock.gate.adapters.FeedListAdapter;
 import com.unlock.gate.models.FeedItem;
+import com.unlock.gate.models.Network;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ public class FeedFragment extends ListFragment {
     private ListView feed;
     private FeedListAdapter listAdapter;
     private List<FeedItem> feedItems;
+    private Network currentNetwork;
 
     private int position;
 
@@ -84,6 +87,16 @@ public class FeedFragment extends ListFragment {
                 });
             }
         }).start();
+    }
+
+    public void getNetworkFeed(Network network) {
+        Toast.makeText(getActivity(), network.getName(), Toast.LENGTH_LONG).show();
+        //Remember, if this is the network we are already showing, then DON'T go through all the effort of a network request, just treat it as a page change.
+
+//        if (currentNetwork.getId().equals(network.getId())) return;
+//        else {
+//            //Load
+//        }
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event

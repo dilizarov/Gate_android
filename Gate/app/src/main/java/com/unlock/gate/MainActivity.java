@@ -4,14 +4,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.unlock.gate.models.Network;
 
 /**
  * Created by davidilizarov on 10/20/14.
@@ -37,7 +40,8 @@ public class MainActivity extends FragmentActivity {
         tabs.setViewPager(pager);
     }
 
-    public class MyPagerAdapter extends FragmentPagerAdapter {
+    public class MyPagerAdapter extends FragmentStatePagerAdapter {
+        SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
         private final String[] TITLES = getResources().getStringArray(R.array.tabs);
 
@@ -64,6 +68,23 @@ public class MainActivity extends FragmentActivity {
             }
 
             return null;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        public Fragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
         }
     }
 
@@ -108,6 +129,13 @@ public class MainActivity extends FragmentActivity {
 
     public void createKey() {
         Toast.makeText(this, "Making key", Toast.LENGTH_SHORT).show();
+    }
+
+    public void showFeed(Network network) {
+        pager.setCurrentItem(0, true);
+
+        FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
+        feedFragment.getNetworkFeed(network);
     }
 
 }
