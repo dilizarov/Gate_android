@@ -48,10 +48,12 @@ public class NetworksListAdapter extends BaseAdapter {
         if (convertView == null) convertView = mInflater.inflate(R.layout.network_item, null);
 
         TextView networkItemName = (TextView) convertView.findViewById(R.id.networkItemName);
+        TextView networkCreatorName = (TextView) convertView.findViewById(R.id.creatorName);
 
         Network network = networkItems.get(position);
 
         networkItemName.setText(network.getName());
+        networkCreatorName.setText(network.getCreator());
 
         return convertView;
     }

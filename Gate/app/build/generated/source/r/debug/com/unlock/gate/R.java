@@ -333,11 +333,12 @@ containing a value of this type.
     }
     public static final class id {
         public static final int Placeholder=0x7f070010;
-        public static final int action_create=0x7f07001c;
-        public static final int action_logout=0x7f07001a;
-        public static final int action_offer_advice=0x7f07001b;
-        public static final int action_settings=0x7f070019;
+        public static final int action_create=0x7f07001d;
+        public static final int action_logout=0x7f07001b;
+        public static final int action_offer_advice=0x7f07001c;
+        public static final int action_settings=0x7f07001a;
         public static final int commandButton=0x7f07000c;
+        public static final int creatorName=0x7f070019;
         public static final int forgotPassword=0x7f07000b;
         public static final int inside=0x7f070000;
         public static final int message=0x7f070016;

@@ -111,14 +111,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
         networks = getListView();
 
-        networks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-
-                viewFeedForNetwork(networkItems.get(position));
-            }
-        });
+        setListViewItemClickListeners();
 
         networkItems = new ArrayList<Network>();
 
@@ -149,6 +142,29 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     @Override
     public void onRefreshStarted(View view) {
         requestNetworksAndPopulateListView(true);
+    }
+
+    private void setListViewItemClickListeners() {
+        networks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+
+                viewFeedForNetwork(networkItems.get(position));
+            }
+        });
+
+        networks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
+                                        long id) {
+                //Write Logic for Settings dialog which for now will just ask if the user wants to leave the network
+
+                Toast.makeText(getActivity(), "Long clicked " + position, Toast.LENGTH_LONG).show();
+
+                return true;
+            }
+        });
     }
 
     private void requestNetworksAndPopulateListView(final boolean refreshing) {

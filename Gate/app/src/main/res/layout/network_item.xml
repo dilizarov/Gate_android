@@ -10,4 +10,10 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"/>
 
+    <!-- Placeholder for 'X Gatekeepers' -->
+    <TextView
+        android:id="@+id/creatorName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

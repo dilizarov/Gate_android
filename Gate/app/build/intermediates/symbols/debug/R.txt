@@ -53,11 +53,12 @@ int drawable ic_action_new 0x7f020001
 int drawable ic_action_overflow 0x7f020002
 int drawable ic_launcher 0x7f020003
 int id Placeholder 0x7f070010
-int id action_create 0x7f07001c
-int id action_logout 0x7f07001a
-int id action_offer_advice 0x7f07001b
-int id action_settings 0x7f070019
+int id action_create 0x7f07001d
+int id action_logout 0x7f07001b
+int id action_offer_advice 0x7f07001c
+int id action_settings 0x7f07001a
 int id commandButton 0x7f07000c
+int id creatorName 0x7f070019
 int id forgotPassword 0x7f07000b
 int id inside 0x7f070000
 int id message 0x7f070016
