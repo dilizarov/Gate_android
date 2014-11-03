@@ -1,11 +1,14 @@
 package com.unlock.gate;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -157,10 +160,52 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         networks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
-                                        long id) {
-                //Write Logic for Settings dialog which for now will just ask if the user wants to leave the network
+                                           long id) {
 
-                Toast.makeText(getActivity(), "Long clicked " + position, Toast.LENGTH_LONG).show();
+                // As Gate grows, we'll add more to this that could be done.
+                final CharSequence[] items = {
+                        "Leave"
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(networkItems.get(position).getName())
+                       .setItems(items, new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int item) {
+                               switch (item) {
+                                   case 0:
+                                       dialog.dismiss();
+                                       AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
+                                       buildConfirmation.setMessage("Are you sure you want to leave the network? Any of your keys that give access to the network will be destroyed. **The network will be destroyed if you are the only user in it.")
+                                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogConfirm, int item) {
+                                                                dialogConfirm.dismiss();
+
+                                                                Toast.makeText(getActivity(), "No longer in network", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        })
+                                                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogConfirm, int item) {
+                                                                dialogConfirm.dismiss();
+
+                                                                Toast.makeText(getActivity(), "Still in network", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+
+                                       AlertDialog confirmation = buildConfirmation.create();
+                                       confirmation.show();
+
+                                       break;
+                               }
+                           }
+                       });
+
+                AlertDialog alert = builder.create();
+                alert.show();
 
                 return true;
             }
