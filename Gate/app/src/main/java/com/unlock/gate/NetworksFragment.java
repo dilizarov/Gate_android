@@ -162,6 +162,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
                                            long id) {
 
+                final int networkIndex = position;
+
                 // As Gate grows, we'll add more to this that could be done.
                 final CharSequence[] items = {
                         "Leave"
@@ -176,23 +178,22 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                    case 0:
                                        dialog.dismiss();
                                        AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
-                                       buildConfirmation.setMessage("Are you sure you want to leave the network? Any of your keys that give access to the network will be destroyed. **The network will be destroyed if you are the only user in it.")
-                                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                       buildConfirmation.setMessage(getString(R.string.confirm_delete_network_message))
+                                                        .setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
 
                                                             @Override
                                                             public void onClick(DialogInterface dialogConfirm, int item) {
                                                                 dialogConfirm.dismiss();
+                                                                //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
 
-                                                                Toast.makeText(getActivity(), "No longer in network", Toast.LENGTH_LONG).show();
+                                                                leaveNetwork(networkItems.get(networkIndex));
                                                             }
                                                         })
-                                                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                                        .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
 
                                                             @Override
                                                             public void onClick(DialogInterface dialogConfirm, int item) {
                                                                 dialogConfirm.dismiss();
-
-                                                                Toast.makeText(getActivity(), "Still in network", Toast.LENGTH_LONG).show();
                                                             }
                                                         });
 
@@ -264,6 +265,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    if (refreshing) mPullToRefreshLayout.setRefreshComplete();
+
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
                     Log.v("Error", mSessionPreferences.getString(getString(R.string.user_auth_token_key), "nope"));
@@ -271,6 +274,56 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             };
 
             APIRequestManager.getInstance().doRequest().getNetworks(params, listener, errorListener);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void leaveNetwork(final Network network) {
+        try {
+            mPullToRefreshLayout.setRefreshing(true);
+
+            JSONObject params = new JSONObject();
+            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
+                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+
+            Response.Listener listener = new Response.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+
+                    new Thread(new Runnable() {
+
+                        public void run() {
+                            networkItems.remove(network);
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+
+                                    mPullToRefreshLayout.setRefreshComplete();
+                                    Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_LONG).show();
+
+                                    listAdapter = new NetworksListAdapter(getActivity(), networkItems);
+                                    networks.setAdapter(listAdapter);
+                                    listAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+
+                    }).start();
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                    mPullToRefreshLayout.setRefreshComplete();
+
+                    Log.v("Error", mSessionPreferences.getString(getString(R.string.user_auth_token_key), "nope"));
+                }
+            };
+
+            APIRequestManager.getInstance().doRequest().leaveNetwork(network, params, listener, errorListener);
         } catch (JSONException ex) {
             ex.printStackTrace();
         }

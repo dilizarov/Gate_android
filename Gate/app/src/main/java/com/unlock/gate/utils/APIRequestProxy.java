@@ -7,6 +7,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.unlock.gate.models.Network;
 
 import org.json.JSONObject;
 
@@ -27,6 +28,19 @@ public class APIRequestProxy {
 	private String getAbsoluteUrl(String endpoint) {
 		return BASE_URL + endpoint;
 	}
+
+    // Requires user_id and auth_token as params
+    private String addAuthAsURLParams(String url, JSONObject params) {
+        StringBuilder buildURLParams = new StringBuilder(url);
+        buildURLParams.append("?")
+                      .append("user_id=")
+                      .append(params.optString("user_id"))
+                      .append("&")
+                      .append("auth_token=")
+                      .append(params.optString("auth_token"));
+
+        return buildURLParams.toString();
+    }
 	
 	public void login(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 		JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(SESSION_ENDPOINT), params, listener, errorListener);
@@ -48,14 +62,27 @@ public class APIRequestProxy {
         //Sadly, Volley does not offer a very fluid experience for get requests with params.
         String url = getAbsoluteUrl(NETWORKS_ENDPOINT);
         StringBuilder buildUrl = new StringBuilder(url);
-        buildUrl.append("?")
-                .append("user_id=")
-                .append(params.optString("user_id"))
-                .append("&")
-                .append("auth_token=")
-                .append(params.optString("auth_token"));
+        url = addAuthAsURLParams(url, params);
 
-        JsonObjectRequest request = new JsonObjectRequest(Method.GET, buildUrl.toString(), null, listener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void leaveNetwork(Network network, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+        //TODO: Probably want to figure out a better way to make these resourcesful strings with consideration of getAbsoluteUrl method.
+        //TODO: Not a big deal though
+
+        StringBuilder buildUrl  = new StringBuilder(BASE_URL);
+        buildUrl.append("networks")
+                .append("/")
+                .append(network.getId())
+                .append("/")
+                .append("leave.json");
+
+        String url = addAuthAsURLParams(buildUrl.toString(), params);
+
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.DELETE, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }

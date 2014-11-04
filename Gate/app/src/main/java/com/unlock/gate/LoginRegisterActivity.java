@@ -314,7 +314,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(getString(R.string.confirm_registration_dialog_title))
 					.setMessage(getString(R.string.confirm_registration))
-					.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+					.setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
 				
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -322,7 +322,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 						}
 					})
 			
-					.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+					.setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
 				
 						@Override
 						public void onClick(DialogInterface dialog, int which) {

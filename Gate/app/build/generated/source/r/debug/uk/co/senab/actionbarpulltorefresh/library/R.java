@@ -69,10 +69,10 @@ public final class R {
 		public static final int default_header = 0x7f030002;
 	}
 	public static final class string {
-		public static final int pull_to_refresh_pull_label = 0x7f0a0010;
-		public static final int pull_to_refresh_refreshing_label = 0x7f0a0011;
-		public static final int pull_to_refresh_release_label = 0x7f0a0012;
-		public static final int spb_default_speed = 0x7f0a0016;
+		public static final int pull_to_refresh_pull_label = 0x7f0a0012;
+		public static final int pull_to_refresh_refreshing_label = 0x7f0a0013;
+		public static final int pull_to_refresh_release_label = 0x7f0a0014;
+		public static final int spb_default_speed = 0x7f0a0018;
 	}
 	public static final class style {
 		public static final int SmoothProgressBar = 0x7f0b0002;

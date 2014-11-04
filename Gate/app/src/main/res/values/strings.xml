@@ -10,6 +10,8 @@
     <string name="user_email_key">UserEmail</string>
     <string name="user_name_key">UserName</string>
     <string name="user_created_at_key">UserCreatedAt</string>
+    <string name="yes_caps">YES</string>
+    <string name="no_caps">NO</string>
 
     <!-- LoginRegisterActivity specific -->
     <string name="user_email_hint">Email</string>
@@ -49,5 +51,8 @@
         <item>Networks</item>
         <item>HQ</item>
     </string-array>
+
+    <!-- NetworksFragment specific -->
+    <string name="confirm_delete_network_message">Are you sure you want to leave the network? Any of your keys that give access to the network will be destroyed. **The network will be destroyed if you are the only user in it.</string>
 
 </resources>
