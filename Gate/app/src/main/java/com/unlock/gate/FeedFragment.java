@@ -20,6 +20,7 @@ import com.unlock.gate.adapters.FeedListAdapter;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.InfiniteScrollListener;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
 import org.joda.time.DateTime;
@@ -92,7 +93,13 @@ public class FeedFragment extends ListFragment {
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
 
-        requestFeedAndPopulateListView(false);
+        feed.setOnScrollListener(new InfiniteScrollListener() {
+            @Override
+            public void loadMore(int page) {
+                requestPostsAndPopulateListView(false, page);
+            }
+        });
+        //requestFeedAndPopulateListView(false);
 
 //        new Thread(new Runnable() {
 //            public void run() {
@@ -130,13 +137,21 @@ public class FeedFragment extends ListFragment {
 //        }
 //    }
 //
+    private void requestPostsAndPopulateListView(final boolean refreshing) {
+        requestPostsAndPopulateListView(refreshing, -1);
+    }
 
-    private void requestFeedAndPopulateListView(final boolean refreshing) {
+    private void requestPostsAndPopulateListView(final boolean refreshing, int page) {
         try {
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
                   .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+
+            if (page > 0) params.put("page", page);
+
+            if (infiniteScrollTimeBuffer != null)
+                params.put("infinite_scroll_time_buffer", infiniteScrollTimeBuffer);
 
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
@@ -147,8 +162,6 @@ public class FeedFragment extends ListFragment {
                     new Thread(new Runnable() {
 
                         public void run() {
-                            posts.clear();
-
                             JSONArray jsonPosts = jsonResponse.optJSONArray("posts");
                             int len = jsonPosts.length();
                             for (int i = 0; i < len; i++) {
@@ -160,7 +173,8 @@ public class FeedFragment extends ListFragment {
                                         jsonPost.optInt("comments_count"),
                                         jsonPost.optString("created_at"));
 
-                                if (i == 0) infiniteScrollTimeBuffer = post.getTimeCreated();
+                                if (i == 0 && infiniteScrollTimeBuffer == null)
+                                    infiniteScrollTimeBuffer = post.getTimeCreated();
 
                                 posts.add(post);
                             }
@@ -192,7 +206,7 @@ public class FeedFragment extends ListFragment {
                 APIRequestManager.getInstance().doRequest().getAggregate(params, listener, errorListener);
             } else {
                 params.put("network_id", currentNetwork.getId());
-                APIRequestManager.getInstance().doRequest().getPosts(params, listener, errorListener);
+                APIRequestManager.getInstance().doRequest().getNetworkPosts(params, listener, errorListener);
             }
         } catch (JSONException ex) {
             ex.printStackTrace();

@@ -88,7 +88,7 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void getPosts(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void getNetworkPosts(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 
         StringBuilder buildUrl = new StringBuilder(BASE_URL);
         buildUrl.append("networks")
@@ -108,6 +108,15 @@ public class APIRequestProxy {
 
         String url = getAbsoluteUrl(AGGREGATE_ENDPOINT);
         url = addAuthAsURLParams(url, params);
+        StringBuilder buildUrl = new StringBuilder(url);
+        if (params.optInt("page", -1) != -1) buildUrl.append("&page=")
+                                                     .append(params.optInt("page"));
+
+        if (params.opt("infinite_scroll_time_buffer") != null)
+            buildUrl.append("&infinite-scroll-time-buffer=")
+                    .append(params.opt("infinite_scroll_time_buffer"));
+
+        url = buildUrl.toString();
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
