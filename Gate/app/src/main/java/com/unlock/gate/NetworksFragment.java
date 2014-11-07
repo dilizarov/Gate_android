@@ -237,6 +237,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                 JSONObject jsonNetwork = jsonNetworks.optJSONObject(i);
                                 Network network = new Network(jsonNetwork.optString("external_id"),
                                         jsonNetwork.optString("name"),
+                                        jsonNetwork.optInt("users_count"),
                                         jsonNetwork.optJSONObject("creator").optString("name"));
 
                                 networkItems.add(network);

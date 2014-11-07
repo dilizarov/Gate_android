@@ -120,7 +120,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void createPost() {
-        Toast.makeText(this, "Making post", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Making feed_item", Toast.LENGTH_SHORT).show();
     }
 
     public void createNetwork() {

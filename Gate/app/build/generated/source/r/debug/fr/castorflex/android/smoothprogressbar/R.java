@@ -47,11 +47,11 @@ public final class R {
 		public static final int spb_default_sections_count = 0x7f090001;
 	}
 	public static final class string {
-		public static final int spb_default_speed = 0x7f0a0018;
+		public static final int spb_default_speed = 0x7f0b0018;
 	}
 	public static final class style {
-		public static final int SmoothProgressBar = 0x7f0b0002;
-		public static final int Theme_SmoothProgressBarDefaults = 0x7f0b0003;
+		public static final int SmoothProgressBar = 0x7f0c0002;
+		public static final int Theme_SmoothProgressBarDefaults = 0x7f0c0003;
 	}
 	public static final class styleable {
 		public static final int[] SmoothProgressBar = { 0x7f010017, 0x7f010018, 0x7f010019, 0x7f01001a, 0x7f01001b, 0x7f01001c, 0x7f01001d, 0x7f01001e, 0x7f01001f, 0x7f010020, 0x7f010021, 0x7f010022, 0x7f010023, 0x7f010024, 0x7f010025 };

@@ -7,13 +7,14 @@ import android.os.Parcelable;
  * Created by davidilizarov on 10/27/14.
  */
 public class Network implements Parcelable {
-    private String id, name, creator;
+    private String id, name, usersCount, creator;
 
     public Network(){}
 
-    public Network(String id, String name, String creator) {
+    public Network(String id, String name, int usersCount, String creator) {
         this.id = id;
         this.name = name;
+        this.usersCount = Integer.toString(usersCount);
         this.creator = creator;
     }
 
@@ -33,6 +34,14 @@ public class Network implements Parcelable {
         this.name = name;
     }
 
+    public int getUsersCount() {
+        return Integer.parseInt(usersCount);
+    }
+
+    public void setUsersCount(int usersCount) {
+        this.usersCount = Integer.toString(usersCount);
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -43,13 +52,14 @@ public class Network implements Parcelable {
 
     //Parcelable implementation
     public Network(Parcel in) {
-        String[] data = new String[3];
+        String[] data = new String[4];
 
         in.readStringArray(data);
 
-        this.id      = data[0];
-        this.name    = data[1];
-        this.creator = data[2];
+        this.id         = data[0];
+        this.name       = data[1];
+        this.usersCount = data[2];
+        this.creator    = data[3];
     }
 
     @Override
@@ -62,6 +72,7 @@ public class Network implements Parcelable {
         dest.writeStringArray(new String[] {
                                             this.id,
                                             this.name,
+                                            this.usersCount,
                                             this.creator
                                             });
     }

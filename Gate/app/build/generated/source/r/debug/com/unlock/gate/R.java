@@ -333,19 +333,19 @@ containing a value of this type.
     }
     public static final class id {
         public static final int Placeholder=0x7f070010;
-        public static final int action_create=0x7f07001d;
-        public static final int action_logout=0x7f07001b;
-        public static final int action_offer_advice=0x7f07001c;
-        public static final int action_settings=0x7f07001a;
+        public static final int action_create=0x7f07001e;
+        public static final int action_logout=0x7f07001c;
+        public static final int action_offer_advice=0x7f07001d;
+        public static final int action_settings=0x7f07001b;
+        public static final int body=0x7f070015;
         public static final int commandButton=0x7f07000c;
-        public static final int creatorName=0x7f070019;
+        public static final int commentsCount=0x7f070016;
+        public static final int feedProgressBarHolder=0x7f070017;
         public static final int forgotPassword=0x7f07000b;
         public static final int inside=0x7f070000;
-        public static final int message=0x7f070016;
         public static final int name=0x7f070013;
-        public static final int networkItemName=0x7f070018;
-        public static final int networkName=0x7f070014;
-        public static final int networkProgressBarHolder=0x7f070017;
+        public static final int networkItemName=0x7f070019;
+        public static final int networkProgressBarHolder=0x7f070018;
         public static final int outside=0x7f070001;
         public static final int pager=0x7f070012;
         public static final int ptr_content=0x7f070006;
@@ -357,11 +357,12 @@ containing a value of this type.
         public static final int spb_interpolator_linear=0x7f070003;
         public static final int tabs=0x7f070011;
         public static final int terms=0x7f07000e;
-        public static final int timestamp=0x7f070015;
+        public static final int timestamp=0x7f070014;
         public static final int toggleRegistrationLogin=0x7f07000f;
         public static final int userEmail=0x7f07000a;
         public static final int userFullName=0x7f07000d;
         public static final int userPassword=0x7f070009;
+        public static final int usersCount=0x7f07001a;
     }
     public static final class integer {
         public static final int spb_default_interpolator=0x7f090000;
@@ -378,53 +379,57 @@ containing a value of this type.
         public static final int network_item=0x7f030007;
     }
     public static final class menu {
-        public static final int login_register=0x7f0c0000;
-        public static final int main_activity_actions=0x7f0c0001;
+        public static final int login_register=0x7f0d0000;
+        public static final int main_activity_actions=0x7f0d0001;
+    }
+    public static final class plurals {
+        public static final int comments_count=0x7f0a0000;
+        public static final int users_count=0x7f0a0001;
     }
     public static final class string {
-        public static final int action_settings=0x7f0a0000;
-        public static final int app_name=0x7f0a0001;
-        public static final int confirm_delete_network_message=0x7f0a0002;
-        public static final int confirm_registration=0x7f0a0003;
-        public static final int confirm_registration_dialog_title=0x7f0a0004;
-        public static final int forgot_password=0x7f0a0005;
-        public static final int forgotton_password_email_not_registered=0x7f0a0006;
-        public static final int forgotton_password_email_sent=0x7f0a0007;
-        public static final int hello_blank_fragment=0x7f0a0008;
-        public static final int improper_email_format=0x7f0a0009;
-        public static final int last_used_email=0x7f0a000a;
-        public static final int log_in=0x7f0a000b;
-        public static final int login_register_shared_preferences_key=0x7f0a000c;
-        public static final int no_caps=0x7f0a000d;
-        public static final int no_email_inputted=0x7f0a000e;
-        public static final int no_name_inputted=0x7f0a000f;
-        public static final int no_password_inputted=0x7f0a0010;
-        public static final int progress_dialog_server_processing_request=0x7f0a0011;
-        public static final int pull_to_refresh_pull_label=0x7f0a0012;
-        public static final int pull_to_refresh_refreshing_label=0x7f0a0013;
-        public static final int pull_to_refresh_release_label=0x7f0a0014;
-        public static final int register=0x7f0a0015;
-        public static final int send_email=0x7f0a0016;
-        public static final int session_shared_preferences_key=0x7f0a0017;
-        public static final int spb_default_speed=0x7f0a0018;
-        public static final int terms=0x7f0a0019;
-        public static final int toggle_login=0x7f0a001a;
-        public static final int toggle_registration=0x7f0a001b;
-        public static final int user_auth_token_key=0x7f0a001c;
-        public static final int user_created_at_key=0x7f0a001d;
-        public static final int user_email_hint=0x7f0a001e;
-        public static final int user_email_key=0x7f0a001f;
-        public static final int user_full_name_hint=0x7f0a0020;
-        public static final int user_id_key=0x7f0a0021;
-        public static final int user_name_key=0x7f0a0022;
-        public static final int user_password_hint=0x7f0a0023;
-        public static final int volley_auth_error=0x7f0a0024;
-        public static final int volley_network_error=0x7f0a0025;
-        public static final int volley_no_connection_error=0x7f0a0026;
-        public static final int volley_parse_error=0x7f0a0027;
-        public static final int volley_server_error=0x7f0a0028;
-        public static final int volley_timeout_error=0x7f0a0029;
-        public static final int yes_caps=0x7f0a002a;
+        public static final int action_settings=0x7f0b0000;
+        public static final int app_name=0x7f0b0001;
+        public static final int confirm_delete_network_message=0x7f0b0002;
+        public static final int confirm_registration=0x7f0b0003;
+        public static final int confirm_registration_dialog_title=0x7f0b0004;
+        public static final int forgot_password=0x7f0b0005;
+        public static final int forgotton_password_email_not_registered=0x7f0b0006;
+        public static final int forgotton_password_email_sent=0x7f0b0007;
+        public static final int hello_blank_fragment=0x7f0b0008;
+        public static final int improper_email_format=0x7f0b0009;
+        public static final int last_used_email=0x7f0b000a;
+        public static final int log_in=0x7f0b000b;
+        public static final int login_register_shared_preferences_key=0x7f0b000c;
+        public static final int no_caps=0x7f0b000d;
+        public static final int no_email_inputted=0x7f0b000e;
+        public static final int no_name_inputted=0x7f0b000f;
+        public static final int no_password_inputted=0x7f0b0010;
+        public static final int progress_dialog_server_processing_request=0x7f0b0011;
+        public static final int pull_to_refresh_pull_label=0x7f0b0012;
+        public static final int pull_to_refresh_refreshing_label=0x7f0b0013;
+        public static final int pull_to_refresh_release_label=0x7f0b0014;
+        public static final int register=0x7f0b0015;
+        public static final int send_email=0x7f0b0016;
+        public static final int session_shared_preferences_key=0x7f0b0017;
+        public static final int spb_default_speed=0x7f0b0018;
+        public static final int terms=0x7f0b0019;
+        public static final int toggle_login=0x7f0b001a;
+        public static final int toggle_registration=0x7f0b001b;
+        public static final int user_auth_token_key=0x7f0b001c;
+        public static final int user_created_at_key=0x7f0b001d;
+        public static final int user_email_hint=0x7f0b001e;
+        public static final int user_email_key=0x7f0b001f;
+        public static final int user_full_name_hint=0x7f0b0020;
+        public static final int user_id_key=0x7f0b0021;
+        public static final int user_name_key=0x7f0b0022;
+        public static final int user_password_hint=0x7f0b0023;
+        public static final int volley_auth_error=0x7f0b0024;
+        public static final int volley_network_error=0x7f0b0025;
+        public static final int volley_no_connection_error=0x7f0b0026;
+        public static final int volley_parse_error=0x7f0b0027;
+        public static final int volley_server_error=0x7f0b0028;
+        public static final int volley_timeout_error=0x7f0b0029;
+        public static final int yes_caps=0x7f0b002a;
     }
     public static final class style {
         /** 
@@ -435,12 +440,12 @@ containing a value of this type.
  API 11 theme customizations can go here. 
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f0b0000;
+        public static final int AppBaseTheme=0x7f0c0000;
         /**  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f0b0001;
-        public static final int SmoothProgressBar=0x7f0b0002;
-        public static final int Theme_SmoothProgressBarDefaults=0x7f0b0003;
+        public static final int AppTheme=0x7f0c0001;
+        public static final int SmoothProgressBar=0x7f0c0002;
+        public static final int Theme_SmoothProgressBarDefaults=0x7f0c0003;
     }
     public static final class styleable {
         /** Attributes that can be used with a PagerSlidingTabStrip.

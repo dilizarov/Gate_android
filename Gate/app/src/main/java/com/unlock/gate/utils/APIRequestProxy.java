@@ -18,6 +18,7 @@ public class APIRequestProxy {
 	private final String SESSION_ENDPOINT = "sessions.json";
 	private final String REGISTRATION_ENDPOINT = "registrations.json";
     private final String NETWORKS_ENDPOINT = "networks.json";
+    private final String AGGREGATE_ENDPOINT = "aggregate.json";
 	
 	private RequestQueue mRequestQueue;
 	
@@ -61,7 +62,7 @@ public class APIRequestProxy {
     public void getNetworks(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         //Sadly, Volley does not offer a very fluid experience for get requests with params.
         String url = getAbsoluteUrl(NETWORKS_ENDPOINT);
-        StringBuilder buildUrl = new StringBuilder(url);
+
         url = addAuthAsURLParams(url, params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
@@ -83,6 +84,32 @@ public class APIRequestProxy {
         String url = addAuthAsURLParams(buildUrl.toString(), params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.DELETE, url, params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void getPosts(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+
+        StringBuilder buildUrl = new StringBuilder(BASE_URL);
+        buildUrl.append("networks")
+                .append("/")
+                .append(params.optString("network_id"))
+                .append("/")
+                .append("posts.json");
+
+        String url = addAuthAsURLParams(buildUrl.toString(), params);
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void getAggregate(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+
+        String url = getAbsoluteUrl(AGGREGATE_ENDPOINT);
+        url = addAuthAsURLParams(url, params);
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
         mRequestQueue.add(request);
     }

@@ -747,6 +747,16 @@ HQ
                 </string>
                 <string name="no_name_inputted" >Your full name is required
                 </string>
+
+                <plurals name="users_count" >
+                    <item quantity="one">
+%d Gatekeeper
+                    </item>
+                    <item quantity="other">
+%d Gatekeepers
+                    </item>
+                </plurals>
+
                 <string name="confirm_registration_dialog_title" >One more step...
                 </string>
                 <string name="yes_caps" >YES
@@ -755,6 +765,16 @@ HQ
                 </string>
                 <string name="confirm_registration" >"Tap YES to indicate you have read the Privacy Policy and that you agree to our Terms of Service."
                 </string>
+
+                <plurals name="comments_count" >
+                    <item quantity="one">
+%d comment
+                    </item>
+                    <item quantity="other">
+%d comments
+                    </item>
+                </plurals>
+
                 <string name="app_name" >Gate
                 </string>
                 <string name="improper_email_format" >This email isn\'t formatted properly
