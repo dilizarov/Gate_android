@@ -8,13 +8,11 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -36,8 +34,8 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 /**
  * A fragment representing a list of Items.
- * <p />
- * <p />
+ * <p/>
+ * <p/>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
@@ -50,7 +48,6 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     private NetworksListAdapter listAdapter;
     private ArrayList<Network> networkItems;
     private SharedPreferences mSessionPreferences;
-    private ProgressBar loadingNetworksProgressBar;
     private PullToRefreshLayout mPullToRefreshLayout;
 
     private LinearLayout progressBarHolder;
@@ -59,6 +56,13 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
     //private OnFragmentInteractionListener mListener;
 
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    public NetworksFragment() {
+    }
+
     // TODO: Rename and change types of parameters
     public static NetworksFragment newInstance(int position) {
         NetworksFragment fragment = new NetworksFragment();
@@ -66,13 +70,6 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         args.putInt(ARG_POSITION, position);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public NetworksFragment() {
     }
 
     @Override
@@ -131,16 +128,17 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             requestNetworksAndPopulateListView(false);
         }
     }
+
     /**
-    * This interface must be implemented by activities that contain this
-    * fragment to allow an interaction in this fragment to be communicated
-    * to the activity and potentially other fragments contained in that
-    * activity.
-    * <p>
-    * See the Android Training lesson <a href=
-    * "http://developer.android.com/training/basics/fragments/communicating.html"
-    * >Communicating with Other Fragments</a> for more information.
-    */
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
 
     @Override
     public void onRefreshStarted(View view) {
@@ -171,39 +169,39 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(networkItems.get(position).getName())
-                       .setItems(items, new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialog, int item) {
-                               switch (item) {
-                                   case 0:
-                                       dialog.dismiss();
-                                       AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
-                                       buildConfirmation.setMessage(getString(R.string.confirm_delete_network_message))
-                                                        .setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int item) {
+                                switch (item) {
+                                    case 0:
+                                        dialog.dismiss();
+                                        AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
+                                        buildConfirmation.setMessage(getString(R.string.confirm_delete_network_message))
+                                                .setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
 
-                                                            @Override
-                                                            public void onClick(DialogInterface dialogConfirm, int item) {
-                                                                dialogConfirm.dismiss();
-                                                                //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogConfirm, int item) {
+                                                        dialogConfirm.dismiss();
+                                                        //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
 
-                                                                leaveNetwork(networkItems.get(networkIndex));
-                                                            }
-                                                        })
-                                                        .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
+                                                        leaveNetwork(networkItems.get(networkIndex));
+                                                    }
+                                                })
+                                                .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
 
-                                                            @Override
-                                                            public void onClick(DialogInterface dialogConfirm, int item) {
-                                                                dialogConfirm.dismiss();
-                                                            }
-                                                        });
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogConfirm, int item) {
+                                                        dialogConfirm.dismiss();
+                                                    }
+                                                });
 
-                                       AlertDialog confirmation = buildConfirmation.create();
-                                       confirmation.show();
+                                        AlertDialog confirmation = buildConfirmation.create();
+                                        confirmation.show();
 
-                                       break;
-                               }
-                           }
-                       });
+                                        break;
+                                }
+                            }
+                        });
 
                 AlertDialog alert = builder.create();
                 alert.show();
@@ -218,7 +216,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
@@ -267,6 +265,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if (refreshing) mPullToRefreshLayout.setRefreshComplete();
+                    progressBarHolder.setVisibility(View.GONE);
 
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
@@ -286,7 +285,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
             Response.Listener listener = new Response.Listener<Integer>() {
                 @Override

@@ -70,11 +70,11 @@ public class Network implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeStringArray(new String[] {
-                                            this.id,
-                                            this.name,
-                                            this.usersCount,
-                                            this.creator
-                                            });
+                this.id,
+                this.name,
+                this.usersCount,
+                this.creator
+        });
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

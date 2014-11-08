@@ -21,8 +21,9 @@
 
     <ListView
         android:id="@id/android:list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="none" />
 
 </LinearLayout>
 <!-- From: file:/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/fragment_feed.xml -->
