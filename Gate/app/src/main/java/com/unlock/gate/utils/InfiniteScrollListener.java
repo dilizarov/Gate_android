@@ -1,6 +1,5 @@
 package com.unlock.gate.utils;
 
-import android.util.Log;
 import android.widget.AbsListView;
 
 /**
@@ -47,14 +46,6 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        Log.v("firstVisibleItem", Integer.toString(firstVisibleItem));
-        Log.v("visibleItemCount", Integer.toString(visibleItemCount));
-        Log.v("totalItemCount", Integer.toString(totalItemCount));
-        Log.v("itemCount", Integer.toString(itemCount));
-        Log.v("currentPage", Integer.toString(currentPage));
-        Log.v("isLoading", Boolean.toString(isLoading));
-        Log.v("================", "================================================");
-
         if (totalItemCount < itemCount) {
             this.itemCount = totalItemCount;
             if (totalItemCount == 0) isLoading = true;
