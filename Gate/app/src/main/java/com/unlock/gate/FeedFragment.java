@@ -54,6 +54,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private DateTime infiniteScrollTimeBuffer;
     private int currentPage;
 
+    private InfiniteScrollListener infiniteScrollListener;
+
     private Network currentNetwork;
 
     private LinearLayout progressBarHolder;
@@ -114,35 +116,29 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
 
-        currentPage = 0;
-
         if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("posts") != null) {
-            posts          = savedInstanceState.getParcelableArrayList("posts");
+            posts = savedInstanceState.getParcelableArrayList("posts");
             currentNetwork = savedInstanceState.getParcelable("currentNetwork");
             infiniteScrollTimeBuffer =
-                  (DateTime) savedInstanceState.getSerializable("infiniteScrollTimeBuffer");
-            currentPage    = savedInstanceState.getInt("currentPage");
-            int index      = savedInstanceState.getInt("feedsFirstVisiblePosition");
-            int top        = savedInstanceState.getInt("topOfFeed");
-            currentPage    = savedInstanceState.getInt("currentPage");
+                    (DateTime) savedInstanceState.getSerializable("infiniteScrollTimeBuffer");
+            currentPage = savedInstanceState.getInt("currentPage");
+            int index = savedInstanceState.getInt("feedsFirstVisiblePosition");
+            int top = savedInstanceState.getInt("topOfFeed");
+            currentPage = savedInstanceState.getInt("currentPage");
 
             progressBarHolder.setVisibility(View.GONE);
             keepPositionInListAndAdaptNewPostsToFeed(index, top);
+
         }
 
-        feed.setOnScrollListener(new InfiniteScrollListener(currentPage) {
-            @Override
-            public void loadMore(int page) {
-                requestPostsAndPopulateListView(false, page);
-                currentPage = page;
-            }
-        });
+            setupInfiniteScrollListener();
     }
 
     @Override
     public void onRefreshStarted(View view) {
         requestPostsAndPopulateListView(true);
-        currentPage = 0;
+        currentPage = 1;
+        infiniteScrollListener.setCurrentPage(currentPage);
     }
 
     public void getNetworkFeed(Network network) {
@@ -268,6 +264,18 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         outState.putInt("feedsFirstVisiblePosition", firstVisiblePost());
         outState.putInt("topOfFeed", topOfFeed());
         outState.putInt("currentPage", currentPage);
+    }
+
+    private void setupInfiniteScrollListener() {
+        infiniteScrollListener = new InfiniteScrollListener(currentPage, posts.size()) {
+            @Override
+            public void loadMore(int page) {
+                requestPostsAndPopulateListView(false, page);
+                currentPage = page;
+            }
+        };
+
+        feed.setOnScrollListener(infiniteScrollListener);
     }
 
     private int firstVisiblePost() {
