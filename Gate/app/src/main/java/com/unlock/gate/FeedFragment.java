@@ -1,6 +1,7 @@
 package com.unlock.gate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -117,7 +119,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
 
-        if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("posts") != null) {
+        if (savedInstanceState != null) {
             posts            = savedInstanceState.getParcelableArrayList("posts");
             currentNetwork   = savedInstanceState.getParcelable("currentNetwork");
             infiniteScrollTimeBuffer =
@@ -130,10 +132,12 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             progressBarHolder.setVisibility(View.GONE);
             keepPositionInListAndAdaptNewPostsToFeed(index, top);
 
-            setupInfiniteScrollListener(savedInstanceState.getBoolean("atEndOfList"));
+            setInfiniteScrollListener(savedInstanceState.getBoolean("atEndOfList"));
         } else {
-            setupInfiniteScrollListener(false);
+            setInfiniteScrollListener(false);
         }
+
+        setListViewItemClickListener();
     }
 
     @Override
@@ -279,7 +283,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         outState.putBoolean("atEndOfList", infiniteScrollListener.getAtEndOfList());
     }
 
-    private void setupInfiniteScrollListener(boolean atEndOfList) {
+    private void setInfiniteScrollListener(boolean atEndOfList) {
         infiniteScrollListener = new InfiniteScrollListener(currentPage, posts.size()) {
             @Override
             public void loadMore(int page) {
@@ -291,6 +295,20 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         infiniteScrollListener.setAtEndOfList(atEndOfList);
 
         feed.setOnScrollListener(infiniteScrollListener);
+    }
+
+    private void setListViewItemClickListener() {
+        feed.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+
+                Intent intent = new Intent(getActivity(), CommentsActivity.class);
+                intent.putExtra("post", posts.get(position));
+                startActivity(intent);
+
+            }
+        });
     }
 
     private int firstVisiblePost() {

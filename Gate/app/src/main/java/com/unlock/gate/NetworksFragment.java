@@ -127,7 +127,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             }
         });
 
-        if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("networkItems") != null) {
+        if (savedInstanceState != null) {
             networkItems = savedInstanceState.getParcelableArrayList("networkItems");
 
             progressBarHolder.setVisibility(View.GONE);

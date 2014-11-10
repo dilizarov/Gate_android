@@ -7,30 +7,20 @@ import android.text.format.DateUtils;
 import org.joda.time.DateTime;
 
 /**
- * Created by davidilizarov on 10/22/14.
+ * Created by davidilizarov on 11/10/14.
  */
-public class Post implements Parcelable {
-    private String id, name, body, networkId, commentCount, timestamp;
+public class Comment implements Parcelable {
+    private String id, name, body, timestamp;
     private DateTime timeCreated;
 
-    public Post(){}
+    public Comment(){}
 
-    public Post(String id, String name, String body, String networkId, int commentCount, String timeCreated) {
+    public Comment(String id, String name, String body, String timeCreated) {
         this.id = id;
         this.name = name;
         this.body = body;
-        this.networkId = networkId;
-        this.commentCount = Integer.toString(commentCount);
         this.timeCreated = new DateTime(timeCreated);
         setTimestamp();
-    }
-
-    public int getCommentCount() {
-        return Integer.parseInt(commentCount);
-    }
-
-    public void setCommentCount(int commentCount) {
-        this.commentCount = Integer.toString(commentCount);
     }
 
     public String getId() {
@@ -57,14 +47,6 @@ public class Post implements Parcelable {
         this.body = body;
     }
 
-    public String getNetworkId() {
-        return networkId;
-    }
-
-    public void setNetworkId(String networkId) {
-        this.networkId = networkId;
-    }
-
     public String getTimestamp() {
         return timestamp;
     }
@@ -84,17 +66,15 @@ public class Post implements Parcelable {
     }
 
     //Parcelable implementation
-    public Post(Parcel in) {
-        String[] data = new String[6];
+    public Comment(Parcel in) {
+        String[] data = new String[4];
 
         in.readStringArray(data);
 
-        this.id           = data[0];
-        this.name         = data[1];
-        this.body         = data[2];
-        this.networkId    = data[3];
-        this.commentCount = data[4];
-        this.timeCreated = DateTime.parse(data[5]);
+        this.id   = data[0];
+        this.name = data[1];
+        this.body = data[2];
+        this.timeCreated = DateTime.parse(data[3]);
         setTimestamp();
     }
 
@@ -106,22 +86,21 @@ public class Post implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeStringArray(new String[] {
-            this.id,
-            this.name,
-            this.body,
-            this.networkId,
-            this.commentCount,
-            this.timeCreated.toString()
+                this.id,
+                this.name,
+                this.body,
+                this.timeCreated.toString()
         });
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Post createFromParcel(Parcel in) {
-            return new Post(in);
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
         }
 
-        public Post[] newArray(int size) {
-            return new Post[size];
+        public Comment[] newArray(int size) {
+            return new Comment[size];
         }
     };
+
 }
