@@ -45,6 +45,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
  *
  */
 public class FeedFragment extends ListFragment implements OnRefreshListener {
+
     private static final String ARG_POSITION = "position";
     private ListView feed;
     private FeedListAdapter listAdapter;
@@ -117,38 +118,46 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
 
         if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("posts") != null) {
-            posts = savedInstanceState.getParcelableArrayList("posts");
-            currentNetwork = savedInstanceState.getParcelable("currentNetwork");
+            posts            = savedInstanceState.getParcelableArrayList("posts");
+            currentNetwork   = savedInstanceState.getParcelable("currentNetwork");
             infiniteScrollTimeBuffer =
                     (DateTime) savedInstanceState.getSerializable("infiniteScrollTimeBuffer");
-            currentPage = savedInstanceState.getInt("currentPage");
-            int index = savedInstanceState.getInt("feedsFirstVisiblePosition");
-            int top = savedInstanceState.getInt("topOfFeed");
-            currentPage = savedInstanceState.getInt("currentPage");
+            currentPage      = savedInstanceState.getInt("currentPage");
+            int index        = savedInstanceState.getInt("feedsFirstVisiblePosition");
+            int top          = savedInstanceState.getInt("topOfFeed");
+            currentPage      = savedInstanceState.getInt("currentPage");
 
             progressBarHolder.setVisibility(View.GONE);
             keepPositionInListAndAdaptNewPostsToFeed(index, top);
 
+            setupInfiniteScrollListener(savedInstanceState.getBoolean("atEndOfList"));
+        } else {
+            setupInfiniteScrollListener(false);
         }
-
-            setupInfiniteScrollListener();
     }
 
     @Override
     public void onRefreshStarted(View view) {
+        infiniteScrollListener.setAtEndOfList(false);
         requestPostsAndPopulateListView(true);
-        currentPage = 1;
-        infiniteScrollListener.setCurrentPage(currentPage);
+        setCurrentPage(1);
     }
 
     public void getNetworkFeed(Network network) {
-        Toast.makeText(getActivity(), network.getName(), Toast.LENGTH_LONG).show();
-        //Remember, if this is the network we are already showing, then DON'T go through all the effort of a network request, just treat it as a page change.
+        if (network == null) Toast.makeText(getActivity(), "Aggregate", Toast.LENGTH_LONG).show();
+        else Toast.makeText(getActivity(), network.getName(), Toast.LENGTH_LONG).show();
 
-//        if (currentNetwork.getId().equals(network.getId())) return;
-//        else {
-//            //Load
-//        }
+        if (!onAggregateAndGettingAggregate(network) &&
+            !onNetworkAndGettingSameNetwork(network)) {
+
+            currentNetwork = network;
+            feed.setSelection(0);
+            mPullToRefreshLayout.setRefreshing(true);
+            infiniteScrollListener.setAtEndOfList(false);
+            requestPostsAndPopulateListView(true);
+            setCurrentPage(1);
+
+        }
     }
 
     private void requestPostsAndPopulateListView(final boolean refreshing) {
@@ -182,6 +191,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                             JSONArray jsonPosts = jsonResponse.optJSONArray("posts");
                             int len = jsonPosts.length();
+
+                            if (len == 0) infiniteScrollListener.reachedEndOfList();
+
                             for (int i = 0; i < len; i++) {
                                 JSONObject jsonPost = jsonPosts.optJSONObject(i);
                                 Post post = new Post(jsonPost.optString("external_id"),
@@ -264,9 +276,10 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         outState.putInt("feedsFirstVisiblePosition", firstVisiblePost());
         outState.putInt("topOfFeed", topOfFeed());
         outState.putInt("currentPage", currentPage);
+        outState.putBoolean("atEndOfList", infiniteScrollListener.getAtEndOfList());
     }
 
-    private void setupInfiniteScrollListener() {
+    private void setupInfiniteScrollListener(boolean atEndOfList) {
         infiniteScrollListener = new InfiniteScrollListener(currentPage, posts.size()) {
             @Override
             public void loadMore(int page) {
@@ -274,6 +287,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 currentPage = page;
             }
         };
+
+        infiniteScrollListener.setAtEndOfList(atEndOfList);
 
         feed.setOnScrollListener(infiniteScrollListener);
     }
@@ -285,6 +300,20 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private int topOfFeed() {
         View v = feed.getChildAt(0);
         return (v == null) ? 0 : v.getTop();
+    }
+
+    private boolean onAggregateAndGettingAggregate(Network network) {
+        return currentNetwork == null && network == null;
+    }
+
+    private boolean onNetworkAndGettingSameNetwork(Network network) {
+        return currentNetwork != null && network != null &&
+               currentNetwork.getId().equals(network.getId());
+    }
+
+    private void setCurrentPage(int page) {
+        currentPage = page;
+        infiniteScrollListener.setCurrentPage(currentPage);
     }
 
     public interface OnFragmentInteractionListener {

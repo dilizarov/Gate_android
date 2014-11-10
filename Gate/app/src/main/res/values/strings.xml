@@ -54,6 +54,7 @@
 
     <!-- NetworksFragment specific -->
     <string name="confirm_delete_network_message">Are you sure you want to leave the network? Any of your keys that give access to the network will be destroyed. **The network will be destroyed if you are the only user in it.</string>
+    <string name="view_aggregate">View Aggregate</string>
     <plurals name="users_count">
         <item quantity="one">%d Gatekeeper</item>
         <item quantity="other">%d Gatekeepers</item>

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     private ArrayList<Network> networkItems;
     private SharedPreferences mSessionPreferences;
     private PullToRefreshLayout mPullToRefreshLayout;
+    private Button viewAggregate;
 
     private LinearLayout progressBarHolder;
 
@@ -116,6 +118,14 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         networkItems = new ArrayList<Network>();
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.networkProgressBarHolder);
+
+        viewAggregate = (Button) this.getActivity().findViewById(R.id.viewAggregate);
+        viewAggregate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewFeedForNetwork(null);
+            }
+        });
 
         if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("networkItems") != null) {
             networkItems = savedInstanceState.getParcelableArrayList("networkItems");

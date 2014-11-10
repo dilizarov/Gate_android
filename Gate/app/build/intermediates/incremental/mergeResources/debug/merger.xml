@@ -250,13 +250,12 @@ false
                         format="reference" />
                 </declare-styleable>
 
-                <string name="pull_to_refresh_pull_label" >Pull to refresh…
-                </string>
-
                 <item
                     name="ptr_progress"
                     type="id"/>
 
+                <string name="pull_to_refresh_pull_label" >Pull to refresh…
+                </string>
                 <string name="pull_to_refresh_release_label" >Release to refresh…
                 </string>
 
@@ -278,19 +277,19 @@ false
                     name="ptr_content"
                     type="id"/>
 
-                <dimen name="ptr_progress_bar_stroke_width" >4dp
-                </dimen>
-
                 <attr
                     name="ptrHeaderStyle"
                     format="reference" />
+
+                <dimen name="ptr_progress_bar_stroke_width" >4dp
+                </dimen>
             </file>
             <file
                 path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-ar/values.xml"
                 qualifiers="ar" >
-                <string name="pull_to_refresh_release_label" >اترك للتحديث…
-                </string>
                 <string name="pull_to_refresh_pull_label" >اسحب للتحديث…
+                </string>
+                <string name="pull_to_refresh_release_label" >اترك للتحديث…
                 </string>
                 <string name="pull_to_refresh_refreshing_label" >تحميل…
                 </string>
@@ -320,9 +319,9 @@ false
                 qualifiers="el" >
                 <string name="pull_to_refresh_release_label" >Αφήστε για ανανέωση…
                 </string>
-                <string name="pull_to_refresh_refreshing_label" >Φόρτωση…
-                </string>
                 <string name="pull_to_refresh_pull_label" >Σύρετε προς τα κάτω για ανανέωση…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Φόρτωση…
                 </string>
             </file>
             <file
@@ -408,9 +407,9 @@ false
             <file
                 path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values-lt/values.xml"
                 qualifiers="lt" >
-                <string name="pull_to_refresh_release_label" >Paleiskite, kad atnaujinti…
-                </string>
                 <string name="pull_to_refresh_refreshing_label" >Kraunama…
+                </string>
+                <string name="pull_to_refresh_release_label" >Paleiskite, kad atnaujinti…
                 </string>
                 <string name="pull_to_refresh_pull_label" >Traukite, kad atnaujinti…
                 </string>
@@ -500,9 +499,9 @@ false
                 qualifiers="tr" >
                 <string name="pull_to_refresh_release_label" >Yenilemek için bırakın…
                 </string>
-                <string name="pull_to_refresh_refreshing_label" >Yükleniyor…
-                </string>
                 <string name="pull_to_refresh_pull_label" >Yenilemek için kaydırın…
+                </string>
+                <string name="pull_to_refresh_refreshing_label" >Yükleniyor…
                 </string>
             </file>
             <file
@@ -686,9 +685,9 @@ false
             <file
                 path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/values/strings.xml"
                 qualifiers="" >
-                <string name="no_caps" >NO
-                </string>
                 <string name="action_settings" >Settings
+                </string>
+                <string name="no_caps" >NO
                 </string>
                 <string name="hello_blank_fragment" >Hello blank fragment
                 </string>
@@ -698,15 +697,15 @@ false
                 </string>
                 <string name="login_register_shared_preferences_key" >com.unlock.gate.LOGIN_REGISTER_PREF
                 </string>
-                <string name="user_email_key" >UserEmail
+                <string name="toggle_login" >Log In
                 </string>
                 <string name="send_email" >Send Email
                 </string>
-                <string name="toggle_login" >Log In
-                </string>
-                <string name="session_shared_preferences_key" >com.unlock.gate.CURRENT_SESSION_PREF
+                <string name="user_email_key" >UserEmail
                 </string>
                 <string name="no_email_inputted" >Your email is required
+                </string>
+                <string name="session_shared_preferences_key" >com.unlock.gate.CURRENT_SESSION_PREF
                 </string>
 
                 <string-array name="tabs" >
@@ -726,6 +725,8 @@ HQ
                 <string name="user_password_hint" >Password
                 </string>
                 <string name="volley_auth_error" >Gatekeeper, you are unauthorized to perform this action
+                </string>
+                <string name="view_aggregate" >View Aggregate
                 </string>
                 <string name="forgotton_password_email_sent" >Email sent
                 </string>
@@ -747,6 +748,8 @@ HQ
                 </string>
                 <string name="no_name_inputted" >Your full name is required
                 </string>
+                <string name="confirm_registration_dialog_title" >One more step...
+                </string>
 
                 <plurals name="users_count" >
                     <item quantity="one">
@@ -757,11 +760,9 @@ HQ
                     </item>
                 </plurals>
 
-                <string name="confirm_registration_dialog_title" >One more step...
+                <string name="register" >Register
                 </string>
                 <string name="yes_caps" >YES
-                </string>
-                <string name="register" >Register
                 </string>
                 <string name="confirm_registration" >"Tap YES to indicate you have read the Privacy Policy and that you agree to our Terms of Service."
                 </string>
@@ -775,23 +776,23 @@ HQ
                     </item>
                 </plurals>
 
-                <string name="app_name" >Gate
-                </string>
                 <string name="improper_email_format" >This email isn\'t formatted properly
+                </string>
+                <string name="app_name" >Gate
                 </string>
                 <string name="user_auth_token_key" >UserAuthToken
                 </string>
-                <string name="confirm_delete_network_message" >Are you sure you want to leave the network? Any of your keys that give access to the network will be destroyed. **The network will be destroyed if you are the only user in it.
-                </string>
                 <string name="log_in" >Log In
                 </string>
-                <string name="forgotton_password_email_not_registered" >Email not registered
+                <string name="confirm_delete_network_message" >Are you sure you want to leave the network? Any of your keys that give access to the network will be destroyed. **The network will be destroyed if you are the only user in it.
                 </string>
                 <string name="last_used_email" >last_used_email
                 </string>
-                <string name="volley_network_error" >Gatekeeper, we couldn\'t connect to the internet
+                <string name="forgotton_password_email_not_registered" >Email not registered
                 </string>
                 <string name="user_full_name_hint" >Full Name
+                </string>
+                <string name="volley_network_error" >Gatekeeper, we couldn\'t connect to the internet
                 </string>
                 <string name="user_created_at_key" >UserCreatedAt
                 </string>

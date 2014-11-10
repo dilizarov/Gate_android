@@ -333,10 +333,10 @@ containing a value of this type.
     }
     public static final class id {
         public static final int Placeholder=0x7f070010;
-        public static final int action_create=0x7f07001e;
-        public static final int action_logout=0x7f07001c;
-        public static final int action_offer_advice=0x7f07001d;
-        public static final int action_settings=0x7f07001b;
+        public static final int action_create=0x7f07001f;
+        public static final int action_logout=0x7f07001d;
+        public static final int action_offer_advice=0x7f07001e;
+        public static final int action_settings=0x7f07001c;
         public static final int body=0x7f070015;
         public static final int commandButton=0x7f07000c;
         public static final int commentsCount=0x7f070016;
@@ -344,8 +344,8 @@ containing a value of this type.
         public static final int forgotPassword=0x7f07000b;
         public static final int inside=0x7f070000;
         public static final int name=0x7f070013;
-        public static final int networkItemName=0x7f070019;
-        public static final int networkProgressBarHolder=0x7f070018;
+        public static final int networkItemName=0x7f07001a;
+        public static final int networkProgressBarHolder=0x7f070019;
         public static final int outside=0x7f070001;
         public static final int pager=0x7f070012;
         public static final int ptr_content=0x7f070006;
@@ -362,7 +362,8 @@ containing a value of this type.
         public static final int userEmail=0x7f07000a;
         public static final int userFullName=0x7f07000d;
         public static final int userPassword=0x7f070009;
-        public static final int usersCount=0x7f07001a;
+        public static final int usersCount=0x7f07001b;
+        public static final int viewAggregate=0x7f070018;
     }
     public static final class integer {
         public static final int spb_default_interpolator=0x7f090000;
@@ -423,13 +424,14 @@ containing a value of this type.
         public static final int user_id_key=0x7f0b0021;
         public static final int user_name_key=0x7f0b0022;
         public static final int user_password_hint=0x7f0b0023;
-        public static final int volley_auth_error=0x7f0b0024;
-        public static final int volley_network_error=0x7f0b0025;
-        public static final int volley_no_connection_error=0x7f0b0026;
-        public static final int volley_parse_error=0x7f0b0027;
-        public static final int volley_server_error=0x7f0b0028;
-        public static final int volley_timeout_error=0x7f0b0029;
-        public static final int yes_caps=0x7f0b002a;
+        public static final int view_aggregate=0x7f0b0024;
+        public static final int volley_auth_error=0x7f0b0025;
+        public static final int volley_network_error=0x7f0b0026;
+        public static final int volley_no_connection_error=0x7f0b0027;
+        public static final int volley_parse_error=0x7f0b0028;
+        public static final int volley_server_error=0x7f0b0029;
+        public static final int volley_timeout_error=0x7f0b002a;
+        public static final int yes_caps=0x7f0b002b;
     }
     public static final class style {
         /** 

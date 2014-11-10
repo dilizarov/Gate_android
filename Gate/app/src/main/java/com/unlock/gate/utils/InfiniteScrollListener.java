@@ -11,17 +11,20 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
     private int itemCount = 0;
     private boolean isLoading = false;
 
+    // Represents the fact that there is no more data from the server to populate the list.
+    // Example: Indicates that we've retrieved all the posts in the feed.
+    private boolean atEndOfList = false;
+
     public InfiniteScrollListener(int currentPage) {
         this.currentPage = currentPage;
     }
 
     public InfiniteScrollListener(int currentPage, int itemCount) {
-        this.itemCount = itemCount;
         this.currentPage = currentPage;
+        this.itemCount = itemCount;
     }
 
-    public InfiniteScrollListener() {
-    }
+    public InfiniteScrollListener() {}
 
     public int getBufferItemCount() {
         return bufferItemCount;
@@ -39,6 +42,19 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
         this.currentPage = currentPage;
     }
 
+    public void reachedEndOfList() {
+        atEndOfList = true;
+        isLoading = false;
+    }
+
+    public boolean getAtEndOfList() {
+        return atEndOfList;
+    }
+
+    public void setAtEndOfList(boolean atEndOfList) {
+        this.atEndOfList = atEndOfList;
+    }
+
     public abstract void loadMore(int page);
 
     @Override
@@ -46,6 +62,9 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        if (atEndOfList) return;
+
         if (totalItemCount < itemCount) {
             this.itemCount = totalItemCount;
             if (totalItemCount == 0) isLoading = true;

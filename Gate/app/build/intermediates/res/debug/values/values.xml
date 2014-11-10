@@ -200,6 +200,7 @@
     <string name="user_id_key">UserID</string>
     <string name="user_name_key">UserName</string>
     <string name="user_password_hint">Password</string>
+    <string name="view_aggregate">View Aggregate</string>
     <string name="volley_auth_error">Gatekeeper, you are unauthorized to perform this action</string>
     <string name="volley_network_error">Gatekeeper, we couldn\'t connect to the internet</string>
     <string name="volley_no_connection_error">Gatekeeper, check your internet connection</string>

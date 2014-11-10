@@ -99,6 +99,17 @@ public class APIRequestProxy {
 
         String url = addAuthAsURLParams(buildUrl.toString(), params);
 
+        StringBuilder addPageAndBuffer = new StringBuilder(url);
+
+        if (params.optInt("page", -1) != -1) addPageAndBuffer.append("&page=")
+                                                             .append(params.optInt("page"));
+
+        if (params.opt("infinite_scroll_time_buffer") != null)
+            addPageAndBuffer.append("&infinite-scroll-time-buffer=")
+                            .append(params.opt("infinite_scroll_time_buffer"));
+
+        url = addPageAndBuffer.toString();
+
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
         mRequestQueue.add(request);
