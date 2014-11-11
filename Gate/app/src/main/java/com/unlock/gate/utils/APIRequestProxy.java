@@ -133,4 +133,20 @@ public class APIRequestProxy {
 
         mRequestQueue.add(request);
     }
+
+    public void getComments(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+
+        StringBuilder buildUrl = new StringBuilder(BASE_URL);
+        buildUrl.append("posts")
+                .append("/")
+                .append(params.optString("post_id"))
+                .append("/")
+                .append("comments.json");
+
+        String url = addAuthAsURLParams(buildUrl.toString(), params);
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
 }

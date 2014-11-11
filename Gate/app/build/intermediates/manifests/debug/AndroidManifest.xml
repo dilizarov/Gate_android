@@ -13,6 +13,15 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_CALL_LOG" />
+
     <application
         android:name="com.unlock.gate.MyApplication"
         android:allowBackup="true"
@@ -32,6 +41,14 @@
         <activity
             android:name="com.unlock.gate.MainActivity"
             android:label="Gate" >
+        </activity>
+        <activity
+            android:name="com.unlock.gate.CommentsActivity"
+            android:label="@string/title_activity_comments"
+            android:parentActivityName="com.unlock.gate.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unlock.gate.MainActivity" />
         </activity>
     </application>
 

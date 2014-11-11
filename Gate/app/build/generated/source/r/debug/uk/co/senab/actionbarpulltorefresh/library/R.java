@@ -66,13 +66,13 @@ public final class R {
 		public static final int spb_default_sections_count = 0x7f090001;
 	}
 	public static final class layout {
-		public static final int default_header = 0x7f030002;
+		public static final int default_header = 0x7f030004;
 	}
 	public static final class string {
-		public static final int pull_to_refresh_pull_label = 0x7f0b0012;
-		public static final int pull_to_refresh_refreshing_label = 0x7f0b0013;
-		public static final int pull_to_refresh_release_label = 0x7f0b0014;
-		public static final int spb_default_speed = 0x7f0b0018;
+		public static final int pull_to_refresh_pull_label = 0x7f0b0013;
+		public static final int pull_to_refresh_refreshing_label = 0x7f0b0014;
+		public static final int pull_to_refresh_release_label = 0x7f0b0015;
+		public static final int spb_default_speed = 0x7f0b0019;
 	}
 	public static final class style {
 		public static final int SmoothProgressBar = 0x7f0c0002;

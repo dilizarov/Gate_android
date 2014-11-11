@@ -226,7 +226,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override

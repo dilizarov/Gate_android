@@ -153,6 +153,7 @@
     </plurals>
 
     <string name="action_settings">Settings</string>
+    <string name="add_comment_hint">Add a comment</string>
     <string name="app_name">Gate</string>
     <string name="confirm_delete_network_message">Are you sure you want to leave the network? Any of your keys that give access to the network will be destroyed. **The network will be destroyed if you are the only user in it.</string>
     <string name="confirm_registration">"Tap YES to indicate you have read the Privacy Policy and that you agree to our Terms of Service."</string>
@@ -190,6 +191,7 @@
     <eat-comment />
 
     <string name="terms">Terms</string>
+    <string name="title_activity_comments">Comments</string>
     <string name="toggle_login">Log In</string>
     <string name="toggle_registration">Register</string>
     <string name="user_auth_token_key">UserAuthToken</string>

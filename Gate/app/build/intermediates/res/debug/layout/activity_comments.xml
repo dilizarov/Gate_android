@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.unlock.gate.CommentsActivity">
+
+    <include layout="@layout/feed_item"
+             android:id="@+id/post"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content" />
+
+    <ListView
+        android:id="@id/android:list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/post"
+        android:scrollbars="none"
+        android:layout_above="@+id/addComment" />
+
+    <Button
+        android:id="@+id/sendComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+
+    <EditText
+        android:id="@+id/addComment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/sendComment"
+        android:hint="@string/add_comment_hint" />
+
+</RelativeLayout>
+<!-- From: file:/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/activity_comments.xml -->
