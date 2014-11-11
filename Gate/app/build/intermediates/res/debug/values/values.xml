@@ -167,9 +167,11 @@
     <string name="log_in">Log In</string>
     <string name="login_register_shared_preferences_key">com.unlock.gate.LOGIN_REGISTER_PREF</string>
     <string name="no_caps">NO</string>
+    <string name="no_comment_inputted">A comment can\'t be blank</string>
     <string name="no_email_inputted">Your email is required</string>
     <string name="no_name_inputted">Your full name is required</string>
     <string name="no_password_inputted">Your password is required</string>
+    <string name="over_500_characters_inputted">Please limit your comment to 500 characters</string>
     <string name="progress_dialog_server_processing_request">Robots processing...</string>
     <!-- From: file:/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9.9/res/values/values.xml -->
     <eat-comment />

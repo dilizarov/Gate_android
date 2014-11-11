@@ -8,6 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.unlock.gate.models.Network;
+import com.unlock.gate.models.Post;
 
 import org.json.JSONObject;
 
@@ -146,6 +147,20 @@ public class APIRequestProxy {
         String url = addAuthAsURLParams(buildUrl.toString(), params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void createComment(Post post, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+
+        StringBuilder buildUrl = new StringBuilder(BASE_URL);
+        buildUrl.append("posts")
+                .append("/")
+                .append(post.getId())
+                .append("/")
+                .append("comments.json");
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, buildUrl.toString(), params, listener, errorListener);
 
         mRequestQueue.add(request);
     }

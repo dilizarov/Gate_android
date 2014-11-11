@@ -705,6 +705,8 @@ false
                 </string>
                 <string name="action_settings" >Settings
                 </string>
+                <string name="no_comment_inputted" >A comment can\'t be blank
+                </string>
                 <string name="hello_blank_fragment" >Hello blank fragment
                 </string>
                 <string name="no_password_inputted" >Your password is required
@@ -736,6 +738,8 @@ HQ
                     </item>
                 </string-array>
 
+                <string name="over_500_characters_inputted" >Please limit your comment to 500 characters
+                </string>
                 <string name="volley_server_error" >Gatekeeper, there was a server error\nThe robots are investigating
                 </string>
                 <string name="user_password_hint" >Password

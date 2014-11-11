@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.format.DateUtils;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 
 /**
  * Created by davidilizarov on 11/10/14.
@@ -60,9 +61,15 @@ public class Comment implements Parcelable {
     }
 
     private void setTimestamp() {
-        timestamp = DateUtils.getRelativeTimeSpanString(timeCreated.getMillis(),
-                System.currentTimeMillis(),
-                DateUtils.SECOND_IN_MILLIS).toString();
+        DateTime tenSecondsAgo = DateTime.now().minusSeconds(10);
+        if (DateTimeComparator.getInstance().compare(timeCreated, tenSecondsAgo) == 1)
+            timestamp = "moments ago";
+        else {
+            timestamp = DateUtils.getRelativeTimeSpanString(timeCreated.getMillis(),
+                    System.currentTimeMillis(),
+                    DateUtils.SECOND_IN_MILLIS).toString();
+
+        }
     }
 
     //Parcelable implementation

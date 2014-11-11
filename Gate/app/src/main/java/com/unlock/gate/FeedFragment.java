@@ -204,6 +204,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                         jsonPost.optJSONObject("user").optString("name"),
                                         jsonPost.optString("body"),
                                         jsonPost.optJSONObject("network").optString("external_id"),
+                                        jsonPost.optJSONObject("network").optString("name"),
                                         jsonPost.optInt("comments_count"),
                                         jsonPost.optString("created_at"));
 
@@ -259,7 +260,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         if (index == -1) index = firstVisiblePost();
         if (top   == -1) top = topOfFeed();
 
-        listAdapter = new FeedListAdapter(getActivity(), posts);
+        listAdapter = new FeedListAdapter(getActivity(), posts, currentNetwork);
         feed.setAdapter(listAdapter);
         listAdapter.notifyDataSetChanged();
 

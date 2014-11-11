@@ -174,12 +174,11 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
                 // As Gate grows, we'll add more to this that could be done.
                 final CharSequence[] items = {
-                        "Leave"
+                        "Leave " + networkItems.get(networkIndex).getName()
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(networkItems.get(position).getName())
-                        .setItems(items, new DialogInterface.OnClickListener() {
+                builder.setItems(items, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int item) {
                                 switch (item) {

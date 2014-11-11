@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.unlock.gate.R;
+import com.unlock.gate.models.Network;
 import com.unlock.gate.models.Post;
 
 import java.util.List;
@@ -21,10 +22,12 @@ public class FeedListAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater mInflater;
     private List<Post> posts;
+    private Network network;
 
-    public FeedListAdapter(Context context, List<Post> posts) {
+    public FeedListAdapter(Context context, List<Post> posts, Network network) {
         this.context = context;
         this.posts = posts;
+        this.network = network;
     }
 
     @Override
@@ -61,6 +64,11 @@ public class FeedListAdapter extends BaseAdapter {
                 .getQuantityString(R.plurals.comments_count,
                                    post.getCommentCount(),
                                    post.getCommentCount()));
+
+        if (network == null) {
+            TextView networkName = (TextView) convertView.findViewById(R.id.networkName);
+            networkName.setText(post.getNetworkName());
+        }
 
         return convertView;
     }
