@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.astuetz.PagerSlidingTabStrip;
 import com.unlock.gate.models.Network;
 
+import java.util.ArrayList;
+
 /**
  * Created by davidilizarov on 10/20/14.
  */
@@ -136,6 +138,11 @@ public class MainActivity extends FragmentActivity {
 
         FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
         feedFragment.getNetworkFeed(network);
+    }
+
+    public ArrayList<Network> getNetworks() {
+        NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
+        return networksFragment.getNetworks();
     }
 
 }

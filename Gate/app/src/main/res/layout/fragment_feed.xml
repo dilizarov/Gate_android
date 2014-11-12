@@ -11,8 +11,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:gravity="center"
-        android:visibility="gone">
+        android:gravity="center">
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
@@ -34,20 +33,11 @@
             android:layout_above="@+id/createPost"/>
 
         <Button
-            android:id="@+id/sendPost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@id/createPost" />
-
-        <EditText
             android:id="@+id/createPost"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@id/sendPost"
-            android:hint="Create a post" />
+            android:text="Post"/>
 
     </RelativeLayout>
 

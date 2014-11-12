@@ -349,6 +349,10 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         ((MainActivity) getActivity()).showFeed(network);
     }
 
+    public ArrayList<Network> getNetworks() {
+        return networkItems;
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);

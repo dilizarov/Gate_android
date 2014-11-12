@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -50,6 +51,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     private static final String ARG_POSITION = "position";
     private ListView feed;
+    private Button createPost;
     private FeedListAdapter listAdapter;
     private ArrayList<Post> posts;
     private SharedPreferences mSessionPreferences;
@@ -62,6 +64,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private Network currentNetwork;
 
     private LinearLayout progressBarHolder;
+
+    private final int CREATE_POST_INTENT = 1;
 
     private int position;
 
@@ -119,6 +123,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
 
+        createPost = (Button) this.getActivity().findViewById(R.id.createPost);
+
         if (savedInstanceState != null) {
             posts            = savedInstanceState.getParcelableArrayList("posts");
             currentNetwork   = savedInstanceState.getParcelable("currentNetwork");
@@ -138,6 +144,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         }
 
         setListViewItemClickListener();
+        setCreatePostClickListener();
+
     }
 
     @Override
@@ -310,6 +318,35 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
             }
         });
+    }
+
+    private void setCreatePostClickListener() {
+        createPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<Network> networks = ((MainActivity) getActivity()).getNetworks();
+
+                Intent intent = new Intent(getActivity(), CreatePostActivity.class);
+                intent.putExtra("currentNetwork", currentNetwork);
+                intent.putExtra("networks", networks);
+                startActivityForResult(intent, CREATE_POST_INTENT);
+                return;
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case CREATE_POST_INTENT:
+                if (resultCode == getActivity().RESULT_OK) {
+                    Network network = (Network) data.getParcelableExtra("network");
+                    String postBody = data.getStringExtra("postBody");
+
+
+
+                }
+        }
     }
 
     private int firstVisiblePost() {

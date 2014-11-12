@@ -162,6 +162,7 @@
     <string name="forgotton_password_email_not_registered">Email not registered</string>
     <string name="forgotton_password_email_sent">Email sent</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_world">Hello world!</string>
     <string name="improper_email_format">This email isn\'t formatted properly</string>
     <string name="last_used_email">last_used_email</string>
     <string name="log_in">Log In</string>
@@ -194,6 +195,7 @@
 
     <string name="terms">Terms</string>
     <string name="title_activity_comments">Comments</string>
+    <string name="title_activity_create_post">Create Post</string>
     <string name="toggle_login">Log In</string>
     <string name="toggle_registration">Register</string>
     <string name="user_auth_token_key">UserAuthToken</string>

@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.unlock.gate.CreatePostActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:id="@+id/writePost"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/postBody"
+        android:layout_below="@+id/writePost"
+        android:layout_alignRight="@+id/writePost"
+        android:layout_alignEnd="@+id/writePost"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:lines="6"
+        android:gravity="top"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/networkSelection"
+        android:layout_above="@+id/postBody"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/writePost"
+        android:layout_toStartOf="@+id/writePost"
+        android:text="No network"/>
+
+</RelativeLayout>
