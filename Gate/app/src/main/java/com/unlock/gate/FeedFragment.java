@@ -340,10 +340,59 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         switch (requestCode) {
             case CREATE_POST_INTENT:
                 if (resultCode == getActivity().RESULT_OK) {
-                    Network network = (Network) data.getParcelableExtra("network");
+                    final Network network = (Network) data.getParcelableExtra("network");
                     String postBody = data.getStringExtra("postBody");
 
+                    try {
+                        JSONObject params = new JSONObject();
+                        params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
+                              .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
+                        JSONObject post = new JSONObject();
+                        post.put("body", postBody);
+
+                        params.put("post", post);
+
+                        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+
+                                if (currentNetwork == null ||
+                                    onNetworkAndGettingSameNetwork(network)) {
+
+                                    JSONObject jsonPost = response.optJSONObject("post");
+                                    Post post = new Post(jsonPost.optString("external_id"),
+                                            jsonPost.optJSONObject("user").optString("name"),
+                                            jsonPost.optString("body"),
+                                            jsonPost.optJSONObject("network").optString("external_id"),
+                                            jsonPost.optJSONObject("network").optString("name"),
+                                            jsonPost.optInt("comments_count"),
+                                            jsonPost.optString("created_at"));
+
+                                    posts.add(0, post);
+                                    feed.setSelection(0);
+                                    listAdapter = new FeedListAdapter(getActivity(), posts, currentNetwork);
+                                    feed.setAdapter(listAdapter);
+                                    listAdapter.notifyDataSetChanged();
+                                } else {
+                                    //Crouton/Toast stuff.
+                                    Toast.makeText(getActivity(), "Successfully posted to another network", Toast.LENGTH_LONG).show();
+                                }
+
+                            }
+                        };
+
+                        Response.ErrorListener errorListener = new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        };
+
+                        APIRequestManager.getInstance().doRequest().createPost(network, params, listener, errorListener);
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
+                    }
 
                 }
         }

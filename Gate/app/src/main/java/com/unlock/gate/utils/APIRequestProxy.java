@@ -164,4 +164,18 @@ public class APIRequestProxy {
 
         mRequestQueue.add(request);
     }
+
+    public void createPost(Network network, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+
+        StringBuilder buildUrl = new StringBuilder(BASE_URL);
+        buildUrl.append("networks")
+                .append("/")
+                .append(network.getId())
+                .append("/")
+                .append("posts.json");
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, buildUrl.toString(), params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
 }
