@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.unlock.gate.models.Network;
 
@@ -45,7 +46,8 @@ public class CreatePostActivity extends Activity {
                 android.R.layout.simple_spinner_dropdown_item, items);
 
         networkSelection = (Button) findViewById(R.id.networkSelection);
-        if (currentNetwork != null) networkSelection.setText(currentNetwork.getName());
+        writePost        = (Button) findViewById(R.id.writePost);
+        postBody         = (EditText) findViewById(R.id.postBody);
 
         networkSelection.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +69,6 @@ public class CreatePostActivity extends Activity {
             }
         });
 
-        postBody = (EditText) findViewById(R.id.postBody);
         postBody.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -87,7 +88,6 @@ public class CreatePostActivity extends Activity {
             }
         });
 
-        writePost = (Button) findViewById(R.id.writePost);
         writePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,6 +98,14 @@ public class CreatePostActivity extends Activity {
                 finish();
             }
         });
+
+        if (currentNetwork != null) networkSelection.setText(currentNetwork.getName());
+        if (intent.getStringExtra("postBody") != null) postBody.setText(intent.getStringExtra("postBody"));
+
+        // Come back and handle errors completely. Crouton, etc.
+
+        if (intent.getStringExtra("errorMessage") != null)
+            Toast.makeText(this, intent.getStringExtra("errorMessage"), Toast.LENGTH_LONG).show();
     }
 
 

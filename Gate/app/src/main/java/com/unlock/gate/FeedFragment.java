@@ -324,13 +324,10 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         createPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Network> networks = ((MainActivity) getActivity()).getNetworks();
-
                 Intent intent = new Intent(getActivity(), CreatePostActivity.class);
                 intent.putExtra("currentNetwork", currentNetwork);
-                intent.putExtra("networks", networks);
+                intent.putExtra("networks", getNetworks());
                 startActivityForResult(intent, CREATE_POST_INTENT);
-                return;
             }
         });
     }
@@ -341,7 +338,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             case CREATE_POST_INTENT:
                 if (resultCode == getActivity().RESULT_OK) {
                     final Network network = (Network) data.getParcelableExtra("network");
-                    String postBody = data.getStringExtra("postBody");
+                    final String postBody = data.getStringExtra("postBody");
 
                     try {
                         JSONObject params = new JSONObject();
@@ -385,7 +382,20 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                         Response.ErrorListener errorListener = new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
+                                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
+                                Intent intent = new Intent(getActivity(), CreatePostActivity.class);
+                                intent.putExtra("currentNetwork", network);
+                                intent.putExtra("networks", getNetworks());
+                                intent.putExtra("postBody", postBody);
+
+                                if (volleyError.isExpectedError()) {
+                                    intent.putExtra("errors", volleyError.getErrors().toString());
+                                } else {
+                                    intent.putExtra("errorMessage", volleyError.getMessage());
+                                }
+
+                                startActivityForResult(intent, CREATE_POST_INTENT);
                             }
                         };
 
@@ -419,6 +429,10 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private void setCurrentPage(int page) {
         currentPage = page;
         infiniteScrollListener.setCurrentPage(currentPage);
+    }
+
+    private ArrayList<Network> getNetworks() {
+        return ((MainActivity) getActivity()).getNetworks();
     }
 
     public interface OnFragmentInteractionListener {
