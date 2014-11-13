@@ -74,5 +74,6 @@
     <string name="over_500_characters_inputted">Please limit your comment to 500 characters</string>
     <string name="title_activity_create_post">Create Post</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_create_network">CreateNetworkActivity</string>
 
 </resources>

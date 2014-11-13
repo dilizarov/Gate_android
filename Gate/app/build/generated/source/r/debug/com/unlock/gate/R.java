@@ -332,31 +332,33 @@ containing a value of this type.
         public static final int ic_launcher=0x7f020003;
     }
     public static final class id {
-        public static final int Placeholder=0x7f070016;
-        public static final int action_create=0x7f07002a;
-        public static final int action_logout=0x7f070028;
-        public static final int action_offer_advice=0x7f070029;
-        public static final int action_settings=0x7f070027;
+        public static final int Placeholder=0x7f070018;
+        public static final int action_create=0x7f07002c;
+        public static final int action_logout=0x7f07002a;
+        public static final int action_offer_advice=0x7f07002b;
+        public static final int action_settings=0x7f070029;
         public static final int addComment=0x7f07000a;
-        public static final int body=0x7f07001f;
-        public static final int commandButton=0x7f070012;
-        public static final int commentBody=0x7f07001a;
-        public static final int commentTimestamp=0x7f07001b;
-        public static final int commenterName=0x7f070019;
-        public static final int commentsCount=0x7f070020;
-        public static final int createPost=0x7f070022;
-        public static final int feedProgressBarHolder=0x7f070021;
-        public static final int forgotPassword=0x7f070011;
+        public static final int body=0x7f070021;
+        public static final int commandButton=0x7f070014;
+        public static final int commentBody=0x7f07001c;
+        public static final int commentTimestamp=0x7f07001d;
+        public static final int commenterName=0x7f07001b;
+        public static final int commentsCount=0x7f070022;
+        public static final int createNetwork=0x7f07000c;
+        public static final int createNetworkName=0x7f07000d;
+        public static final int createPost=0x7f070024;
+        public static final int feedProgressBarHolder=0x7f070023;
+        public static final int forgotPassword=0x7f070013;
         public static final int inside=0x7f070000;
-        public static final int name=0x7f07001c;
-        public static final int networkItemName=0x7f070025;
-        public static final int networkName=0x7f07001d;
-        public static final int networkProgressBarHolder=0x7f070024;
-        public static final int networkSelection=0x7f07000e;
+        public static final int name=0x7f07001e;
+        public static final int networkItemName=0x7f070027;
+        public static final int networkName=0x7f07001f;
+        public static final int networkProgressBarHolder=0x7f070026;
+        public static final int networkSelection=0x7f070010;
         public static final int outside=0x7f070001;
-        public static final int pager=0x7f070018;
+        public static final int pager=0x7f07001a;
         public static final int post=0x7f070009;
-        public static final int postBody=0x7f07000d;
+        public static final int postBody=0x7f07000f;
         public static final int ptr_content=0x7f070006;
         public static final int ptr_progress=0x7f070007;
         public static final int ptr_text=0x7f070008;
@@ -365,16 +367,16 @@ containing a value of this type.
         public static final int spb_interpolator_acceleratedecelerate=0x7f070004;
         public static final int spb_interpolator_decelerate=0x7f070005;
         public static final int spb_interpolator_linear=0x7f070003;
-        public static final int tabs=0x7f070017;
-        public static final int terms=0x7f070014;
-        public static final int timestamp=0x7f07001e;
-        public static final int toggleRegistrationLogin=0x7f070015;
-        public static final int userEmail=0x7f070010;
-        public static final int userFullName=0x7f070013;
-        public static final int userPassword=0x7f07000f;
-        public static final int usersCount=0x7f070026;
-        public static final int viewAggregate=0x7f070023;
-        public static final int writePost=0x7f07000c;
+        public static final int tabs=0x7f070019;
+        public static final int terms=0x7f070016;
+        public static final int timestamp=0x7f070020;
+        public static final int toggleRegistrationLogin=0x7f070017;
+        public static final int userEmail=0x7f070012;
+        public static final int userFullName=0x7f070015;
+        public static final int userPassword=0x7f070011;
+        public static final int usersCount=0x7f070028;
+        public static final int viewAggregate=0x7f070025;
+        public static final int writePost=0x7f07000e;
     }
     public static final class integer {
         public static final int spb_default_interpolator=0x7f090000;
@@ -382,22 +384,24 @@ containing a value of this type.
     }
     public static final class layout {
         public static final int activity_comments=0x7f030000;
-        public static final int activity_create_post=0x7f030001;
-        public static final int activity_login_register=0x7f030002;
-        public static final int activity_main=0x7f030003;
-        public static final int comment_item=0x7f030004;
-        public static final int default_header=0x7f030005;
-        public static final int feed_item=0x7f030006;
-        public static final int fragment_feed=0x7f030007;
-        public static final int fragment_hq=0x7f030008;
-        public static final int fragment_networks=0x7f030009;
-        public static final int network_item=0x7f03000a;
+        public static final int activity_create_network=0x7f030001;
+        public static final int activity_create_post=0x7f030002;
+        public static final int activity_login_register=0x7f030003;
+        public static final int activity_main=0x7f030004;
+        public static final int comment_item=0x7f030005;
+        public static final int default_header=0x7f030006;
+        public static final int feed_item=0x7f030007;
+        public static final int fragment_feed=0x7f030008;
+        public static final int fragment_hq=0x7f030009;
+        public static final int fragment_networks=0x7f03000a;
+        public static final int network_item=0x7f03000b;
     }
     public static final class menu {
         public static final int login_register=0x7f0d0000;
         public static final int main_activity_actions=0x7f0d0001;
         public static final int menu_comments=0x7f0d0002;
-        public static final int menu_create_post=0x7f0d0003;
+        public static final int menu_create_network=0x7f0d0003;
+        public static final int menu_create_post=0x7f0d0004;
     }
     public static final class plurals {
         public static final int comments_count=0x7f0a0000;
@@ -435,25 +439,26 @@ containing a value of this type.
         public static final int spb_default_speed=0x7f0b001c;
         public static final int terms=0x7f0b001d;
         public static final int title_activity_comments=0x7f0b001e;
-        public static final int title_activity_create_post=0x7f0b001f;
-        public static final int toggle_login=0x7f0b0020;
-        public static final int toggle_registration=0x7f0b0021;
-        public static final int user_auth_token_key=0x7f0b0022;
-        public static final int user_created_at_key=0x7f0b0023;
-        public static final int user_email_hint=0x7f0b0024;
-        public static final int user_email_key=0x7f0b0025;
-        public static final int user_full_name_hint=0x7f0b0026;
-        public static final int user_id_key=0x7f0b0027;
-        public static final int user_name_key=0x7f0b0028;
-        public static final int user_password_hint=0x7f0b0029;
-        public static final int view_aggregate=0x7f0b002a;
-        public static final int volley_auth_error=0x7f0b002b;
-        public static final int volley_network_error=0x7f0b002c;
-        public static final int volley_no_connection_error=0x7f0b002d;
-        public static final int volley_parse_error=0x7f0b002e;
-        public static final int volley_server_error=0x7f0b002f;
-        public static final int volley_timeout_error=0x7f0b0030;
-        public static final int yes_caps=0x7f0b0031;
+        public static final int title_activity_create_network=0x7f0b001f;
+        public static final int title_activity_create_post=0x7f0b0020;
+        public static final int toggle_login=0x7f0b0021;
+        public static final int toggle_registration=0x7f0b0022;
+        public static final int user_auth_token_key=0x7f0b0023;
+        public static final int user_created_at_key=0x7f0b0024;
+        public static final int user_email_hint=0x7f0b0025;
+        public static final int user_email_key=0x7f0b0026;
+        public static final int user_full_name_hint=0x7f0b0027;
+        public static final int user_id_key=0x7f0b0028;
+        public static final int user_name_key=0x7f0b0029;
+        public static final int user_password_hint=0x7f0b002a;
+        public static final int view_aggregate=0x7f0b002b;
+        public static final int volley_auth_error=0x7f0b002c;
+        public static final int volley_network_error=0x7f0b002d;
+        public static final int volley_no_connection_error=0x7f0b002e;
+        public static final int volley_parse_error=0x7f0b002f;
+        public static final int volley_server_error=0x7f0b0030;
+        public static final int volley_timeout_error=0x7f0b0031;
+        public static final int yes_caps=0x7f0b0032;
     }
     public static final class style {
         /** 

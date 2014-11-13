@@ -3,6 +3,7 @@ package com.unlock.gate;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -46,6 +47,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_POSITION = "position";
     private ListView networks;
+    private Button createNetwork;
     private NetworksListAdapter listAdapter;
     private ArrayList<Network> networkItems;
     private SharedPreferences mSessionPreferences;
@@ -53,6 +55,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     private Button viewAggregate;
 
     private LinearLayout progressBarHolder;
+
+    private final int CREATE_NETWORK_INTENT = 1;
 
     private int position;
 
@@ -119,6 +123,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.networkProgressBarHolder);
 
+        createNetwork = (Button) this.getActivity().findViewById(R.id.createNetwork);
+
         viewAggregate = (Button) this.getActivity().findViewById(R.id.viewAggregate);
         viewAggregate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +143,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         } else {
             requestNetworksAndPopulateListView(false);
         }
+
+        setCreateNetworkClickListener();
     }
 
     /**
@@ -179,38 +187,38 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int item) {
-                                switch (item) {
-                                    case 0:
-                                        dialog.dismiss();
-                                        AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
-                                        buildConfirmation.setMessage(getString(R.string.confirm_delete_network_message))
-                                                .setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                            case 0:
+                                dialog.dismiss();
+                                AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
+                                buildConfirmation.setMessage(getString(R.string.confirm_delete_network_message))
+                                        .setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
 
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogConfirm, int item) {
-                                                        dialogConfirm.dismiss();
-                                                        //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
+                                            @Override
+                                            public void onClick(DialogInterface dialogConfirm, int item) {
+                                                dialogConfirm.dismiss();
+                                                //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
 
-                                                        leaveNetwork(networkItems.get(networkIndex));
-                                                    }
-                                                })
-                                                .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
+                                                leaveNetwork(networkItems.get(networkIndex));
+                                            }
+                                        })
+                                        .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
 
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogConfirm, int item) {
-                                                        dialogConfirm.dismiss();
-                                                    }
-                                                });
+                                            @Override
+                                            public void onClick(DialogInterface dialogConfirm, int item) {
+                                                dialogConfirm.dismiss();
+                                            }
+                                        });
 
-                                        AlertDialog confirmation = buildConfirmation.create();
-                                        confirmation.show();
+                                AlertDialog confirmation = buildConfirmation.create();
+                                confirmation.show();
 
-                                        break;
-                                }
-                            }
-                        });
+                                break;
+                        }
+                    }
+                });
 
                 AlertDialog alert = builder.create();
                 alert.show();
@@ -335,6 +343,94 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             APIRequestManager.getInstance().doRequest().leaveNetwork(network, params, listener, errorListener);
         } catch (JSONException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void setCreateNetworkClickListener() {
+        createNetwork.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateNetworkActivity.class);
+                startActivityForResult(intent, CREATE_NETWORK_INTENT);
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case CREATE_NETWORK_INTENT:
+                if (resultCode == getActivity().RESULT_OK) {
+                    final String networkName = data.getStringExtra("networkName");
+
+                    try {
+                        JSONObject params = new JSONObject();
+                        params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
+                              .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+
+                        JSONObject network = new JSONObject();
+                        network.put("name", networkName);
+
+                        params.put("network", network);
+
+                        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                JSONObject jsonNetwork = response.optJSONObject("network");
+                                final Network network = new Network(jsonNetwork.optString("external_id"),
+                                        jsonNetwork.optString("name"),
+                                        1,
+                                        jsonNetwork.optJSONObject("creator").optString("name"));
+
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int len = networkItems.size();
+                                        for (int i = 0; i < len; i++) {
+                                            String name = networkItems.get(i).getName();
+                                            if (name.compareToIgnoreCase(network.getName()) > 0) {
+                                                networkItems.add(i, network);
+                                                break;
+                                            }
+                                        }
+
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                listAdapter = new NetworksListAdapter(getActivity(), networkItems);
+                                                networks.setAdapter(listAdapter);
+                                                listAdapter.notifyDataSetChanged();
+                                                networks.setSelection(0);
+                                            }
+                                        });
+                                    }
+                                }).start();
+                            }
+                        };
+
+                        Response.ErrorListener errorListener = new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                                Intent intent = new Intent(getActivity(), CreateNetworkActivity.class);
+                                intent.putExtra("networkName", networkName);
+
+                                if (volleyError.isExpectedError()) {
+                                    intent.putExtra("errors", volleyError.getErrors().toString());
+                                } else {
+                                    intent.putExtra("errorMessage", volleyError.getMessage());
+                                }
+
+                                startActivityForResult(intent, CREATE_NETWORK_INTENT);
+                            }
+                        };
+
+                        APIRequestManager.getInstance().doRequest().createNetwork(params, listener, errorListener);
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
+                    }
+                }
         }
     }
 

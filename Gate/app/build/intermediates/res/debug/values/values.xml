@@ -195,6 +195,7 @@
 
     <string name="terms">Terms</string>
     <string name="title_activity_comments">Comments</string>
+    <string name="title_activity_create_network">CreateNetworkActivity</string>
     <string name="title_activity_create_post">Create Post</string>
     <string name="toggle_login">Log In</string>
     <string name="toggle_registration">Register</string>

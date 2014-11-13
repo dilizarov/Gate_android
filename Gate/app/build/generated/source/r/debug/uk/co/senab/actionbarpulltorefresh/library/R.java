@@ -66,7 +66,7 @@ public final class R {
 		public static final int spb_default_sections_count = 0x7f090001;
 	}
 	public static final class layout {
-		public static final int default_header = 0x7f030005;
+		public static final int default_header = 0x7f030006;
 	}
 	public static final class string {
 		public static final int pull_to_refresh_pull_label = 0x7f0b0016;

@@ -405,6 +405,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                     }
 
                 }
+                break;
         }
     }
 

@@ -776,6 +776,8 @@ HQ
                 </string>
                 <string name="over_500_characters_inputted" >Please limit your comment to 500 characters
                 </string>
+                <string name="title_activity_create_network" >CreateNetworkActivity
+                </string>
                 <string name="forgotton_password_email_sent" >Email sent
                 </string>
                 <string name="hello_world" >Hello world!
@@ -893,6 +895,16 @@ HQ
                 path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/menu/menu_create_post.xml"
                 qualifiers=""
                 type="menu" />
+            <file
+                name="menu_create_network"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/menu/menu_create_network.xml"
+                qualifiers=""
+                type="menu" />
+            <file
+                name="activity_create_network"
+                path="/Users/davidilizarov/Code/Gate/Android/Gate/app/src/main/res/layout/activity_create_network.xml"
+                qualifiers=""
+                type="layout" />
         </source>
         <source path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/generated/res/rs/debug" />
         <source path="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/generated/res/generated/debug" />

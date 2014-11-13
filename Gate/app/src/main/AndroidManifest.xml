@@ -54,7 +54,13 @@
             android:name="com.unlock.gate.CreatePostActivity"
             android:label="@string/title_activity_create_post"
             android:theme="@android:style/Theme.Holo.Light.Dialog"
-            android:windowSoftInputMode="stateVisible">
+            android:windowSoftInputMode="stateVisible" >
+        </activity>
+        <activity
+            android:name="com.unlock.gate.CreateNetworkActivity"
+            android:label="Create Network"
+            android:theme="@android:style/Theme.Holo.Light.Dialog"
+            android:windowSoftInputMode="stateVisible" >
         </activity>
     </application>
 

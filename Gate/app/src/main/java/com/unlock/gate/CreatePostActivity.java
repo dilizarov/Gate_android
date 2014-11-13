@@ -36,8 +36,14 @@ public class CreatePostActivity extends Activity {
         setContentView(R.layout.activity_create_post);
 
         final Intent intent = getIntent();
-        currentNetwork = (Network) intent.getParcelableExtra("currentNetwork");
-        networks       = intent.getParcelableArrayListExtra("networks");
+
+        if (savedInstanceState != null) {
+            currentNetwork = savedInstanceState.getParcelable("currentNetwork");
+            networks       = savedInstanceState.getParcelableArrayList("networks");
+        } else {
+            currentNetwork = (Network) intent.getParcelableExtra("currentNetwork");
+            networks       = intent.getParcelableArrayListExtra("networks");
+        }
 
         final List<String> items = new ArrayList<String>();
         for ( Network network : networks) items.add(network.getName());
@@ -60,7 +66,7 @@ public class CreatePostActivity extends Activity {
                                        networkSelection.setText(items.get(which));
 
                                        if (currentNetwork != null &&
-                                           postBody.getText().toString().length() > 0) writePost.setEnabled(true);
+                                           postBody.getText().toString().trim().length() > 0) writePost.setEnabled(true);
                                        else writePost.setEnabled(false);
 
                                        dialog.dismiss();
@@ -82,7 +88,7 @@ public class CreatePostActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 0 &&
+                if (s.toString().trim().length() > 0 &&
                     currentNetwork != null) writePost.setEnabled(true);
                 else writePost.setEnabled(false);
             }
@@ -92,7 +98,7 @@ public class CreatePostActivity extends Activity {
             @Override
             public void onClick(View v) {
                 intent.putExtra("network", currentNetwork);
-                intent.putExtra("postBody", postBody.getText().toString());
+                intent.putExtra("postBody", postBody.getText().toString().trim());
                 setResult(RESULT_OK, intent);
 
                 finish();
@@ -100,6 +106,7 @@ public class CreatePostActivity extends Activity {
         });
 
         if (currentNetwork != null) networkSelection.setText(currentNetwork.getName());
+
         if (intent.getStringExtra("postBody") != null) postBody.setText(intent.getStringExtra("postBody"));
 
         // Come back and handle errors completely. Crouton, etc.
@@ -115,6 +122,15 @@ public class CreatePostActivity extends Activity {
         getMenuInflater().inflate(R.menu.menu_create_post, menu);
         return true;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable("currentNetwork", currentNetwork);
+        outState.putParcelableArrayList("networks", networks);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

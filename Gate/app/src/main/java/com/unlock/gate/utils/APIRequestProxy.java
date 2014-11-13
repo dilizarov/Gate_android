@@ -178,4 +178,11 @@ public class APIRequestProxy {
 
         mRequestQueue.add(request);
     }
+
+    public void createNetwork(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(NETWORKS_ENDPOINT), params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
 }
