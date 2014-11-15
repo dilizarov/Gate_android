@@ -2,6 +2,7 @@ package com.unlock.gate;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by davidilizarov on 10/20/14.
@@ -49,6 +54,7 @@ public class MainActivity extends FragmentActivity {
     private IntentFilter[] mNdefExchangeFilters;
     private boolean nfcConfigured = false;
     private boolean mWriteMode = false;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,28 +74,28 @@ public class MainActivity extends FragmentActivity {
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        //configureNFC();
+        configureNFC();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-//        if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
-//
-//            if (!nfcConfigured) configureNFC();
+        if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
 
-//        mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
-//                mNdefExchangeFilters, null);
-        //}
+            if (!nfcConfigured) configureNFC();
+
+        mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
+                mNdefExchangeFilters, null);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        //if (mNfcAdapter != null && mNfcAdapter.isEnabled())
-        //    mNfcAdapter.disableForegroundDispatch(this);
+        if (mNfcAdapter != null && mNfcAdapter.isEnabled())
+            mNfcAdapter.disableForegroundDispatch(this);
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -171,62 +177,79 @@ public class MainActivity extends FragmentActivity {
             NdefMessage[] messages = NfcUtils.getNdefMessages(intent);
             ArrayList<String> payload = NfcUtils.getNdefMessagePayload(messages[0]);
 
-            final String otherUserId   = payload.get(0);
-            final String otherUserName = payload.get(1);
+            final String gatekeeperId      = payload.get(0);
+            final String gatekeeperName    = payload.get(1);
+            String grantedNetworkIdsString = payload.get(2);
 
-            Toast.makeText(MainActivity.this, otherUserId, Toast.LENGTH_LONG).show();
-            //do what I would do.  messages[0] gets me what I want.
+            //grantedNetworkIdsString is "id, id2, id3, id4, id5" where idx is a UUID.
+            ArrayList<String> grantedNetworkIds = new ArrayList<String>(Arrays.asList(grantedNetworkIdsString.split(", ")));
 
-            final ArrayList<Integer> selectedNetworks = new ArrayList();
-            final ArrayList<Network> userNetworks = getNetworks();
-
-            int len = userNetworks.size();
-            CharSequence[] networkNames = new CharSequence[len];
-
-            for (int i = 0; i < len; i++) networkNames[i] = userNetworks.get(i).getName();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Grant" + otherUserName + "access to...")
-                    .setMultiChoiceItems(networkNames, null,
-                            new DialogInterface.OnMultiChoiceClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                                    if (isChecked) {
-                                        selectedNetworks.add(which);
-                                    } else if (selectedNetworks.contains(which)) {
-                                        selectedNetworks.remove(Integer.valueOf(which));
-                                    }
-                                }
-                            })
-                    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ArrayList<String> grantedNetworkIds = new ArrayList<String>();
-                            for (int network_index : selectedNetworks) {
-                                grantedNetworkIds.add(userNetworks.get(network_index).getId());
-                            }
-
-                            grantAccessToNetworks(grantedNetworkIds, otherUserId);
-                            dialog.dismiss();
-                        }
-                    });
-
-            builder.create().show();
+            progressDialog = ProgressDialog.show(MainActivity.this, "", "Unlocking gates...", false, true);
+            grantAccessToNetworks(grantedNetworkIds, gatekeeperId, gatekeeperName);
         }
     }
 
-    public void grantAccessToNetworks(ArrayList<String> grantedNetworkIds, String otherUserId) {
+    public void grantAccessToNetworks(ArrayList<String> grantedNetworkIds, String gatekeeperId, final String gatekeeperName) {
         try {
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
                   .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null))
-                  .put("other_user_id", otherUserId)
                   .put("network_ids", new JSONArray(grantedNetworkIds));
 
-            Response.Listener<Integer> listener = new Response.Listener<Integer>() {
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
-                public void onResponse(Integer response) {
+                public void onResponse(final JSONObject response) {
+                    progressDialog.dismiss();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            JSONArray jsonNetworks = response.optJSONArray("networks");
+                            int len = jsonNetworks.length();
+
+                            final ArrayList<Network> newNetworks = new ArrayList<Network>();
+                            final ArrayList<String> networkNames = new ArrayList<String>();
+
+                            for (int i = 0; i < len; i++) {
+                                JSONObject jsonNetwork = jsonNetworks.optJSONObject(i);
+                                Network network = new Network(jsonNetwork.optString("external_id"),
+                                        jsonNetwork.optString("name"),
+                                        jsonNetwork.optInt("users_count"),
+                                        jsonNetwork.optJSONObject("creator").optString("name"));
+
+                                networkNames.add(network.getName());
+                                newNetworks.add(network);
+                            }
+
+                            Collections.sort(networkNames, String.CASE_INSENSITIVE_ORDER);
+                            Collections.sort(newNetworks, new Comparator<Network>() {
+                                public int compare(Network n1, Network n2) {
+                                    return n1.getName().compareToIgnoreCase(n2.getName());
+                                }
+                            });
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
+                                    networksFragment.addNetworksToList(newNetworks);
+
+                                    CharSequence[] items = networkNames.toArray(new CharSequence[networkNames.size()]);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                    builder.setTitle(gatekeeperName + " granted you access to these networks...")
+                                           .setItems(items, new DialogInterface.OnClickListener() {
+                                               @Override
+                                               public void onClick(DialogInterface dialog, int which) {
+                                                   dialog.dismiss();
+                                                   networksFragment.adaptList();
+                                                   showFeed(newNetworks.get(which));
+                                               }
+                                           }).create().show();
+                                }
+                            });
+                        }
+                    }).start();
 
                 }
             };
@@ -234,11 +257,12 @@ public class MainActivity extends FragmentActivity {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                        
+                    progressDialog.dismiss();
+                    Log.v("Somethin dun fucked up", "idk wut it wuz");
                 }
             };
 
-            APIRequestManager.getInstance().doRequest().grantAccessToNetworks(params, listener, errorListener);
+            APIRequestManager.getInstance().doRequest().grantAccessToNetworks(gatekeeperId, params, listener, errorListener);
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
@@ -285,12 +309,6 @@ public class MainActivity extends FragmentActivity {
         }
 
         mNdefExchangeFilters = new IntentFilter[] { ndefDetected };
-
-        String userId     = mSessionPreferences.getString(getString(R.string.user_id_key), null);
-        String userName   = mSessionPreferences.getString(getString(R.string.user_name_key), null);
-
-        mNfcAdapter.setNdefPushMessage(
-                NfcUtils.stringsToNdefMessage(userId, userName), MainActivity.this);
     }
 
 }

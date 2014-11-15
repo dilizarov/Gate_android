@@ -237,16 +237,14 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
-                public void onResponse(JSONObject response) {
-
-                    final JSONObject jsonResponse = response;
+                public void onResponse(final JSONObject response) {
 
                     new Thread(new Runnable() {
 
                         public void run() {
                             networkItems.clear();
 
-                            JSONArray jsonNetworks = jsonResponse.optJSONArray("networks");
+                            JSONArray jsonNetworks = response.optJSONArray("networks");
                             int len = jsonNetworks.length();
                             for (int i = 0; i < len; i++) {
                                 JSONObject jsonNetwork = jsonNetworks.optJSONObject(i);
@@ -382,29 +380,10 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                         1,
                                         jsonNetwork.optJSONObject("creator").optString("name"));
 
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        int len = networkItems.size();
-                                        for (int i = 0; i < len; i++) {
-                                            String name = networkItems.get(i).getName();
-                                            if (name.compareToIgnoreCase(network.getName()) > 0) {
-                                                networkItems.add(i, network);
-                                                break;
-                                            }
-                                        }
+                                ArrayList<Network> networks = new ArrayList<Network>();
+                                networks.add(network);
 
-                                        getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                listAdapter = new NetworksListAdapter(getActivity(), networkItems);
-                                                networks.setAdapter(listAdapter);
-                                                listAdapter.notifyDataSetChanged();
-                                                networks.setSelection(0);
-                                            }
-                                        });
-                                    }
-                                }).start();
+                                addNetworksToList(networks);
                             }
                         };
 
@@ -447,6 +426,49 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
     public ArrayList<Network> getNetworks() {
         return networkItems;
+    }
+
+    public void addNetworksToList(final ArrayList<Network> newNetworks) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                // networkItems is a sorted array. newNetworks will be a very small array.
+                // Ultimately, this shouldn't take long at all, but if for some reason we see it
+                // lagging, then we could speed this up with another algorithm.
+
+                int len = newNetworks.size();
+                for (int i = 0; i < len; i++) {
+                    Network network = newNetworks.get(i);
+
+                    int length = networkItems.size();
+                    for (int j = 0; j < length; j++) {
+                        String name = networkItems.get(j).getName();
+                        if (name.compareToIgnoreCase(network.getName()) > 0) {
+                            networkItems.add(j, network);
+                            break;
+                        }
+                    }
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listAdapter = new NetworksListAdapter(getActivity(), networkItems);
+                        networks.setAdapter(listAdapter);
+                        listAdapter.notifyDataSetChanged();
+                        networks.setSelection(0);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void adaptList() {
+        listAdapter = new NetworksListAdapter(getActivity(), networkItems);
+        networks.setAdapter(listAdapter);
+        listAdapter.notifyDataSetChanged();
+        networks.setSelection(0);
     }
 
     public interface OnFragmentInteractionListener {

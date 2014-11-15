@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -40,6 +39,8 @@ public class UnlockGateActivity extends Activity {
         networks = getIntent().getParcelableArrayListExtra("networks");
         mSessionPreferences = getSharedPreferences(
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
+
+        selectedNetworkIds = new ArrayList<String>();
 
         instantiateViews();
 
@@ -74,26 +75,19 @@ public class UnlockGateActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
 
-                        SparseBooleanArray checkedNetworks = networksList.getCheckedItemPositions();
+                        int len = networksList.getCount();
+                        for (int i = 0; i < len; i++) {
 
-                        if (checkedNetworks != null) {
-                            int len = checkedNetworks.size();
-
-                            Log.v("checkedNetworks", checkedNetworks.toString());
-
-                            for (int i = 0; i < len; i++) {
-                                if (checkedNetworks.valueAt(i)) {
-                                    int key = checkedNetworks.keyAt(i);
-                                    Log.v("network:", networks.get(key).getName());
-                                    selectedNetworkIds.add(networks.get(key).getId());
-                                }
-                            }
+                              if (networksList.isItemChecked(i)) {
+                                  Log.v("checked item", networks.get(i).getName());
+                                  selectedNetworkIds.add(networks.get(i).getId());
+                              }
                         }
+
 
                         runOnUiThread(new Runnable() {
                             @Override
