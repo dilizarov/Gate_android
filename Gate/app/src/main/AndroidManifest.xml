@@ -13,8 +13,10 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.NFC" />
-    <uses-feature android:name="android.hardware.nfc"
-                  android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
 
     <android:uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -64,6 +66,16 @@
             android:label="Create Network"
             android:theme="@android:style/Theme.Holo.Light.Dialog"
             android:windowSoftInputMode="stateVisible" >
+        </activity>
+        <activity
+            android:name="com.unlock.gate.UnlockGateActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_unlock_gate"
+            android:parentActivityName="com.unlock.gate.MainActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unlock.gate.MainActivity" />
         </activity>
     </application>
 

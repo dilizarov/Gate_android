@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#0099cc"
+             tools:context="com.unlock.gate.UnlockGateActivity">
+
+    <RelativeLayout
+        android:id="@+id/networkSelector"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <TextView
+            android:id="@+id/unlockGateMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unlock the gate to..."
+            android:layout_marginTop="66dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="20dp"/>
+
+        <ListView
+            android:id="@+id/networksList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_below="@+id/unlockGateMessage"
+            android:layout_above="@+id/ready"/>
+
+        <TextView
+            android:id="@+id/ready"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="66dp"
+            android:paddingTop="10dp"
+            android:text="Ready"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="30dp"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/bumpPhones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Bump phones with recruit"
+        android:visibility="gone" />
+
+</RelativeLayout>

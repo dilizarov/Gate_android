@@ -2,6 +2,18 @@
 <pre-dex-items>
 
     <item
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-92fb82c8e91c3b1c1f395fa8548f9684bc1055c9.jar"
+        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
+    <item
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/classes-b98c2d367b4dbc67538f7fdf0a269507782c9fe2.jar"
+        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="686344a780033e4ba22b926cd225f8d4941247e6"/>
+    <item
         dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/gson-2.3-15a90e004f09c3d5a157f86bee32de55da951434.jar"
         jar="/Users/davidilizarov/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3/5fc52c41ef0239d1093a1eb7c3697036183677ce/gson-2.3.jar"
         jumboMode="false"
@@ -13,24 +25,6 @@
         jumboMode="false"
         revision="20.0.0"
         sha1="06ca4ea902f14efb76284d918edb085df33cc365"/>
-    <item
-        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/crouton-1.8.2-ddf7f9e78f06fcdcbdabdede8a65f5ab6df9870d.jar"
-        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/libs/crouton-1.8.2.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="ba14b78124a9945dab574c195b8b60633fd61f99"/>
-    <item
-        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/joda-time-2.5-aa193ffc4babc1324ecb96a8a80b1d299c71ab7b.jar"
-        jar="/Users/davidilizarov/.gradle/caches/modules-2/files-2.1/joda-time/joda-time/2.5/c73038a3688525aad5cf33409df483178290cd64/joda-time-2.5.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="c73038a3688525aad5cf33409df483178290cd64"/>
-    <item
-        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/classes-81283e781c47f9f933b9bc2132d50c4cd130afa7.jar"
-        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.castorflex.smoothprogressbar/library/0.4.0/classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="6ca319f998430aa20c4dde97ba6df213d6cf3dd0"/>
     <item
         dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/classes-dffadb8ee155d0436af939db847bbe7473547048.jar"
         jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.astuetz/pagerslidingtabstrip/1.0.1/classes.jar"
@@ -44,16 +38,34 @@
         revision="20.0.0"
         sha1="d71573c9c5ea98a8db47ad6ff993a63d492b3bfa"/>
     <item
-        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/support-v4-19.1.0-d37316cfe7cd117a3866b94e08c943b772c0bb26.jar"
-        jar="/Users/davidilizarov/Code/Android/adt-bundle-mac-x86_64-20140702/sdk/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/crouton-1.8.2-ddf7f9e78f06fcdcbdabdede8a65f5ab6df9870d.jar"
+        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/libs/crouton-1.8.2.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
+        sha1="ba14b78124a9945dab574c195b8b60633fd61f99"/>
+    <item
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/joda-time-2.5-aa193ffc4babc1324ecb96a8a80b1d299c71ab7b.jar"
+        jar="/Users/davidilizarov/.gradle/caches/modules-2/files-2.1/joda-time/joda-time/2.5/c73038a3688525aad5cf33409df483178290cd64/joda-time-2.5.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="c73038a3688525aad5cf33409df483178290cd64"/>
     <item
         dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/volley_20141013-0832c3047103e9f9af595f3212694b6018c11988.jar"
         jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/libs/volley_20141013.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="29476783cc02754de51a9ebec005716307649b65"/>
+    <item
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/classes-81283e781c47f9f933b9bc2132d50c4cd130afa7.jar"
+        jar="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/exploded-aar/com.github.castorflex.smoothprogressbar/library/0.4.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="6ca319f998430aa20c4dde97ba6df213d6cf3dd0"/>
+    <item
+        dex="/Users/davidilizarov/Code/Gate/Android/Gate/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-83056d6cedf5738e21b7ca1f1137aaa19c693534.jar"
+        jar="/Users/davidilizarov/Code/Android/adt-bundle-mac-x86_64-20140702/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e"/>
 
 </pre-dex-items>

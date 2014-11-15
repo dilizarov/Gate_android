@@ -32,8 +32,13 @@ public class NfcUtils {
         return new NdefMessage(records);
     }
 
-    public static String getNdefMessagePayload(NdefMessage message) {
-        return new String(message.getRecords()[0].getPayload());
+    public static ArrayList<String> getNdefMessagePayload(NdefMessage message) {
+        NdefRecord[] records = message.getRecords();
+
+        ArrayList<String> payload = new ArrayList<String>();
+
+        for (NdefRecord record : records) payload.add(new String(record.getPayload()));
+        return payload;
     }
 
     public static NdefMessage[] getNdefMessages(Intent intent) {

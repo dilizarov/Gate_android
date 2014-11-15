@@ -185,4 +185,16 @@ public class APIRequestProxy {
 
         mRequestQueue.add(request);
     }
+
+    public void grantAccessToNetworks(JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+
+        StringBuilder buildUrl  = new StringBuilder(BASE_URL);
+        buildUrl.append("gatekeeper_hq")
+                .append("/")
+                .append("grant_access.json");
+
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.POST, buildUrl.toString(), params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
 }

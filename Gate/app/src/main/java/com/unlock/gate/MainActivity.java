@@ -14,12 +14,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -27,10 +25,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.astuetz.PagerSlidingTabStrip;
 import com.unlock.gate.models.Network;
-import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.NfcUtils;
-import com.unlock.gate.utils.VolleyErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +47,7 @@ public class MainActivity extends FragmentActivity {
     private NfcAdapter mNfcAdapter;
     private PendingIntent mNfcPendingIntent;
     private IntentFilter[] mNdefExchangeFilters;
+    private boolean nfcConfigured = false;
     private boolean mWriteMode = false;
 
     @Override
@@ -71,42 +68,28 @@ public class MainActivity extends FragmentActivity {
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
-        mNfcPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-        IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-
-        try {
-            ndefDetected.addDataType("text/plain");
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            e.printStackTrace();
-        }
-
-        mNdefExchangeFilters = new IntentFilter[] { ndefDetected };
-
-        String userId     = mSessionPreferences.getString(getString(R.string.user_id_key), null);
-        String userName   = mSessionPreferences.getString(getString(R.string.user_name_key), null);
-
-        mNfcAdapter.setNdefPushMessage(
-                NfcUtils.stringsToNdefMessage(userId, userName), MainActivity.this);
+        //configureNFC();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if (mNfcAdapter != null && mNfcAdapter.isEnabled())
-            mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
-                mNdefExchangeFilters, null);
+//        if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+//
+//            if (!nfcConfigured) configureNFC();
+
+//        mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
+//                mNdefExchangeFilters, null);
+        //}
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        if (mNfcAdapter != null && mNfcAdapter.isEnabled())
-            mNfcAdapter.disableForegroundDispatch(this);
+        //if (mNfcAdapter != null && mNfcAdapter.isEnabled())
+        //    mNfcAdapter.disableForegroundDispatch(this);
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -168,11 +151,9 @@ public class MainActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_create:
-                switch (pager.getCurrentItem()) {
-                    case 0: createPost(); break;
-                    case 1: createNetwork(); break;
-                    case 2: createKey(); break;
-                }
+                Intent intent = new Intent(this, UnlockGateActivity.class);
+                intent.putParcelableArrayListExtra("networks", getNetworks());
+                startActivity(intent);
                 return true;
             case R.id.action_offer_advice:
                 return true;
@@ -188,8 +169,10 @@ public class MainActivity extends FragmentActivity {
     protected void onNewIntent(Intent intent) {
         if (!mWriteMode && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             NdefMessage[] messages = NfcUtils.getNdefMessages(intent);
-            final String otherUserId   = NfcUtils.getNdefMessagePayload(messages[0]);
-            final String otherUserName = NfcUtils.getNdefMessagePayload(messages[1]);
+            ArrayList<String> payload = NfcUtils.getNdefMessagePayload(messages[0]);
+
+            final String otherUserId   = payload.get(0);
+            final String otherUserName = payload.get(1);
 
             Toast.makeText(MainActivity.this, otherUserId, Toast.LENGTH_LONG).show();
             //do what I would do.  messages[0] gets me what I want.
@@ -203,7 +186,7 @@ public class MainActivity extends FragmentActivity {
             for (int i = 0; i < len; i++) networkNames[i] = userNetworks.get(i).getName();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Grant Irene access to...")
+            builder.setTitle("Grant" + otherUserName + "access to...")
                     .setMultiChoiceItems(networkNames, null,
                             new DialogInterface.OnMultiChoiceClickListener() {
                                 @Override
@@ -239,11 +222,11 @@ public class MainActivity extends FragmentActivity {
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
                   .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null))
                   .put("other_user_id", otherUserId)
-                  .put("networks", new JSONArray(grantedNetworkIds));
+                  .put("network_ids", new JSONArray(grantedNetworkIds));
 
-            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            Response.Listener<Integer> listener = new Response.Listener<Integer>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onResponse(Integer response) {
 
                 }
             };
@@ -255,7 +238,7 @@ public class MainActivity extends FragmentActivity {
                 }
             };
 
-            APIRequestManager.getInstance().doRequest().grantAccess(params, listener, errorListener);
+            APIRequestManager.getInstance().doRequest().grantAccessToNetworks(params, listener, errorListener);
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
@@ -287,6 +270,27 @@ public class MainActivity extends FragmentActivity {
     public ArrayList<Network> getNetworks() {
         NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
         return networksFragment.getNetworks();
+    }
+
+    private void configureNFC() {
+        mNfcPendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+        IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+
+        try {
+            ndefDetected.addDataType("text/plain");
+        } catch (IntentFilter.MalformedMimeTypeException e) {
+            e.printStackTrace();
+        }
+
+        mNdefExchangeFilters = new IntentFilter[] { ndefDetected };
+
+        String userId     = mSessionPreferences.getString(getString(R.string.user_id_key), null);
+        String userName   = mSessionPreferences.getString(getString(R.string.user_name_key), null);
+
+        mNfcAdapter.setNdefPushMessage(
+                NfcUtils.stringsToNdefMessage(userId, userName), MainActivity.this);
     }
 
 }
