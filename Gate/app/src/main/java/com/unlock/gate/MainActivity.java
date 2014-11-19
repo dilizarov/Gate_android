@@ -229,11 +229,14 @@ public class MainActivity extends FragmentActivity {
                                 }
                             });
 
+                            final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
+                            networksFragment.addNetworksToList(newNetworks);
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
-                                    networksFragment.addNetworksToList(newNetworks);
+
+                                    networksFragment.adaptList();
 
                                     CharSequence[] items = networkNames.toArray(new CharSequence[networkNames.size()]);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -242,7 +245,6 @@ public class MainActivity extends FragmentActivity {
                                                @Override
                                                public void onClick(DialogInterface dialog, int which) {
                                                    dialog.dismiss();
-                                                   networksFragment.adaptList();
                                                    showFeed(newNetworks.get(which));
                                                }
                                            }).create().show();
@@ -269,8 +271,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void logout() {
-        Toast.makeText(this, "Logging out", Toast.LENGTH_SHORT).show();
     }
+
 
     public void createPost() {
         Toast.makeText(this, "Making feed_item", Toast.LENGTH_SHORT).show();
