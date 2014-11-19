@@ -56,9 +56,13 @@ public class APIRequestProxy {
 		mRequestQueue.add(request);
 	}
 
-	public void sendForgottonPasswordEmail(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-		//TODO: Write this function and the associated server code required to pull it off
-	}
+    public void sendForgottonPasswordEmail(JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+        String url = "http://infinite-river-7560.herokuapp.com/forgot_password?email=" + params.optString("email");
+
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
 
     public void getNetworks(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         //Sadly, Volley does not offer a very fluid experience for get requests with params.
@@ -210,4 +214,5 @@ public class APIRequestProxy {
 
         mRequestQueue.add(request);
     }
+
 }

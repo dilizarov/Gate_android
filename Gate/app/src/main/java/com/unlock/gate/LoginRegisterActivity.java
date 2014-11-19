@@ -413,18 +413,14 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 			try {
 				final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", 
 						getString(R.string.progress_dialog_server_processing_request), false, true);
-				
-				JSONObject user = new JSONObject();
-				user.put("email", mEmail);
-			
 			
 				JSONObject params = new JSONObject();
 			
-				params.put("user", user);
+				params.put("email", mEmail);
 			
-				Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+				Response.Listener<Integer> listener = new Response.Listener<Integer>() {
 					@Override
-					public void onResponse(JSONObject response) {
+					public void onResponse(Integer response) {
 												
 						progressDialog.dismiss();
 						
