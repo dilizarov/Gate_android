@@ -199,4 +199,15 @@ public class APIRequestProxy {
 
         mRequestQueue.add(request);
     }
+
+    public void logout(JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+        //TODO: Probably want to figure out a better way to make these resourcesful strings with consideration of getAbsoluteUrl method.
+        //TODO: Not a big deal though
+
+        String url = addAuthAsURLParams(getAbsoluteUrl(SESSION_ENDPOINT), params);
+
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.DELETE, url, params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
 }

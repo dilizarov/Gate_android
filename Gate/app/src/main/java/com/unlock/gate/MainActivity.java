@@ -162,8 +162,11 @@ public class MainActivity extends FragmentActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_offer_advice:
+                test_post_bump();
                 return true;
             case R.id.action_logout:
+                progressDialog = ProgressDialog.show(MainActivity.this, "",
+                        getString(R.string.progress_dialog_server_processing_request), false, true);
                 logout();
                 return true;
             default:
@@ -271,6 +274,37 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void logout() {
+        try {
+
+            JSONObject params = new JSONObject();
+            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
+                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+
+            Response.Listener<Integer> listener = new Response.Listener<Integer>() {
+                @Override
+                public void onResponse(final Integer response) {
+                    progressDialog.dismiss();
+                    SharedPreferences.Editor editor = mSessionPreferences.edit();
+                    editor.clear().commit();
+
+                    Intent intent = new Intent(MainActivity.this, LoginRegisterActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progressDialog.dismiss();
+                    Toast.makeText(MainActivity.this, "Sorry, internet welped", Toast.LENGTH_LONG).show();
+                }
+            };
+
+            APIRequestManager.getInstance().doRequest().logout(params, listener, errorListener);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
     }
 
 
@@ -311,6 +345,58 @@ public class MainActivity extends FragmentActivity {
         }
 
         mNdefExchangeFilters = new IntentFilter[] { ndefDetected };
+    }
+
+    private void test_post_bump() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final ArrayList<Network> newNetworks = new ArrayList<Network>();
+                final ArrayList<String> networkNames = new ArrayList<String>();
+
+                for (int i = 0; i < 14; i++) {
+                    Network network = new Network("wowowowow" + i,
+                            "zgme" + i,
+                            14,
+                            "Squidward" + i);
+
+                    networkNames.add(network.getName());
+                    newNetworks.add(network);
+                }
+
+                Collections.sort(networkNames, String.CASE_INSENSITIVE_ORDER);
+                Collections.sort(newNetworks, new Comparator<Network>() {
+                    public int compare(Network n1, Network n2) {
+                        return n1.getName().compareToIgnoreCase(n2.getName());
+                    }
+                });
+
+                final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
+                networksFragment.addNetworksToList(newNetworks);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        networksFragment.adaptList();
+
+                        CharSequence[] items = networkNames.toArray(new CharSequence[networkNames.size()]);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("Irene Nguyen" + " granted you access to these networks...")
+                                .setItems(items, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        Toast.makeText(MainActivity.this, "No", Toast.LENGTH_LONG).show();
+                                    }
+                                }).create().show();
+                    }
+                });
+
+            }
+        }).start();
+
     }
 
 }
