@@ -48,7 +48,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a1e1079-cb2b-4bdf-9204-b96003f4f776" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java" />
     </list>
     <ignored path="Android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -106,11 +106,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Post.java" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="Post.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.58498025" vertical-offset="1519" max-vertical-offset="2025">
-                  <caret line="156" column="5" selection-start-line="156" selection-start-column="5" selection-end-line="156" selection-end-column="5" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="630" max-vertical-offset="2025">
+                  <caret line="94" column="5" selection-start-line="80" selection-start-column="4" selection-end-line="94" selection-end-column="5" />
                   <folding>
                     <element signature="e#2065#2066#0" expanded="true" />
                     <element signature="e#2113#2114#0" expanded="true" />
@@ -125,12 +125,23 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Comment.java" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="Comment.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1350">
-                  <caret line="65" column="34" selection-start-line="65" selection-start-column="34" selection-end-line="65" selection-end-column="34" />
-                  <folding />
+                <state vertical-scroll-proportion="0.19075145" vertical-offset="1116" max-vertical-offset="1710">
+                  <caret line="102" column="21" selection-start-line="102" selection-start-column="21" selection-end-line="102" selection-end-column="21" />
+                  <folding>
+                    <element signature="e#804#805#0" expanded="true" />
+                    <element signature="e#829#830#0" expanded="true" />
+                    <element signature="e#1184#1185#0" expanded="true" />
+                    <element signature="e#1232#1233#0" expanded="true" />
+                    <element signature="e#1275#1276#0" expanded="true" />
+                    <element signature="e#1331#1332#0" expanded="true" />
+                    <element signature="e#1363#1364#0" expanded="true" />
+                    <element signature="e#1412#1413#0" expanded="true" />
+                    <element signature="e#1453#1454#0" expanded="true" />
+                    <element signature="e#1503#1504#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -1408,7 +1419,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CommentsActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/FeedListAdapter.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_comments.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/SpinnerHintAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_feed.xml" />
@@ -1428,6 +1438,7 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/LoginRegisterActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/APIRequestProxy.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java" />
       </list>
     </option>
   </component>
@@ -2503,14 +2514,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="141" max-vertical-offset="1350">
-          <caret line="65" column="34" selection-start-line="65" selection-start-column="34" selection-end-line="65" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Network.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="1080">
@@ -2521,8 +2524,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.58498025" vertical-offset="1519" max-vertical-offset="2025">
-          <caret line="156" column="5" selection-start-line="156" selection-start-column="5" selection-end-line="156" selection-end-column="5" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="630" max-vertical-offset="2025">
+          <caret line="94" column="5" selection-start-line="80" selection-start-column="4" selection-end-line="94" selection-end-column="5" />
           <folding>
             <element signature="e#2065#2066#0" expanded="true" />
             <element signature="e#2113#2114#0" expanded="true" />
@@ -2532,6 +2535,25 @@
             <element signature="e#2293#2294#0" expanded="true" />
             <element signature="e#2334#2335#0" expanded="true" />
             <element signature="e#2384#2385#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.19075145" vertical-offset="1116" max-vertical-offset="1710">
+          <caret line="102" column="21" selection-start-line="102" selection-start-column="21" selection-end-line="102" selection-end-column="21" />
+          <folding>
+            <element signature="e#804#805#0" expanded="true" />
+            <element signature="e#829#830#0" expanded="true" />
+            <element signature="e#1184#1185#0" expanded="true" />
+            <element signature="e#1232#1233#0" expanded="true" />
+            <element signature="e#1275#1276#0" expanded="true" />
+            <element signature="e#1331#1332#0" expanded="true" />
+            <element signature="e#1363#1364#0" expanded="true" />
+            <element signature="e#1412#1413#0" expanded="true" />
+            <element signature="e#1453#1454#0" expanded="true" />
+            <element signature="e#1503#1504#0" expanded="true" />
           </folding>
         </state>
       </provider>

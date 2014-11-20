@@ -8,18 +8,20 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 
 /**
- * Created by davidilizarov on 11/10/14.
+ * Reason for lots of String use same as Post
  */
 public class Comment implements Parcelable {
-    private String id, name, body, timestamp;
+    private String id, name, body, upCount, uped, timestamp;
     private DateTime timeCreated;
 
     public Comment(){}
 
-    public Comment(String id, String name, String body, String timeCreated) {
+    public Comment(String id, String name, String body, int upCount, boolean uped, String timeCreated) {
         this.id = id;
         this.name = name;
         this.body = body;
+        this.upCount = Integer.toString(upCount);
+        this.uped = Boolean.toString(uped);
         this.timeCreated = new DateTime(timeCreated);
         setTimestamp();
     }
@@ -48,6 +50,22 @@ public class Comment implements Parcelable {
         this.body = body;
     }
 
+    public int getUpCount() {
+        return Integer.parseInt(upCount);
+    }
+
+    public void setUpCount(int upCount) {
+        this.upCount = Integer.toString(upCount);
+    }
+
+    public boolean getUped() {
+        return Boolean.parseBoolean(uped);
+    }
+
+    public void setUped(boolean uped) {
+        this.uped = Boolean.toString(uped);
+    }
+
     public String getTimestamp() {
         return timestamp;
     }
@@ -74,14 +92,16 @@ public class Comment implements Parcelable {
 
     //Parcelable implementation
     public Comment(Parcel in) {
-        String[] data = new String[4];
+        String[] data = new String[6];
 
         in.readStringArray(data);
 
-        this.id   = data[0];
-        this.name = data[1];
-        this.body = data[2];
-        this.timeCreated = DateTime.parse(data[3]);
+        this.id      = data[0];
+        this.name    = data[1];
+        this.body    = data[2];
+        this.upCount = data[3];
+        this.uped    = data[4];
+        this.timeCreated = DateTime.parse(data[5]);
         setTimestamp();
     }
 
@@ -96,6 +116,8 @@ public class Comment implements Parcelable {
                 this.id,
                 this.name,
                 this.body,
+                this.upCount,
+                this.uped,
                 this.timeCreated.toString()
         });
     }
