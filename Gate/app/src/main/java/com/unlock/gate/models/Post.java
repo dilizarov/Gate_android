@@ -8,31 +8,26 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 
 /**
- * Created by davidilizarov on 10/22/14.
+ * For the most part, everything is stored as a String because it makes the Parcelable
+ * implementation much simpler. Conversions when getting and setting are easy.
  */
 public class Post implements Parcelable {
-    private String id, name, body, networkId, networkName, commentCount, timestamp;
+    private String id, name, body, networkId, networkName, commentCount, upCount, uped, timestamp;
     private DateTime timeCreated;
 
     public Post(){}
 
-    public Post(String id, String name, String body, String networkId, String networkName, int commentCount, String timeCreated) {
+    public Post(String id, String name, String body, String networkId, String networkName, int commentCount, int upCount, boolean uped, String timeCreated) {
         this.id = id;
         this.name = name;
         this.body = body;
         this.networkId = networkId;
         this.networkName = networkName;
         this.commentCount = Integer.toString(commentCount);
+        this.upCount = Integer.toString(upCount);
+        this.uped = Boolean.toString(uped);
         this.timeCreated = new DateTime(timeCreated);
         setTimestamp();
-    }
-
-    public int getCommentCount() {
-        return Integer.parseInt(commentCount);
-    }
-
-    public void setCommentCount(int commentCount) {
-        this.commentCount = Integer.toString(commentCount);
     }
 
     public String getId() {
@@ -75,6 +70,30 @@ public class Post implements Parcelable {
         this.networkName = networkName;
     }
 
+    public int getCommentCount() {
+        return Integer.parseInt(commentCount);
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = Integer.toString(commentCount);
+    }
+
+    public int getUpCount() {
+        return Integer.parseInt(upCount);
+    }
+
+    public void setUpCount(int upCount) {
+        this.upCount = Integer.toString(upCount);
+    }
+
+    public boolean getUped() {
+        return Boolean.parseBoolean(uped);
+    }
+
+    public void setUped(boolean uped) {
+        this.uped = Boolean.toString(uped);
+    }
+
     public String getTimestamp() {
         return timestamp;
     }
@@ -101,7 +120,7 @@ public class Post implements Parcelable {
 
     //Parcelable implementation
     public Post(Parcel in) {
-        String[] data = new String[7];
+        String[] data = new String[9];
 
         in.readStringArray(data);
 
@@ -111,7 +130,9 @@ public class Post implements Parcelable {
         this.networkId    = data[3];
         this.networkName  = data[4];
         this.commentCount = data[5];
-        this.timeCreated = DateTime.parse(data[6]);
+        this.upCount      = data[6];
+        this.uped         = data[7];
+        this.timeCreated = DateTime.parse(data[8]);
         setTimestamp();
     }
 
@@ -129,6 +150,8 @@ public class Post implements Parcelable {
             this.networkId,
             this.networkName,
             this.commentCount,
+            this.upCount,
+            this.uped,
             this.timeCreated.toString()
         });
     }
