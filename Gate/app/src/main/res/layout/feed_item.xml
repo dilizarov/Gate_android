@@ -32,9 +32,29 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/commentsCount"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/upPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text="UP"/>
+
+        <TextView
+            android:id="@+id/upCountPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"/>
+
+        <TextView
+            android:id="@+id/commentsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -48,7 +48,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a1e1079-cb2b-4bdf-9204-b96003f4f776" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/dummy/DummyContent.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/util/SystemUiHider.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/util/SystemUiHiderBase.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/util/SystemUiHiderHoneycomb.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/APIRequestProxy.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/APIRequestProxy.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CommentsActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CommentsActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/FeedFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/FeedFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/FeedListAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/FeedListAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -70,28 +79,34 @@
     <favorites_list name="Android" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="vertical" split-proportion="0.59534883">
+    <splitter split-orientation="vertical" split-proportion="0.8172867">
       <split-first>
         <leaf>
-          <file leaf-file-name="activity_unlock_gate.xml" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_unlock_gate.xml">
+          <file leaf-file-name="CommentsActivity.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CommentsActivity.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="401" max-vertical-offset="885">
-                  <caret line="26" column="31" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
-                  <folding />
+                <state vertical-scroll-proportion="0.0" vertical-offset="1627" max-vertical-offset="3210">
+                  <caret line="172" column="11" selection-start-line="172" selection-start-column="11" selection-end-line="172" selection-end-column="11" />
+                  <folding>
+                    <element signature="e#6197#6236#0" expanded="true" />
+                    <element signature="e#6332#6380#0" expanded="true" />
+                  </folding>
                 </state>
-              </provider>
-              <provider editor-type-id="android-designer">
-                <state />
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="UnlockGateActivity.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/UnlockGateActivity.java">
+          <file leaf-file-name="FeedListAdapter.java" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/FeedListAdapter.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1515">
-                  <caret line="102" column="35" selection-start-line="102" selection-start-column="35" selection-end-line="102" selection-end-column="35" />
-                  <folding />
+                <state vertical-scroll-proportion="0.29638556" vertical-offset="687" max-vertical-offset="1890">
+                  <caret line="82" column="9" selection-start-line="82" selection-start-column="9" selection-end-line="82" selection-end-column="9" />
+                  <folding>
+                    <element signature="e#2462#2663#0" expanded="true" />
+                    <element signature="e#2863#5250#0" expanded="true" />
+                    <element signature="e#3951#5007#0" expanded="true" />
+                    <element signature="e#4984#4985#0" expanded="true" />
+                    <element signature="e#5239#5240#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -99,96 +114,26 @@
           <file leaf-file-name="FeedFragment.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/FeedFragment.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="450" max-vertical-offset="5835">
-                  <caret line="58" column="19" selection-start-line="58" selection-start-column="19" selection-end-line="58" selection-end-column="19" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Post.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="630" max-vertical-offset="2025">
-                  <caret line="94" column="5" selection-start-line="80" selection-start-column="4" selection-end-line="94" selection-end-column="5" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="2040" max-vertical-offset="5955">
+                  <caret line="183" column="67" selection-start-line="183" selection-start-column="67" selection-end-line="183" selection-end-column="67" />
                   <folding>
-                    <element signature="e#2065#2066#0" expanded="true" />
-                    <element signature="e#2113#2114#0" expanded="true" />
-                    <element signature="e#2156#2157#0" expanded="true" />
-                    <element signature="e#2212#2213#0" expanded="true" />
-                    <element signature="e#2244#2245#0" expanded="true" />
-                    <element signature="e#2293#2294#0" expanded="true" />
-                    <element signature="e#2334#2335#0" expanded="true" />
-                    <element signature="e#2384#2385#0" expanded="true" />
+                    <element signature="e#6337#6368#0" expanded="true" />
+                    <element signature="e#6444#6483#0" expanded="true" />
+                    <element signature="e#11994#12396#0" expanded="true" />
+                    <element signature="e#12385#12386#0" expanded="true" />
                   </folding>
                 </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Comment.java" pinned="false" current="true" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.19075145" vertical-offset="1116" max-vertical-offset="1710">
-                  <caret line="102" column="21" selection-start-line="102" selection-start-column="21" selection-end-line="102" selection-end-column="21" />
-                  <folding>
-                    <element signature="e#804#805#0" expanded="true" />
-                    <element signature="e#829#830#0" expanded="true" />
-                    <element signature="e#1184#1185#0" expanded="true" />
-                    <element signature="e#1232#1233#0" expanded="true" />
-                    <element signature="e#1275#1276#0" expanded="true" />
-                    <element signature="e#1331#1332#0" expanded="true" />
-                    <element signature="e#1363#1364#0" expanded="true" />
-                    <element signature="e#1412#1413#0" expanded="true" />
-                    <element signature="e#1453#1454#0" expanded="true" />
-                    <element signature="e#1503#1504#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Network.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Network.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="1080">
-                  <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="activity_login_register.xml" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_login_register.xml">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-0.44444445" vertical-offset="708" max-vertical-offset="1485">
-                  <caret line="48" column="21" selection-start-line="48" selection-start-column="21" selection-end-line="48" selection-end-column="21" />
-                  <folding />
-                </state>
-              </provider>
-              <provider editor-type-id="android-designer">
-                <state />
               </provider>
             </entry>
           </file>
           <file leaf-file-name="NetworksFragment.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/NetworksFragment.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="6137" max-vertical-offset="6510">
+                <state vertical-scroll-proportion="0.0" vertical-offset="2362" max-vertical-offset="6240">
                   <caret line="451" column="22" selection-start-line="451" selection-start-column="22" selection-end-line="451" selection-end-column="22" />
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="e#9042#10992#0" expanded="true" />
-                    <element signature="e#10977#10978#0" expanded="true" />
-                    <element signature="e#11046#11544#0" expanded="true" />
-                    <element signature="e#11529#11530#0" expanded="true" />
-                    <element signature="e#12175#13160#0" expanded="true" />
-                    <element signature="e#13145#13146#0" expanded="true" />
-                    <element signature="e#13214#13631#0" expanded="true" />
-                    <element signature="e#13616#13617#0" expanded="true" />
-                    <element signature="e#15099#15919#0" expanded="true" />
                     <element signature="e#15734#15743#0" expanded="true" />
-                    <element signature="e#15892#15893#0" expanded="true" />
-                    <element signature="e#15985#16891#0" expanded="true" />
-                    <element signature="e#16864#16865#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -197,23 +142,12 @@
           <file leaf-file-name="APIRequestProxy.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/APIRequestProxy.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="937" max-vertical-offset="3180">
-                  <caret line="67" column="20" selection-start-line="67" selection-start-column="20" selection-end-line="67" selection-end-column="20" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="LoginRegisterActivity.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/LoginRegisterActivity.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-8.423077" vertical-offset="6501" max-vertical-offset="6915">
-                  <caret line="528" column="13" selection-start-line="528" selection-start-column="13" selection-end-line="528" selection-end-column="13" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="2972" max-vertical-offset="3450">
+                  <caret line="231" column="0" selection-start-line="231" selection-start-column="0" selection-end-line="231" selection-end-column="0" />
                   <folding>
-                    <element signature="e#14207#14607#0" expanded="true" />
-                    <element signature="e#14408#14457#0" expanded="true" />
-                    <element signature="e#14600#14601#0" expanded="true" />
-                    <element signature="e#14960#15019#0" expanded="true" />
+                    <element signature="e#9233#9291#0" expanded="true" />
+                    <element signature="e#9428#9467#0" expanded="true" />
+                    <element signature="e#9526#9573#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -223,61 +157,11 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="Fade.java" pinned="false" current="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/Fade.java">
+          <file leaf-file-name="feed_item.xml" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-1.0857989" vertical-offset="457" max-vertical-offset="795">
-                  <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/MainActivity.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-12.230769" vertical-offset="3222" max-vertical-offset="5910">
-                  <caret line="248" column="37" selection-start-line="248" selection-start-column="37" selection-end-line="248" selection-end-column="37" />
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                    <element signature="e#2293#2343#0" expanded="true" />
-                    <element signature="e#3091#3101#0" expanded="true" />
-                    <element signature="e#5328#5389#0" expanded="true" />
-                    <element signature="e#6728#6759#0" expanded="true" />
-                    <element signature="e#6835#6874#0" expanded="true" />
-                    <element signature="e#7010#10162#0" expanded="true" />
-                    <element signature="e#9941#9942#0" expanded="true" />
-                    <element signature="e#10147#10148#0" expanded="true" />
-                    <element signature="e#10216#10486#0" expanded="true" />
-                    <element signature="e#10471#10472#0" expanded="true" />
-                    <element signature="e#10859#10890#0" expanded="true" />
-                    <element signature="e#10968#11007#0" expanded="true" />
-                    <element signature="e#11068#11568#0" expanded="true" />
-                    <element signature="e#11553#11554#0" expanded="true" />
-                    <element signature="e#11622#11928#0" expanded="true" />
-                    <element signature="e#11913#11914#0" expanded="true" />
-                    <element signature="e#12376#12377#0" expanded="true" />
-                    <element signature="e#12453#12454#0" expanded="true" />
-                    <element signature="e#13458#15593#0" expanded="true" />
-                    <element signature="e#13597#13606#0" expanded="true" />
-                    <element signature="e#13678#13686#0" expanded="true" />
-                    <element signature="e#14171#14382#0" expanded="true" />
-                    <element signature="e#14363#14364#0" expanded="true" />
-                    <element signature="e#14593#15566#0" expanded="true" />
-                    <element signature="e#15093#15508#0" expanded="true" />
-                    <element signature="e#15473#15474#0" expanded="true" />
-                    <element signature="e#15547#15548#0" expanded="true" />
-                    <element signature="e#15582#15583#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="activity_main.xml" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-3.3333333" vertical-offset="0" max-vertical-offset="390">
-                  <caret line="6" column="4" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
+                <state vertical-scroll-proportion="4.366071" vertical-offset="321" max-vertical-offset="990">
+                  <caret line="54" column="46" selection-start-line="54" selection-start-column="46" selection-end-line="54" selection-end-column="46" />
                   <folding />
                 </state>
               </provider>
@@ -1416,14 +1300,10 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/comment_item.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/CommentsListAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CommentsActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/FeedListAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_comments.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/SpinnerHintAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_feed.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_networks.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/FeedFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_create_post.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_create_network.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CreateNetworkActivity.java" />
@@ -1436,16 +1316,20 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/LoginRegisterActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/APIRequestProxy.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CommentsActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/FeedFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/APIRequestProxy.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/FeedListAdapter.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="45" />
-    <option name="y" value="-1016" />
-    <option name="width" value="1326" />
+    <option name="x" value="-84" />
+    <option name="y" value="-1058" />
+    <option name="width" value="1370" />
     <option name="height" value="1016" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -1695,7 +1579,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="models" />
+              <option name="myItemId" value="adapters" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1938,7 +1822,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="45" y="-1016" width="1326" height="1016" extended-state="0" />
+    <frame x="-84" y="-1058" width="1370" height="1016" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1948,20 +1832,20 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32786885" sideWeight="0.4993515" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39848676" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15991692" sideWeight="0.44793814" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32899022" sideWeight="0.3379562" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21517996" sideWeight="0.50110865" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37200505" sideWeight="0.12062257" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2358643" sideWeight="0.50151974" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19293079" sideWeight="0.5515464" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0" sideWeight="0.8783505" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32899022" sideWeight="0.6620438" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956383" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32912987" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960877" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18702866" sideWeight="0.49848023" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1810219" sideWeight="0.49848023" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24889544" sideWeight="0.45012787" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Memory Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -2061,13 +1945,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="418">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/dummy/DummyContent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.42857143" vertical-offset="30" max-vertical-offset="840">
-          <caret line="23" column="63" selection-start-line="23" selection-start-column="63" selection-end-line="23" selection-end-column="63" />
         </state>
       </provider>
     </entry>
@@ -2187,17 +2064,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.0" vertical-offset="0" max-vertical-offset="690">
-          <caret line="9" column="44" selection-start-line="9" selection-start-column="44" selection-end-line="9" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/HQFragment.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="489" max-vertical-offset="1230">
@@ -2258,49 +2124,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.40723982" vertical-offset="405" max-vertical-offset="930">
           <caret line="15" column="3" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CommentsActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.341629" vertical-offset="2273" max-vertical-offset="3990">
-          <caret line="250" column="29" selection-start-line="250" selection-start-column="29" selection-end-line="250" selection-end-column="29" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1652#1702#0" expanded="false" />
-            <element signature="e#3001#3172#0" expanded="false" />
-            <element signature="e#3367#3398#0" expanded="false" />
-            <element signature="e#3474#3513#0" expanded="false" />
-            <element signature="e#3625#5206#0" expanded="false" />
-            <element signature="e#3846#5164#0" expanded="false" />
-            <element signature="e#4727#5113#0" expanded="false" />
-            <element signature="e#5082#5083#0" expanded="false" />
-            <element signature="e#5140#5141#0" expanded="false" />
-            <element signature="e#5191#5192#0" expanded="false" />
-            <element signature="e#5260#5542#0" expanded="false" />
-            <element signature="e#5527#5528#0" expanded="false" />
-            <element signature="e#5823#6340#0" expanded="false" />
-            <element signature="e#6046#6085#0" expanded="false" />
-            <element signature="e#6181#6229#0" expanded="false" />
-            <element signature="e#6329#6330#0" expanded="false" />
-            <element signature="e#6432#6912#0" expanded="false" />
-            <element signature="e#6901#6902#0" expanded="false" />
-            <element signature="e#7098#7129#0" expanded="false" />
-            <element signature="e#7205#7244#0" expanded="false" />
-            <element signature="e#7459#8390#0" expanded="false" />
-            <element signature="e#8375#8376#0" expanded="false" />
-            <element signature="e#8444#8764#0" expanded="false" />
-            <element signature="e#8749#8750#0" expanded="false" />
-            <element signature="e#8997#8998#0" expanded="false" />
-            <element signature="e#9060#9061#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/FeedListAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6266968" vertical-offset="458" max-vertical-offset="900">
-          <caret line="70" column="9" selection-start-line="70" selection-start-column="9" selection-end-line="70" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -2375,17 +2198,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_unlock_gate.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="401" max-vertical-offset="885">
-          <caret line="26" column="31" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_login_register.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.44444445" vertical-offset="708" max-vertical-offset="1485">
@@ -2397,17 +2209,93 @@
         <state />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Network.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="1080">
+          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2025">
+          <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding>
+            <element signature="e#2065#2066#0" expanded="true" />
+            <element signature="e#2113#2114#0" expanded="true" />
+            <element signature="e#2156#2157#0" expanded="true" />
+            <element signature="e#2212#2213#0" expanded="true" />
+            <element signature="e#2244#2245#0" expanded="true" />
+            <element signature="e#2293#2294#0" expanded="true" />
+            <element signature="e#2334#2335#0" expanded="true" />
+            <element signature="e#2384#2385#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.76878613" vertical-offset="1116" max-vertical-offset="1710">
+          <caret line="124" column="47" selection-start-line="124" selection-start-column="47" selection-end-line="124" selection-end-column="47" />
+          <folding>
+            <element signature="e#804#805#0" expanded="true" />
+            <element signature="e#829#830#0" expanded="true" />
+            <element signature="e#1184#1185#0" expanded="true" />
+            <element signature="e#1232#1233#0" expanded="true" />
+            <element signature="e#1275#1276#0" expanded="true" />
+            <element signature="e#1331#1332#0" expanded="true" />
+            <element signature="e#1363#1364#0" expanded="true" />
+            <element signature="e#1412#1413#0" expanded="true" />
+            <element signature="e#1453#1454#0" expanded="true" />
+            <element signature="e#1503#1504#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/UnlockGateActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1202" max-vertical-offset="2210">
+        <state vertical-scroll-proportion="2.1965318" vertical-offset="0" max-vertical-offset="1515">
           <caret line="102" column="35" selection-start-line="102" selection-start-column="35" selection-end-line="102" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_unlock_gate.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.0060975607" vertical-offset="393" max-vertical-offset="885">
+          <caret line="26" column="31" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/LoginRegisterActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.59375" vertical-offset="6435" max-vertical-offset="6915">
+          <caret line="528" column="13" selection-start-line="528" selection-start-column="13" selection-end-line="528" selection-end-column="13" />
+          <folding>
+            <element signature="e#14207#14607#0" expanded="true" />
+            <element signature="e#14408#14457#0" expanded="true" />
+            <element signature="e#14600#14601#0" expanded="true" />
+            <element signature="e#14960#15019#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/Fade.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.10078388" vertical-offset="0" max-vertical-offset="893">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-12.230769" vertical-offset="3222" max-vertical-offset="5910">
+        <state vertical-scroll-proportion="0.366782" vertical-offset="3222" max-vertical-offset="5910">
           <caret line="248" column="37" selection-start-line="248" selection-start-column="37" selection-end-line="248" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -2443,46 +2331,45 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/NetworksFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6137" max-vertical-offset="6510">
-          <caret line="451" column="22" selection-start-line="451" selection-start-column="22" selection-end-line="451" selection-end-column="22" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#9042#10992#0" expanded="true" />
-            <element signature="e#10977#10978#0" expanded="true" />
-            <element signature="e#11046#11544#0" expanded="true" />
-            <element signature="e#11529#11530#0" expanded="true" />
-            <element signature="e#12175#13160#0" expanded="true" />
-            <element signature="e#13145#13146#0" expanded="true" />
-            <element signature="e#13214#13631#0" expanded="true" />
-            <element signature="e#13616#13617#0" expanded="true" />
-            <element signature="e#15099#15919#0" expanded="true" />
-            <element signature="e#15734#15743#0" expanded="true" />
-            <element signature="e#15892#15893#0" expanded="true" />
-            <element signature="e#15985#16891#0" expanded="true" />
-            <element signature="e#16864#16865#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/LoginRegisterActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.423077" vertical-offset="6501" max-vertical-offset="6915">
-          <caret line="528" column="13" selection-start-line="528" selection-start-column="13" selection-end-line="528" selection-end-column="13" />
-          <folding>
-            <element signature="e#14207#14607#0" expanded="true" />
-            <element signature="e#14408#14457#0" expanded="true" />
-            <element signature="e#14600#14601#0" expanded="true" />
-            <element signature="e#14960#15019#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.3333333" vertical-offset="0" max-vertical-offset="390">
+        <state vertical-scroll-proportion="0.1039261" vertical-offset="0" max-vertical-offset="866">
           <caret line="6" column="4" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/CommentsActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1627" max-vertical-offset="3210">
+          <caret line="172" column="11" selection-start-line="172" selection-start-column="11" selection-end-line="172" selection-end-column="11" />
+          <folding>
+            <element signature="e#6197#6236#0" expanded="true" />
+            <element signature="e#6332#6380#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/FeedFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2040" max-vertical-offset="5955">
+          <caret line="183" column="67" selection-start-line="183" selection-start-column="67" selection-end-line="183" selection-end-column="67" />
+          <folding>
+            <element signature="e#6337#6368#0" expanded="true" />
+            <element signature="e#6444#6483#0" expanded="true" />
+            <element signature="e#11994#12396#0" expanded="true" />
+            <element signature="e#12385#12386#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.366071" vertical-offset="321" max-vertical-offset="990">
+          <caret line="54" column="46" selection-start-line="54" selection-start-column="46" selection-end-line="54" selection-end-column="46" />
           <folding />
         </state>
       </provider>
@@ -2492,68 +2379,37 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/APIRequestProxy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="937" max-vertical-offset="3180">
-          <caret line="67" column="20" selection-start-line="67" selection-start-column="20" selection-end-line="67" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/utils/Fade.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.0857989" vertical-offset="457" max-vertical-offset="795">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/FeedFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="450" max-vertical-offset="5835">
-          <caret line="58" column="19" selection-start-line="58" selection-start-column="19" selection-end-line="58" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Network.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="1080">
-          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Post.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="630" max-vertical-offset="2025">
-          <caret line="94" column="5" selection-start-line="80" selection-start-column="4" selection-end-line="94" selection-end-column="5" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2972" max-vertical-offset="3450">
+          <caret line="231" column="0" selection-start-line="231" selection-start-column="0" selection-end-line="231" selection-end-column="0" />
           <folding>
-            <element signature="e#2065#2066#0" expanded="true" />
-            <element signature="e#2113#2114#0" expanded="true" />
-            <element signature="e#2156#2157#0" expanded="true" />
-            <element signature="e#2212#2213#0" expanded="true" />
-            <element signature="e#2244#2245#0" expanded="true" />
-            <element signature="e#2293#2294#0" expanded="true" />
-            <element signature="e#2334#2335#0" expanded="true" />
-            <element signature="e#2384#2385#0" expanded="true" />
+            <element signature="e#9233#9291#0" expanded="true" />
+            <element signature="e#9428#9467#0" expanded="true" />
+            <element signature="e#9526#9573#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/models/Comment.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/NetworksFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19075145" vertical-offset="1116" max-vertical-offset="1710">
-          <caret line="102" column="21" selection-start-line="102" selection-start-column="21" selection-end-line="102" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2362" max-vertical-offset="6240">
+          <caret line="451" column="22" selection-start-line="451" selection-start-column="22" selection-end-line="451" selection-end-column="22" />
           <folding>
-            <element signature="e#804#805#0" expanded="true" />
-            <element signature="e#829#830#0" expanded="true" />
-            <element signature="e#1184#1185#0" expanded="true" />
-            <element signature="e#1232#1233#0" expanded="true" />
-            <element signature="e#1275#1276#0" expanded="true" />
-            <element signature="e#1331#1332#0" expanded="true" />
-            <element signature="e#1363#1364#0" expanded="true" />
-            <element signature="e#1412#1413#0" expanded="true" />
-            <element signature="e#1453#1454#0" expanded="true" />
-            <element signature="e#1503#1504#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#15734#15743#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/unlock/gate/adapters/FeedListAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.29638556" vertical-offset="687" max-vertical-offset="1890">
+          <caret line="82" column="9" selection-start-line="82" selection-start-column="9" selection-end-line="82" selection-end-column="9" />
+          <folding>
+            <element signature="e#2462#2663#0" expanded="true" />
+            <element signature="e#2863#5250#0" expanded="true" />
+            <element signature="e#3951#5007#0" expanded="true" />
+            <element signature="e#4984#4985#0" expanded="true" />
+            <element signature="e#5239#5240#0" expanded="true" />
           </folding>
         </state>
       </provider>

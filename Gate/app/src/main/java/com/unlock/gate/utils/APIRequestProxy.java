@@ -1,12 +1,14 @@
 package com.unlock.gate.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.unlock.gate.R;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.models.Post;
 
@@ -22,8 +24,11 @@ public class APIRequestProxy {
     private final String AGGREGATE_ENDPOINT = "aggregate.json";
 	
 	private RequestQueue mRequestQueue;
+
+    private Context context;
 	
 	APIRequestProxy(Context context) {
+        this.context = context;
 		mRequestQueue = Volley.newRequestQueue(context.getApplicationContext());
 	}
 	
@@ -211,6 +216,21 @@ public class APIRequestProxy {
         String url = addAuthAsURLParams(getAbsoluteUrl(SESSION_ENDPOINT), params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.DELETE, url, params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void upPost(Post post, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "posts/" + post.getId() + "/up.json?";
+
+        SharedPreferences session = context.getSharedPreferences(context.getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
+
+        if (params.optBoolean("revert")) url += "revert=true&";
+
+        url += "user_id=" + session.getString(context.getString(R.string.user_id_key), null);
+        url += "&auth_token=" + session.getString(context.getString(R.string.user_auth_token_key), null);
+
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }

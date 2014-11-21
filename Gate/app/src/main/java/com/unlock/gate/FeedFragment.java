@@ -214,6 +214,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                         jsonPost.optJSONObject("network").optString("external_id"),
                                         jsonPost.optJSONObject("network").optString("name"),
                                         jsonPost.optInt("comments_count"),
+                                        jsonPost.optInt("up_count"),
+                                        jsonPost.optBoolean("uped"),
                                         jsonPost.optString("created_at"));
 
                                 if (i == 0 && (infiniteScrollTimeBuffer == null || refreshing))
@@ -364,6 +366,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                             jsonPost.optJSONObject("network").optString("external_id"),
                                             jsonPost.optJSONObject("network").optString("name"),
                                             jsonPost.optInt("comments_count"),
+                                            jsonPost.optInt("up_count"),
+                                            jsonPost.optBoolean("uped"),
                                             jsonPost.optString("created_at"));
 
                                     posts.add(0, post);

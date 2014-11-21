@@ -122,6 +122,8 @@ public class CommentsActivity extends ListActivity {
                                 Comment comment = new Comment(jsonComment.optString("external_id"),
                                         jsonComment.optJSONObject("user").optString("name"),
                                         jsonComment.optString("body"),
+                                        jsonComment.optInt("up_count"),
+                                        jsonComment.optBoolean("uped"),
                                         jsonComment.optString("created_at"));
 
                                 comments.add(comment);
@@ -160,7 +162,7 @@ public class CommentsActivity extends ListActivity {
             public void onClick(View v) {
                 String comment = addComment.getText().toString();
 
-                if (comment.length() == 0) {
+                if (comment.trim().length() == 0) {
                     addComment.setError(getString(R.string.no_comment_inputted));
                 } else if (comment.length() > 500) {
                     addComment.setError(getString(R.string.over_500_characters_inputted));
@@ -207,6 +209,8 @@ public class CommentsActivity extends ListActivity {
                             jsonComment.optString("external_id"),
                             jsonComment.optJSONObject("user").optString("name"),
                             jsonComment.optString("body"),
+                            jsonComment.optInt("up_count"),
+                            jsonComment.optBoolean("uped"),
                             jsonComment.optString("created_at"));
 
                     comments.add(comment);
