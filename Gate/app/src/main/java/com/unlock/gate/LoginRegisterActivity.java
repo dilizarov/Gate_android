@@ -476,7 +476,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == EMAIL_REQUEST_INTENT && resultCode == RESULT_OK) {
 			mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-			userEmail.setText(mEmail);
+            if (!mEmail.isEmpty()) userEmail.setText(mEmail);
 		}
 	}
 	
@@ -519,7 +519,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		cursor.moveToFirst();
 		mFullName = cursor.getString(0);
-		userFullName.setText(mFullName);
+		if (!mFullName.isEmpty()) userFullName.setText(mFullName);
 	}
 	
 	@Override

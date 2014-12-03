@@ -6,6 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#FFFFFFFF"
     tools:context=".LoginRegisterActivity" >
 
     <EditText
@@ -16,7 +17,8 @@
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:hint="@string/user_password_hint"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:editable="false"/>
 
     <TextView
         android:id="@+id/forgotPassword"
@@ -36,7 +38,9 @@
         android:layout_alignRight="@+id/userPassword"
         android:layout_below="@+id/forgotPassword"
         android:layout_marginTop="22dp"
-        android:text="@string/log_in" />
+        android:textColor="@color/white"
+        android:text="@string/log_in"
+        android:background="#000000"/>
 
     <EditText
         android:id="@+id/userEmail"
@@ -79,15 +83,14 @@
         android:text="@string/toggle_registration"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <TextView
+    <ImageView
         android:id="@+id/Placeholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="66dp"
-        android:text="Gate"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:src="@drawable/icon"
         tools:ignore="HardcodedText" />
 
 </RelativeLayout>

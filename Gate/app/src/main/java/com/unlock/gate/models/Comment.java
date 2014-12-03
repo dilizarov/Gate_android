@@ -2,10 +2,15 @@ package com.unlock.gate.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.format.DateUtils;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+import org.joda.time.Seconds;
+import org.joda.time.Weeks;
+import org.joda.time.Years;
 
 /**
  * Reason for lots of String use same as Post
@@ -79,15 +84,32 @@ public class Comment implements Parcelable {
     }
 
     private void setTimestamp() {
-        DateTime tenSecondsAgo = DateTime.now().minusSeconds(10);
-        if (DateTimeComparator.getInstance().compare(timeCreated, tenSecondsAgo) == 1)
-            timestamp = "moments ago";
-        else {
-            timestamp = DateUtils.getRelativeTimeSpanString(timeCreated.getMillis(),
-                    System.currentTimeMillis(),
-                    DateUtils.SECOND_IN_MILLIS).toString();
-
+        DateTime now = DateTime.now();
+        if (DateTimeComparator.getInstance().compare(timeCreated, now.minusSeconds(1)) == 1) {
+            timestamp = "1s";
+        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusMinutes(1)) == 1) {
+            timestamp = Seconds.secondsBetween(timeCreated, now).getSeconds() + "s";
+        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusHours(1)) == 1) {
+            timestamp = Minutes.minutesBetween(timeCreated, now).getMinutes() + "m";
+        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusDays(1)) == 1) {
+            timestamp = Hours.hoursBetween(timeCreated, now).getHours() + "h";
+        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusWeeks(1)) == 1) {
+            timestamp = Days.daysBetween(timeCreated, now).getDays() + "d";
+        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusYears(1)) == 1) {
+            timestamp = Weeks.weeksBetween(timeCreated, now).getWeeks() + "w";
+        } else {
+            timestamp = Years.yearsBetween(timeCreated, now).getYears() + "y";
         }
+
+//        DateTime tenSecondsAgo = DateTime.now().minusSeconds(10);
+//        if (DateTimeComparator.getInstance().compare(timeCreated, tenSecondsAgo) == 1)
+//            timestamp = "moments ago";
+//        else {
+//            timestamp = DateUtils.getRelativeTimeSpanString(timeCreated.getMillis(),
+//                    System.currentTimeMillis(),
+//                    DateUtils.SECOND_IN_MILLIS).toString();
+//
+//        }
     }
 
     //Parcelable implementation
