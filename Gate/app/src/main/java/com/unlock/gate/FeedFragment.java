@@ -340,7 +340,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             case CREATE_POST_INTENT:
                 if (resultCode == getActivity().RESULT_OK) {
                     final Network network = (Network) data.getParcelableExtra("network");
-                    final String postBody = data.getStringExtra("postBody");
+                    final String postBody = data.getStringExtra("postBody").replaceAll("\\n+", "\n")
+                                                                           .replaceAll("[ \\t\\x0b\\r\\f]{2,}", " ");
 
                     try {
                         JSONObject params = new JSONObject();
