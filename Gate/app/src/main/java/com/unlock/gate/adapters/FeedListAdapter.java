@@ -1,5 +1,6 @@
 package com.unlock.gate.adapters;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,6 +77,8 @@ public class FeedListAdapter extends BaseAdapter {
         final ImageView upPost       = (ImageView) convertView.findViewById(R.id.upPost);
         final TextView upCountPost   = (TextView) convertView.findViewById(R.id.upCountPost);
 
+        final LinearLayout postStats = (LinearLayout) convertView.findViewById(R.id.postStats);
+
         final Post post = posts.get(position);
 
         name.setText(post.getName());
@@ -114,6 +118,11 @@ public class FeedListAdapter extends BaseAdapter {
                         upCountPost.setText(Integer.toString(post.getUpCount()));
                         upCountPost.setVisibility(View.GONE);
                         smileyCount.setVisibility(View.GONE);
+
+                        int finalHeight = postStats.getHeight();
+
+                        ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
+                        animator.start();
                     }
                 } else {
                     post.setUped(true);
@@ -122,6 +131,15 @@ public class FeedListAdapter extends BaseAdapter {
                     upCountPost.setText(Integer.toString(post.getUpCount()));
                     upCountPost.setVisibility(View.VISIBLE);
                     smileyCount.setVisibility(View.VISIBLE);
+
+                    if (post.getUpCount() == 1) {
+                        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                        postStats.measure(widthSpec, heightSpec);
+
+                        ValueAnimator animator = slideAnimator(0, postStats.getMeasuredHeight(), postStats);
+                        animator.start();
+                    }
                 }
 
                 try {
@@ -152,6 +170,11 @@ public class FeedListAdapter extends BaseAdapter {
                                     upCountPost.setText(Integer.toString(post.getUpCount()));
                                     upCountPost.setVisibility(View.GONE);
                                     smileyCount.setVisibility(View.GONE);
+
+                                    int finalHeight = postStats.getHeight();
+
+                                    ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
+                                    animator.start();
                                 }
                             } else {
                                 post.setUped(true);
@@ -160,6 +183,11 @@ public class FeedListAdapter extends BaseAdapter {
                                 upCountPost.setText(Integer.toString(post.getUpCount()));
                                 upCountPost.setVisibility(View.VISIBLE);
                                 smileyCount.setVisibility(View.VISIBLE);
+
+                                if (post.getUpCount() == 1) {
+                                    ValueAnimator animator = slideAnimator(0, postStats.getMeasuredHeight(), postStats);
+                                    animator.start();
+                                }
                             }
                         }
                     };
@@ -179,4 +207,24 @@ public class FeedListAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+    private ValueAnimator slideAnimator(int start, int end, final LinearLayout postStats) {
+
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+                int value = (Integer) animation.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = postStats.getLayoutParams();
+                layoutParams.height = value;
+                postStats.setLayoutParams(layoutParams);
+            }
+        });
+
+        return animator;
+    }
+
+
 }
