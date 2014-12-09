@@ -113,24 +113,23 @@ public class Post implements Parcelable {
 
     private void setTimestamp() {
         DateTime now = DateTime.now();
-        if (DateTimeComparator.getInstance().compare(timeCreated, now.minusSeconds(1)) == 1) {
+        DateTimeComparator comparator = DateTimeComparator.getInstance();
+
+        if (comparator.compare(timeCreated, now.minusSeconds(1)) == 1) {
            timestamp = "1s";
-        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusMinutes(1)) == 1) {
+        } else if (comparator.compare(timeCreated, now.minusMinutes(1)) == 1) {
             timestamp = Seconds.secondsBetween(timeCreated, now).getSeconds() + "s";
-        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusHours(1)) == 1) {
+        } else if (comparator.compare(timeCreated, now.minusHours(1)) == 1) {
             timestamp = Minutes.minutesBetween(timeCreated, now).getMinutes() + "m";
-        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusDays(1)) == 1) {
+        } else if (comparator.compare(timeCreated, now.minusDays(1)) == 1) {
             timestamp = Hours.hoursBetween(timeCreated, now).getHours() + "h";
-        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusWeeks(1)) == 1) {
+        } else if (comparator.compare(timeCreated, now.minusWeeks(1)) == 1) {
             timestamp = Days.daysBetween(timeCreated, now).getDays() + "d";
-        } else if (DateTimeComparator.getInstance().compare(timeCreated, now.minusYears(1)) == 1) {
+        } else if (comparator.compare(timeCreated, now.minusYears(1)) == 1) {
             timestamp = Weeks.weeksBetween(timeCreated, now).getWeeks() + "w";
         } else {
             timestamp = Years.yearsBetween(timeCreated, now).getYears() + "y";
         }
-//            timestamp = DateUtils.getRelativeTimeSpanString(timeCreated.getMillis(),
-//                    System.currentTimeMillis(),
-//                    DateUtils.SECOND_IN_MILLIS).toString();
     }
 
     //Parcelable implementation

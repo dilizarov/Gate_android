@@ -71,7 +71,7 @@ public class CommentsActivity extends ListActivity {
     private void instantiateViews() {
         postName          = (TextView) findViewById(R.id.name);
         postTimestamp     = (TextView) findViewById(R.id.timestamp);
-        postCommentsCount = (TextView) findViewById(R.id.commentsCount);
+        //postCommentsCount = (TextView) findViewById(R.id.commentsCount);
         postBody          = (TextView) findViewById(R.id.body);
 
         commentsList      = getListView();
@@ -90,10 +90,10 @@ public class CommentsActivity extends ListActivity {
         );
 
         postTimestamp.setText(post.getTimestamp());
-        postCommentsCount.setText(getResources()
+        /*postCommentsCount.setText(getResources()
                 .getQuantityString(R.plurals.comments_count,
                         post.getCommentCount(),
-                        post.getCommentCount()));
+                        post.getCommentCount()));*/
     }
 
     private void requestCommentsAndPopulateListView() {

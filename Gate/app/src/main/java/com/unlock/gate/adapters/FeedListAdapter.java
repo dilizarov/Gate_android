@@ -3,11 +3,11 @@ package com.unlock.gate.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,11 +61,18 @@ public class FeedListAdapter extends BaseAdapter {
         if (mInflater == null) mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) convertView = mInflater.inflate(R.layout.feed_item, null);
 
+        if (position % 2 == 1) {
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
+        } else {
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.white));
+        }
+
         TextView name          = (TextView) convertView.findViewById(R.id.name);
         TextView body          = (TextView) convertView.findViewById(R.id.body);
         TextView timestamp     = (TextView) convertView.findViewById(R.id.timestamp);
-        TextView commentsCount = (TextView) convertView.findViewById(R.id.commentsCount);
-        final TextView upPost  = (TextView) convertView.findViewById(R.id.upPost);
+        //TextView commentsCount = (TextView) convertView.findViewById(R.id.commentsCount);
+        final ImageView smileyCount  = (ImageView) convertView.findViewById(R.id.smileyCount);
+        final ImageView upPost       = (ImageView) convertView.findViewById(R.id.upPost);
         final TextView upCountPost   = (TextView) convertView.findViewById(R.id.upCountPost);
 
         final Post post = posts.get(position);
@@ -73,28 +80,48 @@ public class FeedListAdapter extends BaseAdapter {
         name.setText(post.getName());
         body.setText(post.getBody());
         timestamp.setText(post.getTimestamp());
-        commentsCount.setText(context.getResources()
+        /*commentsCount.setText(context.getResources()
                 .getQuantityString(R.plurals.comments_count,
                                    post.getCommentCount(),
-                                   post.getCommentCount()));
+                                   post.getCommentCount()));*/
+
+
+        upCountPost.setText(Integer.toString(post.getUpCount()));
+
         if (post.getUpCount() > 0) {
-            upCountPost.setText(Integer.toString(post.getUpCount()));
-            upPost.setTextColor(Color.BLUE);
+            upCountPost.setVisibility(View.VISIBLE);
+            smileyCount.setVisibility(View.VISIBLE);
+        } else {
+            upCountPost.setVisibility(View.GONE);
+            smileyCount.setVisibility(View.GONE);
+        }
+
+        if (post.getUped()) {
+            upPost.setImageResource(R.drawable.ic_smiley);
+        } else {
+            upPost.setImageResource(R.drawable.ic_circle);
         }
 
         upPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (post.getUped()) {
-                    upPost.setTextColor(Color.BLACK);
                     post.setUped(false);
                     post.setUpCount(post.getUpCount() - 1);
-                    if (post.getUpCount() == 0) upCountPost.setText("");
+                    upPost.setImageResource(R.drawable.ic_circle);
+
+                    if (post.getUpCount() == 0) {
+                        upCountPost.setText(Integer.toString(post.getUpCount()));
+                        upCountPost.setVisibility(View.GONE);
+                        smileyCount.setVisibility(View.GONE);
+                    }
                 } else {
-                    upPost.setTextColor(Color.BLUE);
                     post.setUped(true);
                     post.setUpCount(post.getUpCount() + 1);
+                    upPost.setImageResource(R.drawable.ic_smiley);
                     upCountPost.setText(Integer.toString(post.getUpCount()));
+                    upCountPost.setVisibility(View.VISIBLE);
+                    smileyCount.setVisibility(View.VISIBLE);
                 }
 
                 try {
@@ -117,15 +144,22 @@ public class FeedListAdapter extends BaseAdapter {
                             Toast.makeText(context, volleyError.getMessage(), Toast.LENGTH_LONG).show();
 
                             if (post.getUped()) {
-                                upPost.setTextColor(Color.BLACK);
                                 post.setUped(false);
                                 post.setUpCount(post.getUpCount() - 1);
-                                if (post.getUpCount() == 0) upCountPost.setText("");
+                                upPost.setImageResource(R.drawable.ic_circle);
+
+                                if (post.getUpCount() == 0) {
+                                    upCountPost.setText(Integer.toString(post.getUpCount()));
+                                    upCountPost.setVisibility(View.GONE);
+                                    smileyCount.setVisibility(View.GONE);
+                                }
                             } else {
-                                upPost.setTextColor(Color.BLUE);
                                 post.setUped(true);
                                 post.setUpCount(post.getUpCount() + 1);
+                                upPost.setImageResource(R.drawable.ic_smiley);
                                 upCountPost.setText(Integer.toString(post.getUpCount()));
+                                upCountPost.setVisibility(View.VISIBLE);
+                                smileyCount.setVisibility(View.VISIBLE);
                             }
                         }
                     };
