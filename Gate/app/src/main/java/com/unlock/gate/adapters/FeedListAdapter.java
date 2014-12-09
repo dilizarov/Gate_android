@@ -109,38 +109,7 @@ public class FeedListAdapter extends BaseAdapter {
         upPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (post.getUped()) {
-                    post.setUped(false);
-                    post.setUpCount(post.getUpCount() - 1);
-                    upPost.setImageResource(R.drawable.ic_circle);
-
-                    if (post.getUpCount() == 0) {
-                        upCountPost.setText(Integer.toString(post.getUpCount()));
-                        upCountPost.setVisibility(View.GONE);
-                        smileyCount.setVisibility(View.GONE);
-
-                        int finalHeight = postStats.getHeight();
-
-                        ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
-                        animator.start();
-                    }
-                } else {
-                    post.setUped(true);
-                    post.setUpCount(post.getUpCount() + 1);
-                    upPost.setImageResource(R.drawable.ic_smiley);
-                    upCountPost.setText(Integer.toString(post.getUpCount()));
-                    upCountPost.setVisibility(View.VISIBLE);
-                    smileyCount.setVisibility(View.VISIBLE);
-
-                    if (post.getUpCount() == 1) {
-                        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                        postStats.measure(widthSpec, heightSpec);
-
-                        ValueAnimator animator = slideAnimator(0, postStats.getMeasuredHeight(), postStats);
-                        animator.start();
-                    }
-                }
+                handleUpedViewState(post, upPost, upCountPost, smileyCount, postStats);
 
                 try {
                     JSONObject params = new JSONObject();
@@ -150,7 +119,7 @@ public class FeedListAdapter extends BaseAdapter {
                     Response.Listener<Integer> listener = new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer integer) {
-
+                            //Don't do anything. Eagerly did actions assuming we request succeeds.
                         }
                     };
 
@@ -161,34 +130,7 @@ public class FeedListAdapter extends BaseAdapter {
 
                             Toast.makeText(context, volleyError.getMessage(), Toast.LENGTH_LONG).show();
 
-                            if (post.getUped()) {
-                                post.setUped(false);
-                                post.setUpCount(post.getUpCount() - 1);
-                                upPost.setImageResource(R.drawable.ic_circle);
-
-                                if (post.getUpCount() == 0) {
-                                    upCountPost.setText(Integer.toString(post.getUpCount()));
-                                    upCountPost.setVisibility(View.GONE);
-                                    smileyCount.setVisibility(View.GONE);
-
-                                    int finalHeight = postStats.getHeight();
-
-                                    ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
-                                    animator.start();
-                                }
-                            } else {
-                                post.setUped(true);
-                                post.setUpCount(post.getUpCount() + 1);
-                                upPost.setImageResource(R.drawable.ic_smiley);
-                                upCountPost.setText(Integer.toString(post.getUpCount()));
-                                upCountPost.setVisibility(View.VISIBLE);
-                                smileyCount.setVisibility(View.VISIBLE);
-
-                                if (post.getUpCount() == 1) {
-                                    ValueAnimator animator = slideAnimator(0, postStats.getMeasuredHeight(), postStats);
-                                    animator.start();
-                                }
-                            }
+                            handleUpedViewState(post, upPost, upCountPost, smileyCount, postStats);
                         }
                     };
 
@@ -206,6 +148,41 @@ public class FeedListAdapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+
+    private void handleUpedViewState(Post post, ImageView upPost, TextView upCountPost, ImageView smileyCount, LinearLayout postStats) {
+        if (post.getUped()) {
+            post.setUped(false);
+            post.setUpCount(post.getUpCount() - 1);
+            upPost.setImageResource(R.drawable.ic_circle);
+
+            if (post.getUpCount() == 0) {
+                upCountPost.setText(Integer.toString(post.getUpCount()));
+                upCountPost.setVisibility(View.GONE);
+                smileyCount.setVisibility(View.GONE);
+
+                int finalHeight = postStats.getHeight();
+
+                ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
+                animator.start();
+            }
+        } else {
+            post.setUped(true);
+            post.setUpCount(post.getUpCount() + 1);
+            upPost.setImageResource(R.drawable.ic_smiley);
+            upCountPost.setText(Integer.toString(post.getUpCount()));
+            upCountPost.setVisibility(View.VISIBLE);
+            smileyCount.setVisibility(View.VISIBLE);
+
+            if (post.getUpCount() == 1) {
+                final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                postStats.measure(widthSpec, heightSpec);
+
+                ValueAnimator animator = slideAnimator(0, postStats.getMeasuredHeight(), postStats);
+                animator.start();
+            }
+        }
     }
 
     private ValueAnimator slideAnimator(int start, int end, final LinearLayout postStats) {
