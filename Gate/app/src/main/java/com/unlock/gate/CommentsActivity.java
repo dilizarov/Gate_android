@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -44,6 +45,7 @@ public class CommentsActivity extends ListActivity {
     private ArrayList<Comment> comments;
     private CommentsListAdapter listAdapter;
     private SharedPreferences mSessionPreferences;
+    private boolean creatingComment;
 
     private final int bodyCutoff = 220;
 
@@ -59,6 +61,7 @@ public class CommentsActivity extends ListActivity {
 
         Intent intent = getIntent();
         post = (Post) intent.getParcelableExtra("post");
+        creatingComment = intent.getBooleanExtra("creatingComment", false);
         setPostViews();
 
         setPostBodyClickListener();
@@ -66,6 +69,23 @@ public class CommentsActivity extends ListActivity {
 
         comments = new ArrayList<Comment>();
         requestCommentsAndPopulateListView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (creatingComment) {
+            addComment.requestFocus();
+            addComment.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    InputMethodManager keyboard = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    keyboard.showSoftInput(addComment, 0);
+                }
+            }, 200);
+        }
+
     }
 
     private void instantiateViews() {

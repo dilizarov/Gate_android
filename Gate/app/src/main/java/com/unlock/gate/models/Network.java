@@ -3,6 +3,8 @@ package com.unlock.gate.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
+
 /**
  * Created by davidilizarov on 10/27/14.
  */
@@ -48,6 +50,18 @@ public class Network implements Parcelable {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    public String serialize() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    static public Network deserialize(String serializedNetwork) {
+        if (serializedNetwork == null) return null;
+
+        Gson gson = new Gson();
+        return gson.fromJson(serializedNetwork, Network.class);
     }
 
     //Parcelable implementation

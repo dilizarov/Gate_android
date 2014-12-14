@@ -76,6 +76,22 @@
             android:src="@drawable/ic_small_smiley"
             android:visibility="gone"/>
 
+        <TextView
+            android:id="@+id/commentsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:layout_marginRight="4dp"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/commentsCountBubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:src="@drawable/ic_comment_bubble"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -92,6 +108,12 @@
             android:layout_marginRight="5dp"
             android:layout_marginLeft="8dp"
             android:src="@drawable/ic_circle" />
+
+        <ImageView
+            android:id="@+id/createComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_create_comment"/>
 
     </LinearLayout>
 

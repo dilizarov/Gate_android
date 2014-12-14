@@ -82,19 +82,24 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				getString(R.string.session_shared_preferences_key), MODE_PRIVATE); 
 		
 		viewState = State.LOGIN;
-		
-		instantiateViews();
-		
-		getAndSetEmail();
-		getAndSetFullName();
-		
-		//handling sets up event listeners and actions.
-		//Only handleCommandButton actually communicates to the server
-		handleForgotPassword();
-		handleTerms();
-		handleToggleLoginRegistration();
-		handleCommandButton();
-		
+
+        if (mSessionPreferences.contains(getString(R.string.user_auth_token_key))) {
+            Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            instantiateViews();
+
+            getAndSetEmail();
+            getAndSetFullName();
+
+            //handling sets up event listeners and actions.
+            //Only handleCommandButton actually communicates to the server
+            handleForgotPassword();
+            handleTerms();
+            handleToggleLoginRegistration();
+            handleCommandButton();
+        }
 	}
 	
 	private void instantiateViews() {

@@ -39,8 +39,7 @@
         android:layout_below="@+id/forgotPassword"
         android:layout_marginTop="22dp"
         android:textColor="@color/white"
-        android:text="@string/log_in"
-        android:background="#000000"/>
+        android:text="@string/log_in" />
 
     <EditText
         android:id="@+id/userEmail"

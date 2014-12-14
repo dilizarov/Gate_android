@@ -54,6 +54,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private Button createPost;
     private FeedListAdapter listAdapter;
     private ArrayList<Post> posts;
+    private ArrayList<Post> adapterPosts;
     private SharedPreferences mSessionPreferences;
     private PullToRefreshLayout mPullToRefreshLayout;
     private DateTime infiniteScrollTimeBuffer;
@@ -117,9 +118,12 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         mSessionPreferences = this.getActivity().getSharedPreferences(
                 getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
+        currentNetwork = Network.deserialize(mSessionPreferences.getString(getString(R.string.user_last_gate_viewed_key), null));
+
         feed = getListView();
 
         posts = new ArrayList<Post>();
+        adapterPosts = new ArrayList<Post>();
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
 
@@ -143,6 +147,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             setInfiniteScrollListener(false);
         }
 
+        ((MainActivity) getActivity()).setTitle(currentNetwork);
+
         setListViewItemClickListener();
         setCreatePostClickListener();
 
@@ -159,8 +165,20 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         if (network == null) Toast.makeText(getActivity(), "Aggregate", Toast.LENGTH_LONG).show();
         else Toast.makeText(getActivity(), network.getName(), Toast.LENGTH_LONG).show();
 
+        ((MainActivity) getActivity()).setTitle(network);
+
         if (!onAggregateAndGettingAggregate(network) &&
             !onNetworkAndGettingSameNetwork(network)) {
+
+            APIRequestManager.getInstance().cancelAllFeedRequests();
+
+            if (network != null) {
+                mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
+                        network.serialize()).apply();
+            } else {
+                mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
+                        null).apply();
+            }
 
             currentNetwork = network;
             feed.setSelection(0);
@@ -168,7 +186,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             infiniteScrollListener.setAtEndOfList(false);
             requestPostsAndPopulateListView(true);
             setCurrentPage(1);
-
         }
     }
 
@@ -270,8 +287,13 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         if (index == -1) index = firstVisiblePost();
         if (top   == -1) top = topOfFeed();
 
-        listAdapter = new FeedListAdapter(getActivity(), posts, currentNetwork);
-        feed.setAdapter(listAdapter);
+        if (listAdapter == null) {
+            listAdapter = new FeedListAdapter(getActivity(), adapterPosts, currentNetwork);
+            feed.setAdapter(listAdapter);
+        }
+
+        adapterPosts.clear();
+        adapterPosts.addAll(posts);
         listAdapter.notifyDataSetChanged();
 
         feed.setSelectionFromTop(index, top);

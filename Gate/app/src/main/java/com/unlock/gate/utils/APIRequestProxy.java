@@ -22,6 +22,8 @@ public class APIRequestProxy {
 	private final String REGISTRATION_ENDPOINT = "registrations.json";
     private final String NETWORKS_ENDPOINT = "networks.json";
     private final String AGGREGATE_ENDPOINT = "aggregate.json";
+
+    private final String FEED_TAG = "feed_requests";
 	
 	private RequestQueue mRequestQueue;
 
@@ -122,6 +124,8 @@ public class APIRequestProxy {
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
+        request.setTag(FEED_TAG);
+
         mRequestQueue.add(request);
     }
 
@@ -140,6 +144,8 @@ public class APIRequestProxy {
         url = buildUrl.toString();
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
+
+        request.setTag(FEED_TAG);
 
         mRequestQueue.add(request);
     }
@@ -233,6 +239,10 @@ public class APIRequestProxy {
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
+    }
+
+    public void cancelAllFeedRequests() {
+        mRequestQueue.cancelAll(FEED_TAG);
     }
 
 }

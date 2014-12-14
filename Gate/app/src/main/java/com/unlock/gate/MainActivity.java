@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -66,8 +67,13 @@ public class MainActivity extends FragmentActivity {
         adapter = new MyPagerAdapter(getSupportFragmentManager());
 
         pager.setAdapter(adapter);
-        pager.setOffscreenPageLimit(2);
+        pager.setOffscreenPageLimit(1);
 
+        tabs.setBackgroundColor(getResources().getColor(R.color.white));
+        tabs.setIndicatorColor(Color.BLACK);
+        tabs.setTextColor(Color.BLACK);
+
+        tabs.setShouldExpand(true);
         tabs.setViewPager(pager);
 
         mSessionPreferences = getSharedPreferences(
@@ -122,7 +128,6 @@ public class MainActivity extends FragmentActivity {
             switch(position) {
                 case 0:  return FeedFragment.newInstance(position);
                 case 1:  return NetworksFragment.newInstance(position);
-                case 2:  return HQFragment.newInstance(position);
             }
 
             return null;
@@ -330,6 +335,21 @@ public class MainActivity extends FragmentActivity {
     public ArrayList<Network> getNetworks() {
         NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
         return networksFragment.getNetworks();
+    }
+
+    public void setTitle(Network network) {
+
+        String title;
+
+        if (network == null) {
+            title = "Aggregate";
+        } else {
+            title = (network.getName().length() < 20) ?
+                    network.getName() :
+                    network.getName().substring(0, 16) + "...";
+        }
+
+        getActionBar().setTitle(title);
     }
 
     private void configureNFC() {

@@ -3,6 +3,7 @@ package com.unlock.gate.adapters;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.unlock.gate.CommentsActivity;
 import com.unlock.gate.R;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.models.Post;
@@ -72,7 +74,10 @@ public class FeedListAdapter extends BaseAdapter {
         TextView name          = (TextView) convertView.findViewById(R.id.name);
         TextView body          = (TextView) convertView.findViewById(R.id.body);
         TextView timestamp     = (TextView) convertView.findViewById(R.id.timestamp);
-        //TextView commentsCount = (TextView) convertView.findViewById(R.id.commentsCount);
+        TextView commentsCount = (TextView) convertView.findViewById(R.id.commentsCount);
+        TextView networkName   = (TextView) convertView.findViewById(R.id.networkName);
+        ImageView createComment = (ImageView) convertView.findViewById(R.id.createComment);
+        ImageView commentsCountBubble = (ImageView) convertView.findViewById(R.id.commentsCountBubble);
         final ImageView smileyCount  = (ImageView) convertView.findViewById(R.id.smileyCount);
         final ImageView upPost       = (ImageView) convertView.findViewById(R.id.upPost);
         final TextView upCountPost   = (TextView) convertView.findViewById(R.id.upCountPost);
@@ -84,12 +89,20 @@ public class FeedListAdapter extends BaseAdapter {
         name.setText(post.getName());
         body.setText(post.getBody());
         timestamp.setText(post.getTimestamp());
-        /*commentsCount.setText(context.getResources()
-                .getQuantityString(R.plurals.comments_count,
-                                   post.getCommentCount(),
-                                   post.getCommentCount()));*/
 
+        handleUpBehavior(post, upPost, upCountPost, smileyCount, postStats);
+        handleCommentBehavior(post, createComment, commentsCount, commentsCountBubble);
 
+        if (network == null) {
+            networkName.setText(post.getNetworkName());
+        } else {
+            networkName.setVisibility(View.GONE);
+        }
+
+        return convertView;
+    }
+
+    private void handleUpBehavior(final Post post, final ImageView upPost, final TextView upCountPost, final ImageView smileyCount, final LinearLayout postStats) {
         upCountPost.setText(Integer.toString(post.getUpCount()));
 
         if (post.getUpCount() > 0) {
@@ -141,13 +154,6 @@ public class FeedListAdapter extends BaseAdapter {
 
             }
         });
-
-        if (network == null) {
-            TextView networkName = (TextView) convertView.findViewById(R.id.networkName);
-            networkName.setText(post.getNetworkName());
-        }
-
-        return convertView;
     }
 
     private void handleUpedViewState(Post post, ImageView upPost, TextView upCountPost, ImageView smileyCount, LinearLayout postStats) {
@@ -161,10 +167,12 @@ public class FeedListAdapter extends BaseAdapter {
                 upCountPost.setVisibility(View.GONE);
                 smileyCount.setVisibility(View.GONE);
 
-                int finalHeight = postStats.getHeight();
+                if (post.getCommentCount() == 0) {
+                    int finalHeight = postStats.getHeight();
 
-                ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
-                animator.start();
+                    ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
+                    animator.start();
+                }
             }
         } else {
             post.setUped(true);
@@ -174,7 +182,7 @@ public class FeedListAdapter extends BaseAdapter {
             upCountPost.setVisibility(View.VISIBLE);
             smileyCount.setVisibility(View.VISIBLE);
 
-            if (post.getUpCount() == 1) {
+            if (post.getUpCount() == 1 && post.getCommentCount() == 0) {
                 final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                 final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                 postStats.measure(widthSpec, heightSpec);
@@ -183,6 +191,28 @@ public class FeedListAdapter extends BaseAdapter {
                 animator.start();
             }
         }
+    }
+
+    private void handleCommentBehavior(final Post post, ImageView createComment, TextView commentsCount, ImageView commentsCountBubble) {
+        commentsCount.setText(Integer.toString(post.getCommentCount()));
+
+        if (post.getCommentCount() > 0) {
+            commentsCount.setVisibility(View.VISIBLE);
+            commentsCountBubble.setVisibility(View.VISIBLE);
+        } else {
+            commentsCount.setVisibility(View.GONE);
+            commentsCountBubble.setVisibility(View.GONE);
+        }
+
+        createComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CommentsActivity.class);
+                intent.putExtra("post", post);
+                intent.putExtra("creatingComment", true);
+                context.startActivity(intent);
+            }
+        });
     }
 
     private ValueAnimator slideAnimator(int start, int end, final LinearLayout postStats) {

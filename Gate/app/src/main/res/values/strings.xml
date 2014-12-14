@@ -10,6 +10,7 @@
     <string name="user_email_key">UserEmail</string>
     <string name="user_name_key">UserName</string>
     <string name="user_created_at_key">UserCreatedAt</string>
+    <string name="user_last_gate_viewed_key">UserLastGate</string>
     <string name="yes_caps">YES</string>
     <string name="no_caps">NO</string>
 
@@ -48,8 +49,7 @@
     <!-- MainActivity specific -->
     <string-array name="tabs">
         <item>Feed</item>
-        <item>Networks</item>
-        <item>HQ</item>
+        <item>Gates</item>
     </string-array>
 
     <!-- NetworksFragment specific -->
@@ -62,10 +62,10 @@
     </plurals>
 
     <!-- FeedFragment specific -->
-    <plurals name="comments_count">
-        <item quantity="one">%d comment</item>
-        <item quantity="other">%d comments</item>
-    </plurals>
+    <!--<plurals name="comments_count">-->
+        <!--<item quantity="one">%d comment</item>-->
+        <!--<item quantity="other">%d comments</item>-->
+    <!--</plurals>-->
 
     <!-- CommentsActivity specific -->
     <string name="title_activity_comments">Comments</string>

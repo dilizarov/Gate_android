@@ -14,6 +14,10 @@ public class APIRequestManager {
 	public APIRequestProxy doRequest() {
 		return mRequestProxy;
 	}
+
+    public void cancelAllFeedRequests() {
+        mRequestProxy.cancelAllFeedRequests();
+    }
 	
 	// This method should be called first to do singleton initialization
 	public static synchronized APIRequestManager getInstance(Context context) {
