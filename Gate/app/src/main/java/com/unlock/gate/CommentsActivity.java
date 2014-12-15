@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 public class CommentsActivity extends ListActivity {
 
     private TextView postName;
+    private TextView postNetworkName;
     private TextView postTimestamp;
     private TextView postBody;
     private TextView postCommentsCount;
@@ -43,11 +45,14 @@ public class CommentsActivity extends ListActivity {
 
     private Post post;
     private ArrayList<Comment> comments;
+    private ArrayList<Comment> adapterComments;
     private CommentsListAdapter listAdapter;
     private SharedPreferences mSessionPreferences;
     private boolean creatingComment;
 
-    private final int bodyCutoff = 220;
+    private LinearLayout progressBarHolder;
+
+    private final int BODY_CUTOFF = 220;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +73,18 @@ public class CommentsActivity extends ListActivity {
         setSendCommentClickListener();
 
         comments = new ArrayList<Comment>();
-        requestCommentsAndPopulateListView();
+        adapterComments = new ArrayList<Comment>();
+        listAdapter = new CommentsListAdapter(CommentsActivity.this, adapterComments);
+        commentsList.setAdapter(listAdapter);
+
+        if (savedInstanceState != null) {
+            comments = savedInstanceState.getParcelableArrayList("comments");
+            adapterComments.addAll(comments);
+            listAdapter.notifyDataSetChanged();
+            progressBarHolder.setVisibility(View.GONE);
+        } else {
+            requestCommentsAndPopulateListView(false);
+        }
     }
 
     @Override
@@ -90,6 +106,7 @@ public class CommentsActivity extends ListActivity {
 
     private void instantiateViews() {
         postName          = (TextView) findViewById(R.id.name);
+        postNetworkName   = (TextView) findViewById(R.id.networkName);
         postTimestamp     = (TextView) findViewById(R.id.timestamp);
         //postCommentsCount = (TextView) findViewById(R.id.commentsCount);
         postBody          = (TextView) findViewById(R.id.body);
@@ -98,15 +115,18 @@ public class CommentsActivity extends ListActivity {
         addComment        = (EditText) findViewById(R.id.addComment);
         sendComment       = (Button) findViewById(R.id.sendComment);
 
+        progressBarHolder = (LinearLayout) findViewById(R.id.commentsProgressBarHolder);
+
         addComment.addTextChangedListener(new SetErrorBugFixer(addComment));
         addComment.setFilters(new InputFilter[] { new InputFilter.LengthFilter(500)});
     }
 
     private void setPostViews() {
         postName.setText(post.getName());
+        postNetworkName.setText(post.getNetworkName());
 
         postBody.setText(
-                (post.getBody().length() > bodyCutoff) ? cutoffBody() : post.getBody()
+                (post.getBody().length() > BODY_CUTOFF) ? cutoffBody() : post.getBody()
         );
 
         postTimestamp.setText(post.getTimestamp());
@@ -116,7 +136,7 @@ public class CommentsActivity extends ListActivity {
                         post.getCommentCount()));*/
     }
 
-    private void requestCommentsAndPopulateListView() {
+    private void requestCommentsAndPopulateListView(final boolean refreshing) {
         try {
 
             JSONObject params = new JSONObject();
@@ -151,9 +171,14 @@ public class CommentsActivity extends ListActivity {
 
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    listAdapter = new CommentsListAdapter(CommentsActivity.this, comments);
-                                    commentsList.setAdapter(listAdapter);
+                                    adapterComments.clear();
+                                    adapterComments.addAll(comments);
                                     listAdapter.notifyDataSetChanged();
+                                    progressBarHolder.setVisibility(View.GONE);
+
+                                    if (refreshing) {
+                                        commentsList.setSelection(listAdapter.getCount() - 1);
+                                    }
                                 }
                             });
                         }
@@ -166,7 +191,7 @@ public class CommentsActivity extends ListActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-
+                    progressBarHolder.setVisibility(View.GONE);
                     Log.v("Error", "nooo");
                 }
             };
@@ -197,9 +222,13 @@ public class CommentsActivity extends ListActivity {
         postBody.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String body = postBody.getText().toString();
-                if (body.length() < bodyCutoff) return;
-                else if (body.length() == bodyCutoff && body.substring(216, 219).equals("...")) {
+
+                Log.v("Body Size", Integer.toString(body.length()));
+
+                if (body.length() < BODY_CUTOFF) return;
+                else if (body.length() == BODY_CUTOFF && body.substring(BODY_CUTOFF - 3, BODY_CUTOFF).equals("...")) {
                     postBody.setText(post.getBody());
                 } else {
                     postBody.setText(cutoffBody());
@@ -235,8 +264,8 @@ public class CommentsActivity extends ListActivity {
 
                     comments.add(comment);
 
-                    listAdapter = new CommentsListAdapter(CommentsActivity.this, comments);
-                    commentsList.setAdapter(listAdapter);
+                    adapterComments.clear();
+                    adapterComments.addAll(comments);
                     listAdapter.notifyDataSetChanged();
                     commentsList.setSelection(listAdapter.getCount() - 1);
                     addComment.setText("");
@@ -261,7 +290,14 @@ public class CommentsActivity extends ListActivity {
     }
 
     private String cutoffBody() {
-        return post.getBody().substring(0, 216) + "...";
+        return post.getBody().substring(0, 217) + "...";
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList("comments", comments);
     }
 
     @Override
@@ -276,6 +312,12 @@ public class CommentsActivity extends ListActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.action_refresh_comments:
+                adapterComments.clear();
+                listAdapter.notifyDataSetChanged();
+                progressBarHolder.setVisibility(View.VISIBLE);
+                requestCommentsAndPopulateListView(true);
                 return true;
         }
 
