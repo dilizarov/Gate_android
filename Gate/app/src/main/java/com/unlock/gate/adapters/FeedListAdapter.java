@@ -95,6 +95,7 @@ public class FeedListAdapter extends BaseAdapter {
 
         if (network == null) {
             networkName.setText(post.getNetworkName());
+            networkName.setVisibility(View.VISIBLE);
         } else {
             networkName.setVisibility(View.GONE);
         }
@@ -154,6 +155,10 @@ public class FeedListAdapter extends BaseAdapter {
 
             }
         });
+    }
+
+    public void setNetwork(Network network) {
+        this.network = network;
     }
 
     private void handleUpedViewState(Post post, ImageView upPost, TextView upCountPost, ImageView smileyCount, LinearLayout postStats) {

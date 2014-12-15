@@ -172,13 +172,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
             APIRequestManager.getInstance().cancelAllFeedRequests();
 
-            if (network != null) {
-                mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
-                        network.serialize()).apply();
-            } else {
-                mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
-                        null).apply();
-            }
+            mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
+                    (network != null) ? network.serialize() : null).apply();
 
             currentNetwork = network;
             feed.setSelection(0);
@@ -292,6 +287,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             feed.setAdapter(listAdapter);
         }
 
+        listAdapter.setNetwork(currentNetwork);
         adapterPosts.clear();
         adapterPosts.addAll(posts);
         listAdapter.notifyDataSetChanged();
