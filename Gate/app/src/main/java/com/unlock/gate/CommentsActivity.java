@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.unlock.gate.adapters.CommentsListAdapter;
 import com.unlock.gate.models.Comment;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.PostViewHelper;
 import com.unlock.gate.utils.SetErrorBugFixer;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
@@ -39,9 +41,15 @@ public class CommentsActivity extends ListActivity {
     private TextView postTimestamp;
     private TextView postBody;
     private TextView postCommentsCount;
+    private TextView postUpCountPost;
     private ListView commentsList;
+    private LinearLayout postStats;
     private EditText addComment;
     private Button sendComment;
+    private ImageView upPost;
+    private ImageView postSmileyCount;
+    private ImageView postCommentsCountBubble;
+
 
     private Post post;
     private ArrayList<Comment> comments;
@@ -71,6 +79,9 @@ public class CommentsActivity extends ListActivity {
 
         setPostBodyClickListener();
         setSendCommentClickListener();
+
+        PostViewHelper.handleUpBehavior(this, post, upPost, postUpCountPost, postSmileyCount, postStats);
+        PostViewHelper.handleCommentBehavior(this, post, null, postCommentsCount, postCommentsCountBubble);
 
         comments = new ArrayList<Comment>();
         adapterComments = new ArrayList<Comment>();
@@ -110,6 +121,15 @@ public class CommentsActivity extends ListActivity {
         postTimestamp     = (TextView) findViewById(R.id.timestamp);
         //postCommentsCount = (TextView) findViewById(R.id.commentsCount);
         postBody          = (TextView) findViewById(R.id.body);
+        postUpCountPost   = (TextView) findViewById(R.id.upCountPost);
+        postCommentsCount = (TextView) findViewById(R.id.commentsCount);
+
+        upPost                  = (ImageView) findViewById(R.id.upPost);
+        postCommentsCountBubble = (ImageView) findViewById(R.id.commentsCountBubble);
+        postSmileyCount         = (ImageView) findViewById(R.id.smileyCount);
+        findViewById(R.id.createComment).setVisibility(View.GONE);
+
+        postStats         = (LinearLayout) findViewById(R.id.postStats);
 
         commentsList      = getListView();
         addComment        = (EditText) findViewById(R.id.addComment);
