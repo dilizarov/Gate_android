@@ -190,6 +190,7 @@ public class CommentsActivity extends ListActivity {
 
                                     if (refreshing) {
                                         commentsList.setSelection(listAdapter.getCount() - 1);
+                                        handleCommentCount(false);
                                     }
                                 }
                             });
@@ -284,17 +285,7 @@ public class CommentsActivity extends ListActivity {
                     listAdapter.notifyDataSetChanged();
                     commentsList.setSelection(listAdapter.getCount() - 1);
 
-                    post.setCommentCount(post.getCommentCount() + 1);
-                    postCommentsCount.setText(Integer.toString(post.getCommentCount()));
-
-                    if (post.getCommentCount() == 1) {
-                        postCommentsCount.setVisibility(View.VISIBLE);
-                        postCommentsCountBubble.setVisibility(View.VISIBLE);
-
-                        if (post.getUpCount() == 0) {
-                            PostViewHelper.expandPostStats(postStats);
-                        }
-                    }
+                    handleCommentCount(true);
                 }
             };
 
@@ -319,6 +310,22 @@ public class CommentsActivity extends ListActivity {
 
     private String cutoffBody() {
         return post.getBody().substring(0, 217) + "...";
+    }
+
+    private void handleCommentCount(boolean creating) {
+        boolean wasCommentCountZero = post.getCommentCount() == 0;
+
+        post.setCommentCount(creating ? post.getCommentCount() + 1 : comments.size());
+        postCommentsCount.setText(Integer.toString(post.getCommentCount()));
+
+        if (wasCommentCountZero) {
+            postCommentsCount.setVisibility(View.VISIBLE);
+            postCommentsCountBubble.setVisibility(View.VISIBLE);
+
+            if (post.getUpCount() == 0) {
+                PostViewHelper.expandPostStats(postStats);
+            }
+        }
     }
 
     private void showKeyboard(View view) {
