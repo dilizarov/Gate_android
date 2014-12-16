@@ -103,14 +103,7 @@ public class CommentsActivity extends ListActivity {
         super.onResume();
 
         if (creatingComment) {
-            addComment.requestFocus();
-            addComment.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    InputMethodManager keyboard = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    keyboard.showSoftInput(addComment, 0);
-                }
-            }, 200);
+            showKeyboard(addComment);
         }
 
     }
@@ -119,7 +112,6 @@ public class CommentsActivity extends ListActivity {
         postName          = (TextView) findViewById(R.id.name);
         postNetworkName   = (TextView) findViewById(R.id.networkName);
         postTimestamp     = (TextView) findViewById(R.id.timestamp);
-        //postCommentsCount = (TextView) findViewById(R.id.commentsCount);
         postBody          = (TextView) findViewById(R.id.body);
         postUpCountPost   = (TextView) findViewById(R.id.upCountPost);
         postCommentsCount = (TextView) findViewById(R.id.commentsCount);
@@ -257,8 +249,11 @@ public class CommentsActivity extends ListActivity {
         });
     }
 
-    private void sendComment(String comment) {
+    private void sendComment(final String comment) {
         try {
+
+            hideKeyboard();
+            addComment.setText("");
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
@@ -288,7 +283,18 @@ public class CommentsActivity extends ListActivity {
                     adapterComments.addAll(comments);
                     listAdapter.notifyDataSetChanged();
                     commentsList.setSelection(listAdapter.getCount() - 1);
-                    addComment.setText("");
+
+                    post.setCommentCount(post.getCommentCount() + 1);
+                    postCommentsCount.setText(Integer.toString(post.getCommentCount()));
+
+                    if (post.getCommentCount() == 1) {
+                        postCommentsCount.setVisibility(View.VISIBLE);
+                        postCommentsCountBubble.setVisibility(View.VISIBLE);
+
+                        if (post.getUpCount() == 0) {
+                            PostViewHelper.expandPostStats(postStats);
+                        }
+                    }
                 }
             };
 
@@ -297,6 +303,8 @@ public class CommentsActivity extends ListActivity {
                 public void onErrorResponse(VolleyError error) {
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
+                    addComment.append(comment);
+                    showKeyboard(addComment);
                     //Crouton stuff.
 
                     Log.v("Error", "nooo");
@@ -311,6 +319,27 @@ public class CommentsActivity extends ListActivity {
 
     private String cutoffBody() {
         return post.getBody().substring(0, 217) + "...";
+    }
+
+    private void showKeyboard(View view) {
+        view.requestFocus();
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager keyboard = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(addComment, 0);
+            }
+        }, 200);
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
+        view.clearFocus();
     }
 
     @Override
@@ -344,3 +373,4 @@ public class CommentsActivity extends ListActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+

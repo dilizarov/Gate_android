@@ -102,7 +102,7 @@ public class PostViewHelper {
         }
     }
 
-    private static void handleUpedViewState(Post post, ImageView upPost, TextView upCountPost, ImageView smileyCount, LinearLayout postStats) {
+    public static void handleUpedViewState(Post post, ImageView upPost, TextView upCountPost, ImageView smileyCount, LinearLayout postStats) {
         if (post.getUped()) {
             post.setUped(false);
             post.setUpCount(post.getUpCount() - 1);
@@ -114,10 +114,7 @@ public class PostViewHelper {
                 smileyCount.setVisibility(View.GONE);
 
                 if (post.getCommentCount() == 0) {
-                    int finalHeight = postStats.getHeight();
-
-                    ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
-                    animator.start();
+                    collapsePostStats(postStats);
                 }
             }
         } else {
@@ -129,17 +126,28 @@ public class PostViewHelper {
             smileyCount.setVisibility(View.VISIBLE);
 
             if (post.getUpCount() == 1 && post.getCommentCount() == 0) {
-                final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                postStats.measure(widthSpec, heightSpec);
-
-                ValueAnimator animator = slideAnimator(0, postStats.getMeasuredHeight(), postStats);
-                animator.start();
+                expandPostStats(postStats);
             }
         }
     }
 
-    private static ValueAnimator slideAnimator(int start, int end, final LinearLayout postStats) {
+    public static void expandPostStats(LinearLayout postStats) {
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        postStats.measure(widthSpec, heightSpec);
+
+        ValueAnimator animator = slideAnimator(0, postStats.getMeasuredHeight(), postStats);
+        animator.start();
+    }
+
+    public static void collapsePostStats(LinearLayout postStats) {
+        int finalHeight = postStats.getHeight();
+
+        ValueAnimator animator = slideAnimator(finalHeight, 0, postStats);
+        animator.start();
+    }
+
+    public static ValueAnimator slideAnimator(int start, int end, final LinearLayout postStats) {
 
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
 

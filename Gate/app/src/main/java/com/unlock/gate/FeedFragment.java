@@ -118,6 +118,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         mSessionPreferences = this.getActivity().getSharedPreferences(
                 getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
+        //Handles the case of when a user backs out of the App. We want to have them back at their
+        //original network viewed.
         currentNetwork = Network.deserialize(mSessionPreferences.getString(getString(R.string.user_last_gate_viewed_key), null));
 
         feed = getListView();
@@ -429,7 +431,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                 }
                 break;
-        }
+            }
     }
 
     private int firstVisiblePost() {
