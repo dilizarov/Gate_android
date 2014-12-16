@@ -2,6 +2,7 @@ package com.unlock.gate.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.unlock.gate.CommentsActivity;
+import com.unlock.gate.MainActivity;
 import com.unlock.gate.R;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.models.Post;
@@ -23,6 +26,7 @@ import java.util.List;
  */
 public class FeedListAdapter extends BaseAdapter {
 
+    private final int UPDATE_POST_INTENT = 2;
     private Context context;
     private LayoutInflater mInflater;
     private List<Post> posts;
@@ -81,7 +85,18 @@ public class FeedListAdapter extends BaseAdapter {
         timestamp.setText(post.getTimestamp());
 
         PostViewHelper.handleUpBehavior(context, post, upPost, upCountPost, smileyCount, postStats);
-        PostViewHelper.handleCommentBehavior(context, post, createComment, commentsCount, commentsCountBubble);
+        PostViewHelper.handleCommentBehavior(context, post, commentsCount, commentsCountBubble);
+
+        createComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(context, CommentsActivity.class);
+                intent.putExtra("post", post);
+                intent.putExtra("creatingComment", true);
+                ((MainActivity) context).startActivityForResult(intent, UPDATE_POST_INTENT);
+            }
+        });
 
         if (network == null) {
             networkName.setText(post.getNetworkName());

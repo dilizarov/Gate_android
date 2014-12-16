@@ -2,7 +2,6 @@ package com.unlock.gate.utils;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,7 +11,6 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.unlock.gate.CommentsActivity;
 import com.unlock.gate.R;
 import com.unlock.gate.models.Post;
 
@@ -78,7 +76,7 @@ public class PostViewHelper {
         });
     }
 
-    public static void handleCommentBehavior(final Context context, final Post post, ImageView createComment, TextView commentsCount, ImageView commentsCountBubble) {
+    public static void handleCommentBehavior(final Context context, final Post post, TextView commentsCount, ImageView commentsCountBubble) {
         commentsCount.setText(Integer.toString(post.getCommentCount()));
 
         if (post.getCommentCount() > 0) {
@@ -87,18 +85,6 @@ public class PostViewHelper {
         } else {
             commentsCount.setVisibility(View.GONE);
             commentsCountBubble.setVisibility(View.GONE);
-        }
-
-        if (createComment != null) {
-            createComment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, CommentsActivity.class);
-                    intent.putExtra("post", post);
-                    intent.putExtra("creatingComment", true);
-                    context.startActivity(intent);
-                }
-            });
         }
     }
 

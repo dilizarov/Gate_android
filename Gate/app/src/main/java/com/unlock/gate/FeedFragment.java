@@ -67,6 +67,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private LinearLayout progressBarHolder;
 
     private final int CREATE_POST_INTENT = 1;
+    private final int UPDATE_POST_INTENT = 2;
 
     private int position;
 
@@ -336,8 +337,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                 Intent intent = new Intent(getActivity(), CommentsActivity.class);
                 intent.putExtra("post", posts.get(position));
-                startActivity(intent);
-
+                startActivityForResult(intent, UPDATE_POST_INTENT);
             }
         });
     }
@@ -392,10 +392,10 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                             jsonPost.optString("created_at"));
 
                                     posts.add(0, post);
-                                    feed.setSelection(0);
-                                    listAdapter = new FeedListAdapter(getActivity(), posts, currentNetwork);
-                                    feed.setAdapter(listAdapter);
+                                    adapterPosts.clear();
+                                    adapterPosts.addAll(posts);
                                     listAdapter.notifyDataSetChanged();
+                                    feed.setSelection(0);
                                 } else {
                                     //Crouton/Toast stuff.
                                     Toast.makeText(getActivity(), "Successfully posted to another network", Toast.LENGTH_LONG).show();
@@ -431,7 +431,36 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                 }
                 break;
-            }
+
+            case UPDATE_POST_INTENT:
+                if (resultCode == getActivity().RESULT_OK) {
+
+                    final Post post = data.getParcelableExtra("updatedPost");
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int len = posts.size();
+                            for (int i = 0; i < len; i++) {
+                                if (posts.get(i).getId().equals(post.getId())) {
+                                    posts.set(i, post);
+                                    break;
+                                }
+                            }
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    keepPositionInListAndAdaptNewPostsToFeed();
+                                }
+                            });
+                        }
+                    }).start();
+                }
+                break;
+        }
+
+
     }
 
     private int firstVisiblePost() {

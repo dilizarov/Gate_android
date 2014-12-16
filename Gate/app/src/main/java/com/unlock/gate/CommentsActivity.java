@@ -81,7 +81,7 @@ public class CommentsActivity extends ListActivity {
         setSendCommentClickListener();
 
         PostViewHelper.handleUpBehavior(this, post, upPost, postUpCountPost, postSmileyCount, postStats);
-        PostViewHelper.handleCommentBehavior(this, post, null, postCommentsCount, postCommentsCountBubble);
+        PostViewHelper.handleCommentBehavior(this, post, postCommentsCount, postCommentsCountBubble);
 
         comments = new ArrayList<Comment>();
         adapterComments = new ArrayList<Comment>();
@@ -367,6 +367,10 @@ public class CommentsActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                Intent intent = getIntent();
+                intent.putExtra("updatedPost", post);
+                setResult(RESULT_OK, intent);
+
                 onBackPressed();
                 return true;
             case R.id.action_refresh_comments:

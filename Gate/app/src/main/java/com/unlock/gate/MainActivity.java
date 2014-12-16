@@ -45,6 +45,8 @@ import java.util.Comparator;
  */
 public class MainActivity extends FragmentActivity {
 
+    private final int UPDATE_POST_INTENT = 2;
+
     private PagerSlidingTabStrip tabs;
     private ViewPager pager;
     private MyPagerAdapter adapter;
@@ -365,6 +367,18 @@ public class MainActivity extends FragmentActivity {
         }
 
         mNdefExchangeFilters = new IntentFilter[] { ndefDetected };
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode) {
+            case UPDATE_POST_INTENT:
+                FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
+                feedFragment.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
     }
 
     private void test_post_bump() {
