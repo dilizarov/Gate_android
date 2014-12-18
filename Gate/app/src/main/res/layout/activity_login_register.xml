@@ -61,7 +61,7 @@
         android:layout_below="@+id/userPassword"
         android:ems="10"
         android:hint="@string/user_full_name_hint"
-        android:inputType="textPersonName"
+        android:inputType="textPersonName|textCapWords"
         android:visibility="invisible" />
 
     <TextView

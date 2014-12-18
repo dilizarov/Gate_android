@@ -28,9 +28,20 @@ public class PostViewHelper {
         if (post.getUpCount() > 0) {
             upCountPost.setVisibility(View.VISIBLE);
             smileyCount.setVisibility(View.VISIBLE);
+
+            int height = upCountPost.getMaxHeight();
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) postStats.getLayoutParams();
+            layoutParams.height = height;
+            postStats.setLayoutParams(layoutParams);
         } else {
             upCountPost.setVisibility(View.GONE);
             smileyCount.setVisibility(View.GONE);
+
+            if (post.getCommentCount() == 0) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) postStats.getLayoutParams();
+                layoutParams.height = 0;
+                postStats.setLayoutParams(layoutParams);
+            }
         }
 
         if (post.getUped()) {

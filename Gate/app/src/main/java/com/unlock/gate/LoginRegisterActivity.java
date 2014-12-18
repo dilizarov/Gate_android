@@ -263,6 +263,10 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 					public void onResponse(JSONObject response) {
 						
 						storeSessionInformation(response);
+
+                        mActivityPreferences.edit()
+                                            .putString(getString(R.string.last_used_email), mEmail)
+                                            .commit();
 						
 						progressDialog.dismiss();
 						Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
@@ -282,13 +286,13 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 						
 						if (volleyError.isExpectedError()) {
 							JSONObject errorsJSON = volleyError.getErrors();
-							
-								JSONArray errorsArray = errorsJSON.optJSONArray("errors");
-								String incorrectEmailPassword = errorsArray.optString(0);
+
+							JSONArray errorsArray = errorsJSON.optJSONArray("errors");
+							String incorrectEmailPassword = errorsArray.optString(0);
 								
-								Crouton.makeText(LoginRegisterActivity.this, incorrectEmailPassword, Style.ALERT)
-										.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-										.show();
+							Crouton.makeText(LoginRegisterActivity.this, incorrectEmailPassword, Style.ALERT)
+									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+									.show();
 						} else {
 							Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
 									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
@@ -354,6 +358,15 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 									public void onResponse(JSONObject response) {
 
 										storeSessionInformation(response);
+                                        String nameOnPhone = mActivityPreferences.getString(getString(R.string.name_on_phone), "");
+                                        SharedPreferences.Editor editor = mActivityPreferences.edit();
+
+                                        if (mFullName.equals(nameOnPhone)) {
+                                            editor.putBoolean(getString(R.string.used_name_on_phone), true);
+                                        }
+
+                                        editor.putString(getString(R.string.last_used_email), mEmail);
+                                        editor.commit();
 
 										progressDialog.dismiss();
 										Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
@@ -381,6 +394,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 
 											int j = errorsArray.length();
 											for (int i = 0; i < j; i++) {
+                                                Log.v("error " + i, errorsArray.optString(i, ""));
 												if (i != 0) errorString.append("\n");
 												errorString.append(errorsArray.optString(i));
 											}
@@ -498,12 +512,15 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 			} catch (ActivityNotFoundException e) {
 				Log.v("EMAIL_REQUEST_INTENT", "Activity was not found");
 			}
-		}
+		} else {
+            userEmail.setText(mEmail);
+        }
 	}
 	
 	private void getAndSetFullName() {
 		// Use ContactContracts.Profile to try to get full name
-		getLoaderManager().initLoader(0, null, this);
+        if (!mActivityPreferences.getBoolean(getString(R.string.used_name_on_phone), false))
+            getLoaderManager().initLoader(0, null, this);
 	}
 	
 	@Override
@@ -523,8 +540,15 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		cursor.moveToFirst();
-		mFullName = cursor.getString(0);
-		if (!mFullName.isEmpty()) userFullName.setText(mFullName);
+        if (!cursor.isNull(0)) {
+            mFullName = cursor.getString(0);
+            if (!mFullName.isEmpty()) {
+                userFullName.setText(mFullName);
+                mActivityPreferences.edit()
+                                    .putString(getString(R.string.name_on_phone), mFullName)
+                                    .commit();
+            }
+        }
 	}
 	
 	@Override

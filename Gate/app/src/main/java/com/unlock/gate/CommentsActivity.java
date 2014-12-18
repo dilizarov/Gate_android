@@ -142,10 +142,6 @@ public class CommentsActivity extends ListActivity {
         );
 
         postTimestamp.setText(post.getTimestamp());
-        /*postCommentsCount.setText(getResources()
-                .getQuantityString(R.plurals.comments_count,
-                        post.getCommentCount(),
-                        post.getCommentCount()));*/
     }
 
     private void requestCommentsAndPopulateListView(final boolean refreshing) {

@@ -27,6 +27,8 @@
     <string name="toggle_registration">Register</string>
     <string name="login_register_shared_preferences_key">com.unlock.gate.LOGIN_REGISTER_PREF</string>
     <string name="last_used_email">last_used_email</string>
+    <string name="used_name_on_phone">used_name_on_phone</string>
+    <string name="name_on_phone">name_on_phone</string>
     <string name="no_email_inputted">Your email is required</string>
     <string name="improper_email_format">This email isn\'t formatted properly</string>
     <string name="no_password_inputted">Your password is required</string>
