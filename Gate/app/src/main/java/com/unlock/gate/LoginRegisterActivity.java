@@ -345,7 +345,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 								JSONObject user = new JSONObject();
 								user.put("email", mEmail)
 									.put("password", mPassword)
-									.put("password_confirmation", mPassword)
 									.put("name", mFullName);
 					
 					

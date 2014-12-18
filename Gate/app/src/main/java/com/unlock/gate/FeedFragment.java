@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -65,6 +66,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private Network currentNetwork;
 
     private LinearLayout progressBarHolder;
+    private RelativeLayout feedPostButtonHolder;
 
     private final int CREATE_POST_INTENT = 1;
     private final int UPDATE_POST_INTENT = 2;
@@ -129,6 +131,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         adapterPosts = new ArrayList<Post>();
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
+        feedPostButtonHolder = (RelativeLayout) this.getActivity().findViewById(R.id.feedPostButtonHolder);
 
         createPost = (Button) this.getActivity().findViewById(R.id.createPost);
 
@@ -165,9 +168,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     }
 
     public void getNetworkFeed(Network network) {
-        if (network == null) Toast.makeText(getActivity(), "Aggregate", Toast.LENGTH_LONG).show();
-        else Toast.makeText(getActivity(), network.getName(), Toast.LENGTH_LONG).show();
-
         ((MainActivity) getActivity()).setTitle(network);
 
         if (!onAggregateAndGettingAggregate(network) &&
@@ -180,18 +180,23 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
             currentNetwork = network;
             feed.setSelection(0);
-            mPullToRefreshLayout.setRefreshing(true);
+            feedPostButtonHolder.setVisibility(View.GONE);
+            progressBarHolder.setVisibility(View.VISIBLE);
             infiniteScrollListener.setAtEndOfList(false);
-            requestPostsAndPopulateListView(true);
+            requestPostsAndPopulateListView(true, true);
             setCurrentPage(1);
         }
     }
 
     private void requestPostsAndPopulateListView(final boolean refreshing) {
-        requestPostsAndPopulateListView(refreshing, -1);
+        requestPostsAndPopulateListView(refreshing, -1, false);
     }
 
-    private void requestPostsAndPopulateListView(final boolean refreshing, int page) {
+    private void requestPostsAndPopulateListView(final boolean refreshing, final boolean changingGates) {
+        requestPostsAndPopulateListView(refreshing, -1, changingGates);
+    }
+
+    private void requestPostsAndPopulateListView(final boolean refreshing, int page, final boolean changingGates) {
         try {
 
             JSONObject params = new JSONObject();
@@ -243,12 +248,19 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                 public void run() {
                                     if (refreshing) {
                                         mPullToRefreshLayout.setRefreshComplete();
-                                        Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_LONG).show();
-                                    } else {
-                                        progressBarHolder.setVisibility(View.GONE);
+                                        if (changingGates)
+                                            Toast.makeText(getActivity(),
+                                                    currentNetwork == null
+                                                    ? "Aggregate"
+                                                    : currentNetwork.getName(), Toast.LENGTH_LONG).show();
+                                        else
+                                            Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_LONG).show();
                                     }
 
+                                    progressBarHolder.setVisibility(View.GONE);
+
                                     keepPositionInListAndAdaptNewPostsToFeed();
+                                    feedPostButtonHolder.setVisibility(View.VISIBLE);
                                 }
                             });
                         }
@@ -319,7 +331,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         infiniteScrollListener = new InfiniteScrollListener(currentPage, posts.size()) {
             @Override
             public void loadMore(int page) {
-                requestPostsAndPopulateListView(false, page);
+                requestPostsAndPopulateListView(false, page, false);
                 currentPage = page;
             }
         };
