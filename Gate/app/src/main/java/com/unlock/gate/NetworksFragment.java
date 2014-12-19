@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -22,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.unlock.gate.adapters.NetworksListAdapter;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
 import org.json.JSONArray;
@@ -55,6 +57,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     private PullToRefreshLayout mPullToRefreshLayout;
     private Button viewAggregate;
 
+    private TextView noGatesMessage;
     private LinearLayout progressBarHolder;
 
     private final int CREATE_NETWORK_INTENT = 1;
@@ -123,6 +126,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         networks = new ArrayList<Network>();
         adapterNetworks = new ArrayList<Network>();
 
+        noGatesMessage = (TextView) this.getActivity().findViewById(R.id.noGatesMessage);
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.networkProgressBarHolder);
 
         createNetwork = (Button) this.getActivity().findViewById(R.id.createNetwork);
@@ -168,7 +172,6 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-
                 viewFeedForNetwork(networks.get(position));
             }
         });
@@ -265,9 +268,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                         progressBarHolder.setVisibility(View.GONE);
                                     }
 
-                                    listAdapter = new NetworksListAdapter(getActivity(), networks);
-                                    networksList.setAdapter(listAdapter);
-                                    listAdapter.notifyDataSetChanged();
+                                    adaptNewGatesToList();
                                 }
                             });
                         }
@@ -317,9 +318,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                     mPullToRefreshLayout.setRefreshComplete();
                                     Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_LONG).show();
 
-                                    listAdapter = new NetworksListAdapter(getActivity(), networks);
-                                    networksList.setAdapter(listAdapter);
-                                    listAdapter.notifyDataSetChanged();
+                                    adaptNewGatesToList();
                                 }
                             });
                         }
@@ -367,7 +366,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                               .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
                         JSONObject network = new JSONObject();
-                        network.put("name", networkName);
+                        network.put("name", networkName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));
 
                         params.put("network", network);
 
@@ -380,10 +379,11 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                         1,
                                         jsonNetwork.optJSONObject("creator").optString("name"));
 
-                                ArrayList<Network> networks = new ArrayList<Network>();
-                                networks.add(network);
+                                ArrayList<Network> newNetworks = new ArrayList<Network>();
+                                newNetworks.add(network);
 
-                                addNetworksToList(networks);
+                                addNetworksToArrayList(newNetworks);
+                                adaptNewGatesToList();
                             }
                         };
 
@@ -428,7 +428,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         return networks;
     }
 
-    public void addNetworksToList(final ArrayList<Network> newNetworks) {
+    public void addNetworksToArrayList(final ArrayList<Network> newNetworks) {
 
         // networkItems is a sorted array. newNetworks will be a very small array.
         // Ultimately, this shouldn't take long at all, but if for some reason we see it
@@ -441,6 +441,12 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             Network network = newNetworks.get(i);
 
             int length = networks.size();
+
+            if (length == 0) {
+                networks.add(network);
+                continue;
+            }
+
             for (int j = startingPoint; j < length; j++) {
                 String name = networks.get(j).getName();
                 if (name.compareToIgnoreCase(network.getName()) > 0) {
@@ -458,11 +464,11 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
     public void adaptNewGatesToList() {
 
-//        noGatesMessage.setVisibility(
-//                networks.size() == 0
-//                ? View.VISIBLE
-//                : View.GONE
-//        );
+        noGatesMessage.setVisibility(
+                networks.size() == 0
+                ? View.VISIBLE
+                : View.GONE
+        );
 
         if (listAdapter == null) {
             listAdapter = new NetworksListAdapter(getActivity(), adapterNetworks);

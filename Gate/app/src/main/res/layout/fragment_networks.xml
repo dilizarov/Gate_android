@@ -30,6 +30,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/noGatesMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:text="You've unlocked no Gates. \n Create a Gate or ask a Gatekeeper to let you in one!"
+            android:textColor="@android:color/black"
+            android:visibility="visible"
+            android:layout_above="@+id/createNetwork"/>
+
         <ListView
             android:id="@id/android:list"
             android:layout_width="fill_parent"

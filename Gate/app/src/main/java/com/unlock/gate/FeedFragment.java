@@ -26,6 +26,7 @@ import com.unlock.gate.models.Network;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.InfiniteScrollListener;
+import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
 import org.joda.time.DateTime;
@@ -387,8 +388,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             case CREATE_POST_INTENT:
                 if (resultCode == getActivity().RESULT_OK) {
                     final Network network = (Network) data.getParcelableExtra("network");
-                    final String postBody = data.getStringExtra("postBody").replaceAll("\\n+", "\n")
-                                                                           .replaceAll("[ \\t\\x0b\\r\\f]{2,}", " ");
+                    final String postBody = data.getStringExtra("postBody")
+                                                .replaceAll(RegexConstants.NEW_LINE, "\n")
+                                                .replaceAll(RegexConstants.DOUBLE_SPACE, " ");
 
                     try {
                         JSONObject params = new JSONObject();

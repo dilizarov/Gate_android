@@ -57,6 +57,7 @@
     <LinearLayout
         android:id="@+id/postStats"
         android:layout_marginTop="6dp"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 

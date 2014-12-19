@@ -25,6 +25,7 @@ import com.unlock.gate.models.Comment;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.PostViewHelper;
+import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.SetErrorBugFixer;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
@@ -230,9 +231,9 @@ public class CommentsActivity extends ListActivity {
     private void setSendCommentClickListener() {
         sendComment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String comment = addComment.getText().toString();
+                String comment = addComment.getText().toString().trim();
 
-                if (comment.trim().length() == 0) {
+                if (comment.length() == 0) {
                     addComment.setError(getString(R.string.no_comment_inputted));
                 } else if (comment.length() > 500) {
                     addComment.setError(getString(R.string.over_500_characters_inputted));
@@ -273,7 +274,8 @@ public class CommentsActivity extends ListActivity {
                   .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
             JSONObject commentJson = new JSONObject();
-            commentJson.put("body", comment);
+            commentJson.put("body", comment.replaceAll(RegexConstants.NEW_LINE, "\n")
+                    .replaceAll(RegexConstants.DOUBLE_SPACE, " "));
 
             params.put("comment", commentJson);
 

@@ -32,6 +32,7 @@ import com.google.android.gms.common.AccountPicker;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.CustomValidator;
 import com.unlock.gate.utils.Fade;
+import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.SetErrorBugFixer;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
@@ -309,9 +310,9 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	}
 	
 	private void processRegistration() {
-		mEmail    = userEmail.getText().toString();
-		mPassword = userPassword.getText().toString();
-		mFullName = userFullName.getText().toString();
+		mEmail    = userEmail.getText().toString().trim();
+		mPassword = userPassword.getText().toString(); //Not really one to judge if space is in password.
+		mFullName = userFullName.getText().toString().trim();
 	
 		if (mEmail.length() == 0 || mPassword.length() == 0 || mFullName.length() == 0) {
 			if (mEmail.length() == 0)    userEmail.setError(getString(R.string.no_email_inputted));
@@ -345,7 +346,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 								JSONObject user = new JSONObject();
 								user.put("email", mEmail)
 									.put("password", mPassword)
-									.put("name", mFullName);
+									.put("name", mFullName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));
 					
 					
 								JSONObject params = new JSONObject();

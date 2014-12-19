@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.unlock.gate.R;
@@ -21,6 +23,15 @@ public class CommentsListAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater mInflater;
     private List<Comment> comments;
+
+    static class ViewHolder {
+        TextView commenterName;
+        TextView commentBody;
+        TextView commentTimestamp;
+        TextView upCountComment;
+        ImageView smileyCountComment;
+        LinearLayout commentStats;
+    }
 
     public CommentsListAdapter(Context context, List<Comment> comments) {
         this.context = context;
@@ -44,18 +55,33 @@ public class CommentsListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (mInflater == null) mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null) convertView = mInflater.inflate(R.layout.comment_item, null);
+        ViewHolder viewHolder;
 
-        TextView commenterName    = (TextView) convertView.findViewById(R.id.commenterName);
-        TextView commentBody      = (TextView) convertView.findViewById(R.id.commentBody);
-        TextView commentTimestamp = (TextView) convertView.findViewById(R.id.commentTimestamp);
+        if (mInflater == null) mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.comment_item, null);
+
+            viewHolder = new ViewHolder();
+
+            viewHolder.commenterName      = (TextView) convertView.findViewById(R.id.commenterName);
+            viewHolder.commentBody        = (TextView) convertView.findViewById(R.id.commentBody);
+            viewHolder.commentTimestamp   = (TextView) convertView.findViewById(R.id.commentTimestamp);
+            viewHolder.upCountComment     = (TextView) convertView.findViewById(R.id.upCountComment);
+            viewHolder.smileyCountComment = (ImageView) convertView.findViewById(R.id.smileyCountComment);
+            viewHolder.commentStats       = (LinearLayout) convertView.findViewById(R.id.commentStats);
+
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
 
         Comment comment = comments.get(position);
 
-        commenterName.setText(comment.getName());
-        commentBody.setText(comment.getBody());
-        commentTimestamp.setText(comment.getTimestamp());
+        
+
+        viewHolder.commenterName.setText(comment.getName());
+        viewHolder.commentBody.setText(comment.getBody());
+        viewHolder.commentTimestamp.setText(comment.getTimestamp());
 
         return convertView;
     }

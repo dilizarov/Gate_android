@@ -275,13 +275,13 @@ public class MainActivity extends FragmentActivity {
                             });
 
                             final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
-                            networksFragment.addNetworksToList(newNetworks);
+                            networksFragment.addNetworksToArrayList(newNetworks);
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
 
-                                    networksFragment.adaptList();
+                                    networksFragment.adaptNewGatesToList();
 
                                     CharSequence[] items = networkNames.toArray(new CharSequence[networkNames.size()]);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -442,13 +442,13 @@ public class MainActivity extends FragmentActivity {
                 });
 
                 final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
-                networksFragment.addNetworksToList(newNetworks);
+                networksFragment.addNetworksToArrayList(newNetworks);
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
-                        networksFragment.adaptList();
+                        networksFragment.adaptNewGatesToList();
 
                         CharSequence[] items = networkNames.toArray(new CharSequence[networkNames.size()]);
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
