@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -65,6 +66,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     private Network currentNetwork;
 
+    private TextView noPostsMessage;
     private LinearLayout progressBarHolder;
     private RelativeLayout feedPostButtonHolder;
 
@@ -130,6 +132,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         posts = new ArrayList<Post>();
         adapterPosts = new ArrayList<Post>();
 
+        noPostsMessage = (TextView) this.getActivity().findViewById(R.id.noPostsMessage);
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
         feedPostButtonHolder = (RelativeLayout) this.getActivity().findViewById(R.id.feedPostButtonHolder);
 
@@ -146,7 +149,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             currentPage      = savedInstanceState.getInt("currentPage");
 
             progressBarHolder.setVisibility(View.GONE);
-            keepPositionInListAndAdaptNewPostsToFeed(index, top);
+            setPositionInList(index, top);
+            adaptNewPostsToFeed();
 
             setInfiniteScrollListener(savedInstanceState.getBoolean("atEndOfList"));
         } else {
@@ -259,7 +263,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                                     progressBarHolder.setVisibility(View.GONE);
 
-                                    keepPositionInListAndAdaptNewPostsToFeed();
+                                    keepPositionInList();
+                                    adaptNewPostsToFeed();
+
                                     feedPostButtonHolder.setVisibility(View.VISIBLE);
                                 }
                             });
@@ -293,9 +299,23 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     //Usual listAdapter & notifyDataSetChanged stuff wrapped around ensuring
     //The same position is kept.
-    private void keepPositionInListAndAdaptNewPostsToFeed(int index, int top) {
+    private void setPositionInList(int index, int top) {
         if (index == -1) index = firstVisiblePost();
         if (top   == -1) top = topOfFeed();
+
+        feed.setSelectionFromTop(index, top);
+    }
+
+    private void keepPositionInList() {
+        setPositionInList(-1, -1);
+    }
+
+    private void adaptNewPostsToFeed() {
+        if (posts.size() == 0) {
+            noPostsMessage.setVisibility(View.VISIBLE);
+        } else {
+            noPostsMessage.setVisibility(View.GONE);
+        }
 
         if (listAdapter == null) {
             listAdapter = new FeedListAdapter(getActivity(), adapterPosts, currentNetwork);
@@ -306,12 +326,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         adapterPosts.clear();
         adapterPosts.addAll(posts);
         listAdapter.notifyDataSetChanged();
-
-        feed.setSelectionFromTop(index, top);
-    }
-
-    private void keepPositionInListAndAdaptNewPostsToFeed() {
-        keepPositionInListAndAdaptNewPostsToFeed(-1, -1);
     }
 
     @Override
@@ -404,9 +418,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                             jsonPost.optString("created_at"));
 
                                     posts.add(0, post);
-                                    adapterPosts.clear();
-                                    adapterPosts.addAll(posts);
-                                    listAdapter.notifyDataSetChanged();
+                                    adaptNewPostsToFeed();
                                     feed.setSelection(0);
                                 } else {
                                     //Crouton/Toast stuff.
@@ -463,7 +475,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    keepPositionInListAndAdaptNewPostsToFeed();
+                                    setPositionInList(0, 0);
+                                    adaptNewPostsToFeed();
                                 }
                             });
                         }
@@ -471,8 +484,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 }
                 break;
         }
-
-
     }
 
     private int firstVisiblePost() {

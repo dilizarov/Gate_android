@@ -26,12 +26,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/noPostsMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:text="There are no posts :(. Be the first to make a post!"
+            android:textColor="@android:color/black"
+            android:visibility="visible"
+            android:layout_above="@+id/createPost"/>
+
         <ListView
             android:id="@id/android:list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:scrollbars="none"
-            android:divider = "@null"
+            android:divider="@null"
             android:layout_above="@+id/createPost"/>
 
         <Button
