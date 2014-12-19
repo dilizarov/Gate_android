@@ -10,7 +10,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -55,9 +58,10 @@ public class MainActivity extends FragmentActivity {
     private NfcAdapter mNfcAdapter;
     private PendingIntent mNfcPendingIntent;
     private IntentFilter[] mNdefExchangeFilters;
-    private boolean nfcConfigured = false;
     private boolean mWriteMode = false;
     private ProgressDialog progressDialog;
+
+    private AlertDialog activateNfcDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,19 +86,50 @@ public class MainActivity extends FragmentActivity {
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        configureNFC();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+        if (mNfcAdapter != null) {
+            if (mNfcAdapter.isEnabled()) {
+                configureNFC();
+                mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
+                        mNdefExchangeFilters, null);
+            } else {
+                if (activateNfcDialog == null) {
+                    activateNfcDialog = new AlertDialog.Builder(this)
+                        .setTitle("Please activate NFC")
+                        .setMessage("NFC is required to use Gate and does not drain any battery")
+                        .setCancelable(false)
+                        .setPositiveButton("Activate", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                    Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+                                    startActivity(intent);
+                                } else {
+                                    Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                                    startActivity(intent);
+                                }
+                            }
+                        }).create();
+                }
 
-            if (!nfcConfigured) configureNFC();
-
-        mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
-                mNdefExchangeFilters, null);
+                // I use the handler postDelayed because when someone logs in,
+                // sometimes everything happens so fast the Keyboard doesn't have
+                // time to leave the view. So in the background, you still see the keyboard.
+                // By waiting 100 milliseconds, you basically guarantee that the keyboard is gone
+                // and the difference honestly isn't even noticable. 
+                if (!activateNfcDialog.isShowing())
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            activateNfcDialog.show();
+                        }
+                    }, 100);
+            }
         }
     }
 
