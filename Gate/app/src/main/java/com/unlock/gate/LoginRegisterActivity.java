@@ -386,20 +386,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 										VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
 										if (volleyError.isExpectedError()) {
-											JSONObject errorsJSON = volleyError.getErrors();
-
-											JSONArray errorsArray = errorsJSON.optJSONArray("errors");
-
-											StringBuilder errorString = new StringBuilder();
-
-											int j = errorsArray.length();
-											for (int i = 0; i < j; i++) {
-                                                Log.v("error " + i, errorsArray.optString(i, ""));
-												if (i != 0) errorString.append("\n");
-												errorString.append(errorsArray.optString(i));
-											}
-
-											Crouton.makeText(LoginRegisterActivity.this, errorString.toString(), Style.ALERT)
+											Crouton.makeText(LoginRegisterActivity.this, volleyError.getPrettyErrors(), Style.ALERT)
 											.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
 											.show();
 										} else {

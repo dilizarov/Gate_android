@@ -10,7 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.unlock.gate.utils.Butter;
 
 
 public class CreateNetworkActivity extends Activity {
@@ -57,10 +58,13 @@ public class CreateNetworkActivity extends Activity {
             }
         });
 
-        if (intent.getStringExtra("networkName") != null) createNetworkName.setText(intent.getStringExtra("networkName"));
+        if (intent.getStringExtra("networkName") != null) createNetworkName.append(intent.getStringExtra("networkName"));
 
-        if (intent.getStringExtra("errorMessage") != null)
-            Toast.makeText(this, intent.getStringExtra("errorMessage"), Toast.LENGTH_LONG).show();
+        if (intent.getStringExtra("errors") != null) {
+            Butter.between(this, intent.getStringExtra("errors"));
+        } else if (intent.getStringExtra("errorMessage") != null) {
+            Butter.between(this, intent.getStringExtra("errorMessage"));
+        }
     }
 
 

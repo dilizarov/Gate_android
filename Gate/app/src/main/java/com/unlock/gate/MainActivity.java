@@ -94,6 +94,9 @@ public class MainActivity extends FragmentActivity {
 
         if (mNfcAdapter != null) {
             if (mNfcAdapter.isEnabled()) {
+                if (activateNfcDialog != null && activateNfcDialog.isShowing())
+                    activateNfcDialog.cancel();
+
                 configureNFC();
                 mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
                         mNdefExchangeFilters, null);
@@ -122,7 +125,8 @@ public class MainActivity extends FragmentActivity {
                 // time to leave the view. So in the background, you still see the keyboard.
                 // By waiting 100 milliseconds, you basically guarantee that the keyboard is gone
                 // and the difference in time honestly isn't even noticeable.
-                if (!activateNfcDialog.isShowing())
+                if (!activateNfcDialog.isShowing() &&
+                    !airplaneModeIsOn())
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -381,9 +385,9 @@ public class MainActivity extends FragmentActivity {
         if (network == null) {
             title = "Aggregate";
         } else {
-            title = (network.getName().length() < 20) ?
-                    network.getName() :
-                    network.getName().substring(0, 16) + "...";
+            title = ( network.getName().length() < 20 )
+                    ? network.getName()
+                    : network.getName().substring(0, 16) + "...";
         }
 
         getActionBar().setTitle(title);
@@ -466,6 +470,17 @@ public class MainActivity extends FragmentActivity {
             }
         }).start();
 
+    }
+
+    @SuppressWarnings("deprecation")
+    public boolean airplaneModeIsOn() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.System.getInt(this.getContentResolver(),
+                    Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+        } else {
+            return Settings.Global.getInt(this.getContentResolver(),
+                    Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+        }
     }
 
 }

@@ -111,8 +111,9 @@ public class CreatePostActivity extends Activity {
 
         // Come back and handle errors completely. Crouton, etc.
 
-        if (intent.getStringExtra("errorMessage") != null)
-            Toast.makeText(this, intent.getStringExtra("errorMessage"), Toast.LENGTH_LONG).show();
+        if (intent.getStringExtra("errorMessage") != null) {
+            Toast toast = Toast.makeText(this, intent.getStringExtra("errorMessage"), Toast.LENGTH_LONG);
+        }
     }
 
 

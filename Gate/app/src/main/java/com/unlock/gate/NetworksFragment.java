@@ -331,7 +331,6 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-                    mPullToRefreshLayout.setRefreshComplete();
 
                     Log.v("Error", mSessionPreferences.getString(getString(R.string.user_auth_token_key), "nope"));
                 }
@@ -396,7 +395,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                 intent.putExtra("networkName", networkName);
 
                                 if (volleyError.isExpectedError()) {
-                                    intent.putExtra("errors", volleyError.getErrors().toString());
+                                    intent.putExtra("errors", volleyError.getPrettyErrors());
                                 } else {
                                     intent.putExtra("errorMessage", volleyError.getMessage());
                                 }

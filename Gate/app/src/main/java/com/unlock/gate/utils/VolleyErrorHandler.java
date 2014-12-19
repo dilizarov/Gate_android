@@ -1,10 +1,5 @@
 package com.unlock.gate.utils;
 
-import java.io.UnsupportedEncodingException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -16,6 +11,12 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.unlock.gate.MyApplication;
 import com.unlock.gate.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 
 public class VolleyErrorHandler {
 
@@ -74,6 +75,24 @@ public class VolleyErrorHandler {
 	public JSONObject getErrors() {
 		return mJSONErrors;
 	}
+
+    public String getPrettyErrors() {
+        if (!this.isExpectedError()) return null;
+
+        JSONArray errorsArray = mJSONErrors.optJSONArray("errors");
+
+        StringBuilder errorString = new StringBuilder();
+
+        int j = errorsArray.length();
+        for (int i = 0; i < j; i++) {
+            Log.v("error " + i, errorsArray.optString(i, ""));
+            if (i != 0) errorString.append("\n");
+            errorString.append(errorsArray.optString(i));
+        }
+
+        return errorString.toString();
+    }
+
 	public boolean isExpectedError() {
 		return mErrorType == Error.EXPECTED;
 	}
