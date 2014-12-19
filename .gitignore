@@ -1,1 +1,33 @@
+#built application files
+Gate/*.apk
+Gate/*.ap_
+
+# files for the dex VM
+Gate/*.dex
+
+# Java class files
+Gate/*.class
+
+# generated files
+Gate/bin/
+Gate/gen/
+
+# Local configuration file (sdk path, etc)
+Gate/local.properties
+
+# Windows thumbnail db
+Gate/Thumbs.db
+
+# OSX files
+.DS_Store
+
+# Eclipse project files
+.classpath
+.project
+
+# Android Studio
+Gate/.idea
+#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+Gate/.gradle
+Gate/build/
 Gate/app/build
