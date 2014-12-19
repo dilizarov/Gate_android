@@ -121,7 +121,7 @@ public class MainActivity extends FragmentActivity {
                 // sometimes everything happens so fast the Keyboard doesn't have
                 // time to leave the view. So in the background, you still see the keyboard.
                 // By waiting 100 milliseconds, you basically guarantee that the keyboard is gone
-                // and the difference honestly isn't even noticable. 
+                // and the difference in time honestly isn't even noticeable.
                 if (!activateNfcDialog.isShowing())
                     new Handler().postDelayed(new Runnable() {
                         @Override
