@@ -42,6 +42,7 @@ public class CommentsActivity extends ListActivity {
     private TextView postBody;
     private TextView postCommentsCount;
     private TextView postUpCountPost;
+    private TextView noCommentsMessage;
     private ListView commentsList;
     private LinearLayout postStats;
     private EditText addComment;
@@ -85,13 +86,10 @@ public class CommentsActivity extends ListActivity {
 
         comments = new ArrayList<Comment>();
         adapterComments = new ArrayList<Comment>();
-        listAdapter = new CommentsListAdapter(CommentsActivity.this, adapterComments);
-        commentsList.setAdapter(listAdapter);
 
         if (savedInstanceState != null) {
             comments = savedInstanceState.getParcelableArrayList("comments");
-            adapterComments.addAll(comments);
-            listAdapter.notifyDataSetChanged();
+            adaptNewCommentsToList();
             progressBarHolder.setVisibility(View.GONE);
         } else {
             requestCommentsAndPopulateListView(false);
@@ -123,6 +121,7 @@ public class CommentsActivity extends ListActivity {
 
         postStats         = (LinearLayout) findViewById(R.id.postStats);
 
+        noCommentsMessage = (TextView) findViewById(R.id.noCommentsMessage);
         commentsList      = getListView();
         addComment        = (EditText) findViewById(R.id.addComment);
         sendComment       = (Button) findViewById(R.id.sendComment);
@@ -142,6 +141,25 @@ public class CommentsActivity extends ListActivity {
         );
 
         postTimestamp.setText(post.getTimestamp());
+    }
+
+    private void adaptNewCommentsToList() {
+
+        if (comments.size() == 0) {
+            noCommentsMessage.setVisibility(View.VISIBLE);
+        } else {
+            noCommentsMessage.setVisibility(View.GONE);
+        }
+
+        if (listAdapter == null) {
+            listAdapter = new CommentsListAdapter(CommentsActivity.this, adapterComments);
+            commentsList.setAdapter(listAdapter);
+        }
+
+        adapterComments.clear();
+        adapterComments.addAll(comments);
+        listAdapter.notifyDataSetChanged();
+
     }
 
     private void requestCommentsAndPopulateListView(final boolean refreshing) {
@@ -179,9 +197,7 @@ public class CommentsActivity extends ListActivity {
 
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    adapterComments.clear();
-                                    adapterComments.addAll(comments);
-                                    listAdapter.notifyDataSetChanged();
+                                    adaptNewCommentsToList();
                                     progressBarHolder.setVisibility(View.GONE);
 
                                     if (refreshing) {
@@ -276,9 +292,7 @@ public class CommentsActivity extends ListActivity {
 
                     comments.add(comment);
 
-                    adapterComments.clear();
-                    adapterComments.addAll(comments);
-                    listAdapter.notifyDataSetChanged();
+                    adaptNewCommentsToList();
                     commentsList.setSelection(listAdapter.getCount() - 1);
 
                     handleCommentCount(true);

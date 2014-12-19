@@ -36,6 +36,16 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/noCommentsMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/post"
+        android:layout_above="@+id/addComment"
+        android:text="There are no comments :(.\n Be the first to make a comment!"
+        android:textColor="@android:color/black"
+        android:visibility="gone"/>
+
     <ListView
         android:id="@id/android:list"
         android:layout_width="fill_parent"
