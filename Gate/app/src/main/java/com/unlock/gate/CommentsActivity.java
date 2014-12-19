@@ -145,11 +145,11 @@ public class CommentsActivity extends ListActivity {
 
     private void adaptNewCommentsToList() {
 
-        if (comments.size() == 0) {
-            noCommentsMessage.setVisibility(View.VISIBLE);
-        } else {
-            noCommentsMessage.setVisibility(View.GONE);
-        }
+        noCommentsMessage.setVisibility(
+                comments.size() == 0
+                ? View.VISIBLE
+                : View.GONE
+        );
 
         if (listAdapter == null) {
             listAdapter = new CommentsListAdapter(CommentsActivity.this, adapterComments);

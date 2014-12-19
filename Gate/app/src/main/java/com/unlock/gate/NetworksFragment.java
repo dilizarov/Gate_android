@@ -46,10 +46,11 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_POSITION = "position";
-    private ListView networks;
+    private ListView networksList;
     private Button createNetwork;
     private NetworksListAdapter listAdapter;
-    private ArrayList<Network> networkItems;
+    private ArrayList<Network> networks;
+    private ArrayList<Network> adapterNetworks;
     private SharedPreferences mSessionPreferences;
     private PullToRefreshLayout mPullToRefreshLayout;
     private Button viewAggregate;
@@ -115,11 +116,12 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         mSessionPreferences = this.getActivity().getSharedPreferences(
                 getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
-        networks = getListView();
+        networksList = getListView();
 
         setListViewItemClickListeners();
 
-        networkItems = new ArrayList<Network>();
+        networks = new ArrayList<Network>();
+        adapterNetworks = new ArrayList<Network>();
 
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.networkProgressBarHolder);
 
@@ -134,12 +136,10 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         });
 
         if (savedInstanceState != null) {
-            networkItems = savedInstanceState.getParcelableArrayList("networkItems");
+            networks = savedInstanceState.getParcelableArrayList("networkItems");
 
             progressBarHolder.setVisibility(View.GONE);
-            listAdapter = new NetworksListAdapter(getActivity(), networkItems);
-            networks.setAdapter(listAdapter);
-            listAdapter.notifyDataSetChanged();
+            adaptNewGatesToList();
         } else {
             requestNetworksAndPopulateListView(false);
         }
@@ -164,16 +164,16 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     }
 
     private void setListViewItemClickListeners() {
-        networks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        networksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
 
-                viewFeedForNetwork(networkItems.get(position));
+                viewFeedForNetwork(networks.get(position));
             }
         });
 
-        networks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        networksList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
                                            long id) {
@@ -182,7 +182,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
                 // As Gate grows, we'll add more to this that could be done.
                 final CharSequence[] items = {
-                        "Leave " + networkItems.get(networkIndex).getName()
+                        "Leave " + networks.get(networkIndex).getName()
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -201,7 +201,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                                 dialogConfirm.dismiss();
                                                 //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
 
-                                                leaveNetwork(networkItems.get(networkIndex));
+                                                leaveNetwork(networks.get(networkIndex));
                                             }
                                         })
                                         .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
@@ -242,7 +242,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                     new Thread(new Runnable() {
 
                         public void run() {
-                            networkItems.clear();
+                            networks.clear();
 
                             JSONArray jsonNetworks = response.optJSONArray("networks");
                             int len = jsonNetworks.length();
@@ -253,7 +253,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                         jsonNetwork.optInt("users_count"),
                                         jsonNetwork.optJSONObject("creator").optString("name"));
 
-                                networkItems.add(network);
+                                networks.add(network);
                             }
 
                             getActivity().runOnUiThread(new Runnable() {
@@ -265,8 +265,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                         progressBarHolder.setVisibility(View.GONE);
                                     }
 
-                                    listAdapter = new NetworksListAdapter(getActivity(), networkItems);
-                                    networks.setAdapter(listAdapter);
+                                    listAdapter = new NetworksListAdapter(getActivity(), networks);
+                                    networksList.setAdapter(listAdapter);
                                     listAdapter.notifyDataSetChanged();
                                 }
                             });
@@ -309,7 +309,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                     new Thread(new Runnable() {
 
                         public void run() {
-                            networkItems.remove(network);
+                            networks.remove(network);
 
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
@@ -317,8 +317,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                     mPullToRefreshLayout.setRefreshComplete();
                                     Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_LONG).show();
 
-                                    listAdapter = new NetworksListAdapter(getActivity(), networkItems);
-                                    networks.setAdapter(listAdapter);
+                                    listAdapter = new NetworksListAdapter(getActivity(), networks);
+                                    networksList.setAdapter(listAdapter);
                                     listAdapter.notifyDataSetChanged();
                                 }
                             });
@@ -417,7 +417,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelableArrayList("networkItems", networkItems);
+        outState.putParcelableArrayList("networkItems", networks);
     }
 
     public void viewFeedForNetwork(Network network) {
@@ -425,7 +425,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     }
 
     public ArrayList<Network> getNetworks() {
-        return networkItems;
+        return networks;
     }
 
     public void addNetworksToList(final ArrayList<Network> newNetworks) {
@@ -440,15 +440,15 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         for (int i = 0; i < len; i++) {
             Network network = newNetworks.get(i);
 
-            int length = networkItems.size();
+            int length = networks.size();
             for (int j = startingPoint; j < length; j++) {
-                String name = networkItems.get(j).getName();
+                String name = networks.get(j).getName();
                 if (name.compareToIgnoreCase(network.getName()) > 0) {
-                    networkItems.add(j, network);
+                    networks.add(j, network);
                     startingPoint = j + 1;
                     break;
                 } else if (reachedEnd || j == length - 1) {
-                    networkItems.add(network);
+                    networks.add(network);
                     reachedEnd = true;
                     break;
                 }
@@ -456,11 +456,22 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         }
     }
 
-    public void adaptList() {
-        listAdapter = new NetworksListAdapter(getActivity(), networkItems);
-        networks.setAdapter(listAdapter);
+    public void adaptNewGatesToList() {
+
+//        noGatesMessage.setVisibility(
+//                networks.size() == 0
+//                ? View.VISIBLE
+//                : View.GONE
+//        );
+
+        if (listAdapter == null) {
+            listAdapter = new NetworksListAdapter(getActivity(), adapterNetworks);
+            networksList.setAdapter(listAdapter);
+        }
+
+        adapterNetworks.clear();
+        adapterNetworks.addAll(networks);
         listAdapter.notifyDataSetChanged();
-        networks.setSelection(0);
     }
 
     public interface OnFragmentInteractionListener {

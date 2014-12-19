@@ -311,11 +311,12 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     }
 
     private void adaptNewPostsToFeed() {
-        if (posts.size() == 0) {
-            noPostsMessage.setVisibility(View.VISIBLE);
-        } else {
-            noPostsMessage.setVisibility(View.GONE);
-        }
+
+        noPostsMessage.setVisibility(
+                posts.size() == 0
+                ? View.VISIBLE
+                : View.GONE
+        );
 
         if (listAdapter == null) {
             listAdapter = new FeedListAdapter(getActivity(), adapterPosts, currentNetwork);
