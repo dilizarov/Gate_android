@@ -63,7 +63,7 @@ public class PostViewHelper {
                     Response.Listener<Integer> listener = new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer integer) {
-                            //Don't do anything. Eagerly did actions assuming we request succeeds.
+                            //Don't do anything. Eagerly did actions assuming the request succeeds.
                         }
                     };
 

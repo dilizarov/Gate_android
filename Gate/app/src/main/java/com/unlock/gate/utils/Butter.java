@@ -10,22 +10,42 @@ import android.widget.Toast;
  */
 public class Butter {
 
+    private static Toast oldToast;
+
     public static void up(Context context, String message) {
+        cancelPrevious();
+
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP, 0, 0);
         toast.show();
+
+        setPrevious(toast);
     }
 
     public static void down(Context context, String message) {
+        cancelPrevious();
+
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.BOTTOM, 0, 0);
         toast.show();
+
+        setPrevious(toast);
     }
 
     public static void between(Context context, String message) {
+        cancelPrevious();
+
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+
+        setPrevious(toast);
     }
 
+    public static void cancelPrevious() {
+        if (oldToast != null) oldToast.cancel();
+    }
+
+    private static void setPrevious(Toast toast) {
+        oldToast = toast;
+    }
 }

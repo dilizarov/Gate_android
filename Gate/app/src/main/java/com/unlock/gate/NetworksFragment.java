@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.unlock.gate.adapters.NetworksListAdapter;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
@@ -263,7 +264,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                 public void run() {
                                     if (refreshing) {
                                         mPullToRefreshLayout.setRefreshComplete();
-                                        Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_LONG).show();
+                                        Butter.down(getActivity(), "Refreshed");
                                     } else {
                                         progressBarHolder.setVisibility(View.GONE);
                                     }
@@ -284,8 +285,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                     progressBarHolder.setVisibility(View.GONE);
 
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-
-                    Log.v("Error", mSessionPreferences.getString(getString(R.string.user_auth_token_key), "nope"));
+                    Butter.down(getActivity(), volleyError.getMessage());
                 }
             };
 
@@ -296,8 +296,11 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     }
 
     private void leaveNetwork(final Network network) {
+        networks.remove(network);
+        adaptNewGatesToList();
+        Butter.down(getActivity(), "Left " + network.getName());
+
         try {
-            mPullToRefreshLayout.setRefreshing(true);
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
@@ -306,24 +309,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             Response.Listener listener = new Response.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-
-                    new Thread(new Runnable() {
-
-                        public void run() {
-                            networks.remove(network);
-
-                            getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-
-                                    mPullToRefreshLayout.setRefreshComplete();
-                                    Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_LONG).show();
-
-                                    adaptNewGatesToList();
-                                }
-                            });
-                        }
-
-                    }).start();
+                    //Don't do anything. Eagerly did actions assuming the request succeeds.
                 }
             };
 
@@ -332,7 +318,12 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                 public void onErrorResponse(VolleyError error) {
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
-                    Log.v("Error", mSessionPreferences.getString(getString(R.string.user_auth_token_key), "nope"));
+                    ArrayList<Network> failedNetworks = new ArrayList<Network>();
+                    failedNetworks.add(network);
+                    addNetworksToArrayList(failedNetworks);
+                    adaptNewGatesToList();
+
+                    Butter.down(getActivity(), volleyError.getMessage());
                 }
             };
 
