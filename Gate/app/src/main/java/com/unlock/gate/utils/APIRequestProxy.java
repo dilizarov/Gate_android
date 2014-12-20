@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.unlock.gate.R;
+import com.unlock.gate.models.Comment;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.models.Post;
 
@@ -228,6 +229,21 @@ public class APIRequestProxy {
 
     public void upPost(Post post, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "posts/" + post.getId() + "/up.json?";
+
+        SharedPreferences session = context.getSharedPreferences(context.getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
+
+        if (params.optBoolean("revert")) url += "revert=true&";
+
+        url += "user_id=" + session.getString(context.getString(R.string.user_id_key), null);
+        url += "&auth_token=" + session.getString(context.getString(R.string.user_auth_token_key), null);
+
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void upComment(Comment comment, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "comments/" + comment.getId() + "/up.json?";
 
         SharedPreferences session = context.getSharedPreferences(context.getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 

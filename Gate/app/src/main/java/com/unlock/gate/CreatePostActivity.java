@@ -13,9 +13,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.unlock.gate.models.Network;
+import com.unlock.gate.utils.Butter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,10 +109,10 @@ public class CreatePostActivity extends Activity {
 
         if (intent.getStringExtra("postBody") != null) postBody.setText(intent.getStringExtra("postBody"));
 
-        // Come back and handle errors completely. Crouton, etc.
-
-        if (intent.getStringExtra("errorMessage") != null) {
-            Toast toast = Toast.makeText(this, intent.getStringExtra("errorMessage"), Toast.LENGTH_LONG);
+        if (intent.getStringExtra("errors") != null) {
+            Butter.between(this, intent.getStringExtra("errors"));
+        } else if (intent.getStringExtra("errorMessage") != null) {
+            Butter.between(this, intent.getStringExtra("errorMessage"));
         }
     }
 

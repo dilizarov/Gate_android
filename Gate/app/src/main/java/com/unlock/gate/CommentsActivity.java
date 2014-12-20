@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -24,6 +25,7 @@ import com.unlock.gate.adapters.CommentsListAdapter;
 import com.unlock.gate.models.Comment;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.PostViewHelper;
 import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.SetErrorBugFixer;
@@ -52,6 +54,8 @@ public class CommentsActivity extends ListActivity {
     private ImageView postSmileyCount;
     private ImageView postCommentsCountBubble;
 
+    private Menu menu;
+    private MenuItem refreshButton;
 
     private Post post;
     private ArrayList<Comment> comments;
@@ -201,9 +205,10 @@ public class CommentsActivity extends ListActivity {
                                     adaptNewCommentsToList();
                                     progressBarHolder.setVisibility(View.GONE);
 
-                                    if (refreshing) {
+                                    if (refreshing && refreshButton != null) {
                                         commentsList.setSelection(listAdapter.getCount() - 1);
                                         handleCommentCount(false);
+                                        refreshButton.setActionView(null);
                                     }
                                 }
                             });
@@ -218,7 +223,12 @@ public class CommentsActivity extends ListActivity {
                 public void onErrorResponse(VolleyError error) {
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                     progressBarHolder.setVisibility(View.GONE);
-                    Log.v("Error", "nooo");
+
+                    Butter.down(CommentsActivity.this, volleyError.getMessage());
+
+                    if (refreshing && refreshButton != null) {
+                        refreshButton.setActionView(null);
+                    }
                 }
             };
 
@@ -308,9 +318,11 @@ public class CommentsActivity extends ListActivity {
 
                     addComment.append(comment);
                     showKeyboard(addComment);
-                    //Crouton stuff.
 
-                    Log.v("Error", "nooo");
+                    if (volleyError.isExpectedError())
+                        Butter.between(CommentsActivity.this, volleyError.getPrettyErrors());
+                    else
+                        Butter.between(CommentsActivity.this, volleyError.getMessage());
                 }
             };
 
@@ -372,6 +384,8 @@ public class CommentsActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_comments, menu);
+        this.menu = menu;
+
         return true;
     }
 
@@ -386,9 +400,8 @@ public class CommentsActivity extends ListActivity {
                 onBackPressed();
                 return true;
             case R.id.action_refresh_comments:
-                adapterComments.clear();
-                listAdapter.notifyDataSetChanged();
-                progressBarHolder.setVisibility(View.VISIBLE);
+                if (refreshButton == null) refreshButton = item;
+                refreshButton.setActionView(new ProgressBar(this));
                 requestCommentsAndPopulateListView(true);
                 return true;
         }

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -72,7 +71,7 @@ public class PostViewHelper {
                         public void onErrorResponse(VolleyError error) {
                             VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
-                            Toast.makeText(context, volleyError.getMessage(), Toast.LENGTH_LONG).show();
+                            Butter.down(context, volleyError.getMessage());
 
                             handleUpedViewState(post, upPost, upCountPost, smileyCount, postStats);
                         }

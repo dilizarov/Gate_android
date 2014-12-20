@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import com.unlock.gate.adapters.FeedListAdapter;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.InfiniteScrollListener;
 import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.VolleyErrorHandler;
@@ -162,7 +162,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         setListViewItemClickListener();
         setCreatePostClickListener();
-
     }
 
     @Override
@@ -282,8 +281,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                     progressBarHolder.setVisibility(View.GONE);
 
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-
-                    Log.v("Error", "nooooo");
+                    Butter.down(getActivity(), volleyError.getMessage());
                 }
             };
 

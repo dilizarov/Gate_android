@@ -19,7 +19,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,7 +31,9 @@ import com.android.volley.VolleyError;
 import com.astuetz.PagerSlidingTabStrip;
 import com.unlock.gate.models.Network;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.NfcUtils;
+import com.unlock.gate.utils.VolleyErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -308,8 +309,13 @@ public class MainActivity extends FragmentActivity {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                     progressDialog.dismiss();
-                    Log.v("Somethin dun fucked up", "idk wut it wuz");
+
+                    if (volleyError.isExpectedError())
+                        Butter.down(MainActivity.this, volleyError.getPrettyErrors());
+                    else
+                        Butter.down(MainActivity.this, volleyError.getMessage());
                 }
             };
 
@@ -343,7 +349,7 @@ public class MainActivity extends FragmentActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this, "Sorry, internet welped", Toast.LENGTH_LONG).show();
+                    Butter.down(MainActivity.this, "Sorry, internet welped");
                 }
             };
 
