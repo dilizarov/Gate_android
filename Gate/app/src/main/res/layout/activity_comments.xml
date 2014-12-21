@@ -63,7 +63,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/addComment"/>
 
-    <EditText
+    <com.unlock.gate.utils.CustomEditText
         android:id="@+id/addComment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

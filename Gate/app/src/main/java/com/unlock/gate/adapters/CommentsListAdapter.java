@@ -100,31 +100,15 @@ public class CommentsListAdapter extends BaseAdapter {
             viewHolder.upCountComment.setVisibility(View.VISIBLE);
             viewHolder.smileyCountComment.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.upCountComment.setVisibility(View.GONE);
-            viewHolder.smileyCountComment.setVisibility(View.GONE);
+            viewHolder.upCountComment.setVisibility(View.INVISIBLE);
+            viewHolder.smileyCountComment.setVisibility(View.INVISIBLE);
         }
 
         viewHolder.upComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (comment.getUped()) {
-                    comment.setUped(false);
-                    comment.setUpCount(comment.getUpCount() - 1);
-                    viewHolder.upComment.setImageResource(R.drawable.ic_small_circle);
-                } else {
-                    comment.setUped(true);
-                    comment.setUpCount(comment.getUpCount() + 1);
-                    viewHolder.upComment.setImageResource(R.drawable.ic_small_smiley);
-                }
 
-                viewHolder.upCountComment.setText(Integer.toString(comment.getUpCount()));
-                if (comment.getUpCount() > 0) {
-                    viewHolder.upCountComment.setVisibility(View.VISIBLE);
-                    viewHolder.smileyCountComment.setVisibility(View.VISIBLE);
-                } else {
-                    viewHolder.upCountComment.setVisibility(View.GONE);
-                    viewHolder.smileyCountComment.setVisibility(View.GONE);
-                }
+                toggleUpComment(comment, viewHolder);
 
                 try {
                     JSONObject params = new JSONObject();
@@ -145,24 +129,7 @@ public class CommentsListAdapter extends BaseAdapter {
 
                             Butter.down(context, volleyError.getMessage());
 
-                            if (comment.getUped()) {
-                                comment.setUped(false);
-                                comment.setUpCount(comment.getUpCount() - 1);
-                                viewHolder.upComment.setImageResource(R.drawable.ic_small_circle);
-                            } else {
-                                comment.setUped(true);
-                                comment.setUpCount(comment.getUpCount() + 1);
-                                viewHolder.upComment.setImageResource(R.drawable.ic_small_smiley);
-                            }
-
-                            viewHolder.upCountComment.setText(Integer.toString(comment.getUpCount()));
-                            if (comment.getUpCount() > 0) {
-                                viewHolder.upCountComment.setVisibility(View.VISIBLE);
-                                viewHolder.smileyCountComment.setVisibility(View.VISIBLE);
-                            } else {
-                                viewHolder.upCountComment.setVisibility(View.GONE);
-                                viewHolder.smileyCountComment.setVisibility(View.GONE);
-                            }
+                            toggleUpComment(comment, viewHolder);
                         }
                     };
 
@@ -174,5 +141,26 @@ public class CommentsListAdapter extends BaseAdapter {
         });
 
         return convertView;
+    }
+
+    private void toggleUpComment(Comment comment, ViewHolder viewHolder) {
+        if (comment.getUped()) {
+            comment.setUped(false);
+            comment.setUpCount(comment.getUpCount() - 1);
+            viewHolder.upComment.setImageResource(R.drawable.ic_small_circle);
+        } else {
+            comment.setUped(true);
+            comment.setUpCount(comment.getUpCount() + 1);
+            viewHolder.upComment.setImageResource(R.drawable.ic_small_smiley);
+        }
+
+        viewHolder.upCountComment.setText(Integer.toString(comment.getUpCount()));
+        if (comment.getUpCount() > 0) {
+            viewHolder.upCountComment.setVisibility(View.VISIBLE);
+            viewHolder.smileyCountComment.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.upCountComment.setVisibility(View.INVISIBLE);
+            viewHolder.smileyCountComment.setVisibility(View.INVISIBLE);
+        }
     }
 }

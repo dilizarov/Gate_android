@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -26,6 +25,7 @@ import com.unlock.gate.models.Comment;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.Butter;
+import com.unlock.gate.utils.CustomEditText;
 import com.unlock.gate.utils.PostViewHelper;
 import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.SetErrorBugFixer;
@@ -48,7 +48,7 @@ public class CommentsActivity extends ListActivity {
     private TextView noCommentsMessage;
     private ListView commentsList;
     private LinearLayout postStats;
-    private EditText addComment;
+    private CustomEditText addComment;
     private Button sendComment;
     private ImageView upPost;
     private ImageView postSmileyCount;
@@ -128,7 +128,7 @@ public class CommentsActivity extends ListActivity {
 
         noCommentsMessage = (TextView) findViewById(R.id.noCommentsMessage);
         commentsList      = getListView();
-        addComment        = (EditText) findViewById(R.id.addComment);
+        addComment        = (CustomEditText) findViewById(R.id.addComment);
         sendComment       = (Button) findViewById(R.id.sendComment);
 
         progressBarHolder = (LinearLayout) findViewById(R.id.commentsProgressBarHolder);
@@ -387,6 +387,11 @@ public class CommentsActivity extends ListActivity {
         this.menu = menu;
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
