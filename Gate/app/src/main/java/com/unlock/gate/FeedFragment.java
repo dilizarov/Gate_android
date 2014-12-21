@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -207,6 +208,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
                   .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
+            Log.v("page", Integer.toString(page));
+
             if (!refreshing) {
                 if (page > 0) params.put("page", page);
 
@@ -266,7 +269,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                     keepPositionInList();
                                     adaptNewPostsToFeed();
 
+                                    infiniteScrollListener.setHadProblemsLoading(false);
                                     feedPostButtonHolder.setVisibility(View.VISIBLE);
+
                                 }
                             });
                         }
@@ -280,8 +285,11 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                     if (refreshing) mPullToRefreshLayout.setRefreshComplete();
                     progressBarHolder.setVisibility(View.GONE);
 
+                    infiniteScrollListener.setHadProblemsLoading(true);
+
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-                    Butter.down(getActivity(), volleyError.getMessage());
+                    Butter.downUnlessButtered(getActivity(), volleyError.getMessage());
+
                 }
             };
 

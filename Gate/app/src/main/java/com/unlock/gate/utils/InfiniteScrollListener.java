@@ -13,7 +13,11 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
 
     // Represents the fact that there is no more data from the server to populate the list.
     // Example: Indicates that we've retrieved all the posts in the feed.
+    // TODO: Maybe rename for clarity?
     private boolean atEndOfList = false;
+
+    private boolean hadProblemsLoading = false;
+    private long lastTimeLoading;
 
     public InfiniteScrollListener(int currentPage) {
         this.currentPage = currentPage;
@@ -55,6 +59,10 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
         this.atEndOfList = atEndOfList;
     }
 
+    public void setHadProblemsLoading(boolean flag) {
+        hadProblemsLoading = flag;
+    }
+
     public abstract void loadMore(int page);
 
     @Override
@@ -76,9 +84,12 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
             currentPage++;
         }
 
+        if (hadProblemsLoading && (lastTimeLoading + 4000 < System.currentTimeMillis())) isLoading = false;
+
         if (!isLoading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + bufferItemCount)) {
             loadMore(currentPage + 1);
             isLoading = true;
+            lastTimeLoading = System.currentTimeMillis();
         }
     }
 }

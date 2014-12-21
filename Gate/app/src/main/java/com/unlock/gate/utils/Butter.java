@@ -11,6 +11,7 @@ import android.widget.Toast;
 public class Butter {
 
     private static Toast oldToast;
+    private static long timeOfOld;
 
     public static void up(Context context, String message) {
         cancelPrevious();
@@ -41,11 +42,17 @@ public class Butter {
         setPrevious(toast);
     }
 
+    public static void downUnlessButtered(Context context, String message) {
+        if (oldToast == null || (timeOfOld + 4000 < System.currentTimeMillis()))
+            down(context, message);
+    }
+
     public static void cancelPrevious() {
         if (oldToast != null) oldToast.cancel();
     }
 
     private static void setPrevious(Toast toast) {
         oldToast = toast;
+        timeOfOld = System.currentTimeMillis();
     }
 }
