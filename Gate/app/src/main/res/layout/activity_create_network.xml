@@ -17,8 +17,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/createNetworkName"
-        android:layout_toLeftOf="@id/createNetwork"
         android:hint="Network name"
-        android:inputType="textShortMessage"/>
+        android:inputType="textShortMessage"
+        android:layout_alignBottom="@+id/createNetwork"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/createNetwork"
+        android:layout_toStartOf="@+id/createNetwork"/>
 
 </RelativeLayout>

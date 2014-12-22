@@ -87,7 +87,7 @@ public class CommentsActivity extends ListActivity {
         setSendCommentClickListener();
 
         PostViewHelper.handleUpBehavior(this, post, upPost, postUpCountPost, postSmileyCount, postStats);
-        PostViewHelper.handleCommentBehavior(this, post, postCommentsCount, postCommentsCountBubble);
+        PostViewHelper.handleCommentBehavior(this, post, postCommentsCount, postCommentsCountBubble, postStats);
 
         comments = new ArrayList<Comment>();
         adapterComments = new ArrayList<Comment>();

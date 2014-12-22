@@ -108,7 +108,7 @@ public class FeedListAdapter extends BaseAdapter {
         viewHolder.timestamp.setText(post.getTimestamp());
 
         PostViewHelper.handleUpBehavior(context, post, viewHolder.upPost, viewHolder.upCountPost, viewHolder.smileyCount, viewHolder.postStats);
-        PostViewHelper.handleCommentBehavior(context, post, viewHolder.commentsCount, viewHolder.commentsCountBubble);
+        PostViewHelper.handleCommentBehavior(context, post, viewHolder.commentsCount, viewHolder.commentsCountBubble, viewHolder.postStats);
 
         viewHolder.createComment.setOnClickListener(new View.OnClickListener() {
             @Override

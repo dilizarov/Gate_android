@@ -28,9 +28,12 @@ public class PostViewHelper {
             upCountPost.setVisibility(View.VISIBLE);
             smileyCount.setVisibility(View.VISIBLE);
 
-            int height = upCountPost.getMaxHeight();
+            final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            postStats.measure(widthSpec, heightSpec);
+
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) postStats.getLayoutParams();
-            layoutParams.height = height;
+            layoutParams.height = postStats.getMeasuredHeight();
             postStats.setLayoutParams(layoutParams);
         } else {
             upCountPost.setVisibility(View.GONE);
@@ -86,12 +89,20 @@ public class PostViewHelper {
         });
     }
 
-    public static void handleCommentBehavior(final Context context, final Post post, TextView commentsCount, ImageView commentsCountBubble) {
+    public static void handleCommentBehavior(final Context context, final Post post, TextView commentsCount, ImageView commentsCountBubble, LinearLayout postStats) {
         commentsCount.setText(Integer.toString(post.getCommentCount()));
 
         if (post.getCommentCount() > 0) {
             commentsCount.setVisibility(View.VISIBLE);
             commentsCountBubble.setVisibility(View.VISIBLE);
+
+            final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            postStats.measure(widthSpec, heightSpec);
+
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) postStats.getLayoutParams();
+            layoutParams.height = postStats.getMeasuredHeight();
+            postStats.setLayoutParams(layoutParams);
         } else {
             commentsCount.setVisibility(View.GONE);
             commentsCountBubble.setVisibility(View.GONE);

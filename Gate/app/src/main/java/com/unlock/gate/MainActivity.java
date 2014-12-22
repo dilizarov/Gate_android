@@ -386,17 +386,11 @@ public class MainActivity extends FragmentActivity {
 
     public void setTitle(Network network) {
 
-        String title;
-
-        if (network == null) {
-            title = "Aggregate";
-        } else {
-            title = ( network.getName().length() < 20 )
-                    ? network.getName()
-                    : network.getName().substring(0, 16) + "...";
-        }
-
-        getActionBar().setTitle(title);
+        getActionBar().setTitle(
+                network == null
+                ? "Aggregate"
+                : network.getName()
+        );
     }
 
     private void configureNFC() {
