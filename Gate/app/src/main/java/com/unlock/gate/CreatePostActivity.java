@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.unlock.gate.models.Network;
 import com.unlock.gate.utils.Butter;
@@ -28,7 +29,7 @@ public class CreatePostActivity extends Activity {
 
     private Button writePost;
     private EditText postBody;
-    private Button networkSelection;
+    private TextView networkSelection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class CreatePostActivity extends Activity {
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, items);
 
-        networkSelection = (Button) findViewById(R.id.networkSelection);
+        networkSelection = (TextView) findViewById(R.id.networkSelection);
         writePost        = (Button) findViewById(R.id.writePost);
         postBody         = (EditText) findViewById(R.id.postBody);
 

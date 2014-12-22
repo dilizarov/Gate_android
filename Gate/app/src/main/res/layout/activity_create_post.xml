@@ -27,10 +27,12 @@
         android:lines="6"
         android:gravity="top"
         android:background="@android:color/transparent"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:hint="Write a post"/>
 
-    <Button
-        android:layout_width="wrap_content"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/networkSelection"
         android:layout_above="@+id/postBody"
@@ -38,6 +40,11 @@
         android:layout_alignParentStart="true"
         android:layout_toLeftOf="@+id/writePost"
         android:layout_toStartOf="@+id/writePost"
-        android:text="No network"/>
+        android:text="No Gate"
+        android:scrollHorizontally="true"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/darker_gray"
+        style="?android:attr/spinnerStyle"/>
 
 </RelativeLayout>
