@@ -28,21 +28,14 @@ public class PostViewHelper {
             upCountPost.setVisibility(View.VISIBLE);
             smileyCount.setVisibility(View.VISIBLE);
 
-            final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-            final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-            postStats.measure(widthSpec, heightSpec);
-
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) postStats.getLayoutParams();
-            layoutParams.height = postStats.getMeasuredHeight();
-            postStats.setLayoutParams(layoutParams);
+            measurePostStats(postStats);
+            setPostStatsHeight(postStats, postStats.getMeasuredHeight());
         } else {
             upCountPost.setVisibility(View.GONE);
             smileyCount.setVisibility(View.GONE);
 
             if (post.getCommentCount() == 0) {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) postStats.getLayoutParams();
-                layoutParams.height = 0;
-                postStats.setLayoutParams(layoutParams);
+                setPostStatsHeight(postStats, 0);
             }
         }
 
@@ -96,13 +89,8 @@ public class PostViewHelper {
             commentsCount.setVisibility(View.VISIBLE);
             commentsCountBubble.setVisibility(View.VISIBLE);
 
-            final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-            final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-            postStats.measure(widthSpec, heightSpec);
-
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) postStats.getLayoutParams();
-            layoutParams.height = postStats.getMeasuredHeight();
-            postStats.setLayoutParams(layoutParams);
+            measurePostStats(postStats);
+            setPostStatsHeight(postStats, postStats.getMeasuredHeight());
         } else {
             commentsCount.setVisibility(View.GONE);
             commentsCountBubble.setVisibility(View.GONE);
@@ -139,9 +127,7 @@ public class PostViewHelper {
     }
 
     public static void expandPostStats(LinearLayout postStats) {
-        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        postStats.measure(widthSpec, heightSpec);
+        measurePostStats(postStats);
 
         ValueAnimator animator = slideAnimator(0, postStats.getMeasuredHeight(), postStats);
         animator.start();
@@ -170,6 +156,18 @@ public class PostViewHelper {
         });
 
         return animator;
+    }
+
+    private static void measurePostStats(LinearLayout postStats) {
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        postStats.measure(widthSpec, heightSpec);
+    }
+
+    private static void setPostStatsHeight(LinearLayout postStats, int height) {
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) postStats.getLayoutParams();
+        layoutParams.height = height;
+        postStats.setLayoutParams(layoutParams);
     }
 
 }
