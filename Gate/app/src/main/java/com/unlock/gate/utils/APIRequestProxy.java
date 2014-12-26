@@ -216,13 +216,13 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void logout(JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+    public void logout(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         //TODO: Probably want to figure out a better way to make these resourcesful strings with consideration of getAbsoluteUrl method.
         //TODO: Not a big deal though
 
-        String url = addAuthAsURLParams(getAbsoluteUrl(SESSION_ENDPOINT), params);
+        String url = BASE_URL + "sessions/logout.json";
 
-        HeaderResponseRequest request = new HeaderResponseRequest(Method.DELETE, url, params, listener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }
@@ -253,6 +253,18 @@ public class APIRequestProxy {
         url += "&auth_token=" + session.getString(context.getString(R.string.user_auth_token_key), null);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void getPost(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+
+        String url = BASE_URL + "posts/" + params.optString("post_id") + ".json?";
+
+        url += "user_id=" + params.optString("user_id");
+        url += "&auth_token=" + params.optString("auth_token");
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }

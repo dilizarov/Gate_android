@@ -411,7 +411,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     }
 
     public void viewFeedForNetwork(Network network) {
-        ((MainActivity) getActivity()).showFeed(network);
+        ((MainActivity) getActivity()).showFeed(network, false, true);
     }
 
     public ArrayList<Network> getNetworks() {

@@ -64,6 +64,8 @@ public class CommentsActivity extends ListActivity {
     private SharedPreferences mSessionPreferences;
     private boolean creatingComment;
 
+    private boolean notification;
+
     private LinearLayout progressBarHolder;
 
     private final int BODY_CUTOFF = 220;
@@ -79,7 +81,9 @@ public class CommentsActivity extends ListActivity {
         instantiateViews();
 
         Intent intent = getIntent();
+
         post = (Post) intent.getParcelableExtra("post");
+        notification = intent.getBooleanExtra("notification", false);
         creatingComment = intent.getBooleanExtra("creatingComment", false);
         setPostViews();
 
@@ -204,6 +208,9 @@ public class CommentsActivity extends ListActivity {
                                 public void run() {
                                     adaptNewCommentsToList();
                                     progressBarHolder.setVisibility(View.GONE);
+
+                                    if (notification) commentsList.setSelection(
+                                            listAdapter.getCount() - 1);
 
                                     if (refreshing && refreshButton != null) {
                                         commentsList.setSelection(listAdapter.getCount() - 1);

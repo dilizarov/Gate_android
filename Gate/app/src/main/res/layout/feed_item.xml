@@ -67,6 +67,7 @@
             android:layout_marginRight="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/gate_blue"
             android:visibility="gone"/>
 
         <ImageView
@@ -83,6 +84,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="8dp"
             android:layout_marginRight="4dp"
+            android:textColor="@color/gate_blue"
             android:visibility="gone"/>
 
         <ImageView

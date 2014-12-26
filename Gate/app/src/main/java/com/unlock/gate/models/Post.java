@@ -35,6 +35,19 @@ public class Post implements Parcelable {
         setTimestamp();
     }
 
+    public Post(String id, String name, String body, String networkId, String networkName, String commentCount, String upCount, String uped, String timeCreated) {
+        this.id = id;
+        this.name = name;
+        this.body = body;
+        this.networkId = networkId;
+        this.networkName = networkName;
+        this.commentCount = commentCount;
+        this.upCount = upCount;
+        this.uped = uped;
+        this.timeCreated = new DateTime(timeCreated);
+        setTimestamp();
+    }
+
     public String getId() {
         return id;
     }

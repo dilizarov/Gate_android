@@ -104,7 +104,6 @@ public class PostViewHelper {
             upPost.setImageResource(R.drawable.ic_circle);
 
             if (post.getUpCount() == 0) {
-                upCountPost.setText(Integer.toString(post.getUpCount()));
                 upCountPost.setVisibility(View.GONE);
                 smileyCount.setVisibility(View.GONE);
 
@@ -112,6 +111,8 @@ public class PostViewHelper {
                     collapsePostStats(postStats);
                 }
             }
+
+            upCountPost.setText(Integer.toString(post.getUpCount()));
         } else {
             post.setUped(true);
             post.setUpCount(post.getUpCount() + 1);

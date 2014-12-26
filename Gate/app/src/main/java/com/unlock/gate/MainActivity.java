@@ -136,6 +136,13 @@ public class MainActivity extends FragmentActivity {
                     }, 100);
             }
         }
+
+        Intent callingIntent = getIntent();
+        Bundle extras = callingIntent.getExtras();
+
+        if (extras != null && extras.getBoolean("notification", false)) {
+            showFeed(null, true, false);
+        }
     }
 
     @Override
@@ -223,6 +230,9 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
         if (!mWriteMode && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             NdefMessage[] messages = NfcUtils.getNdefMessages(intent);
             ArrayList<String> payload = NfcUtils.getNdefMessagePayload(messages[0]);
@@ -295,7 +305,7 @@ public class MainActivity extends FragmentActivity {
                                                @Override
                                                public void onClick(DialogInterface dialog, int which) {
                                                    dialog.dismiss();
-                                                   showFeed(newNetworks.get(which));
+                                                   showFeed(newNetworks.get(which), false, true);
                                                }
                                            }).create().show();
                                 }
@@ -330,30 +340,35 @@ public class MainActivity extends FragmentActivity {
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
-            Response.Listener<Integer> listener = new Response.Listener<Integer>() {
+            JSONObject device = new JSONObject();
+            device.put("token", getSharedPreferences(getString(R.string.gcm_preferences_key), MODE_PRIVATE)
+                                    .getString("registration_id", ""));
+
+            params.put("device", device);
+
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
-                public void onResponse(final Integer response) {
-                    progressDialog.dismiss();
-                    SharedPreferences.Editor editor = mSessionPreferences.edit();
-                    editor.clear().commit();
-
-                    Intent intent = new Intent(MainActivity.this, LoginRegisterActivity.class);
-                    startActivity(intent);
-                    finish();
+                public void onResponse(final JSONObject response) {
                 }
             };
 
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    progressDialog.dismiss();
-                    Butter.down(MainActivity.this, "Sorry, internet welped");
                 }
             };
 
             APIRequestManager.getInstance().doRequest().logout(params, listener, errorListener);
+
+            progressDialog.dismiss();
+            SharedPreferences.Editor editor = mSessionPreferences.edit();
+            editor.clear().commit();
+
+            Intent intent = new Intent(MainActivity.this, LoginRegisterActivity.class);
+            startActivity(intent);
+            finish();
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
@@ -372,11 +387,11 @@ public class MainActivity extends FragmentActivity {
         Toast.makeText(this, "Making key", Toast.LENGTH_SHORT).show();
     }
 
-    public void showFeed(Network network) {
-        pager.setCurrentItem(0, true);
+    public void showFeed(Network network, boolean refresh, boolean smoothScroll) {
+        pager.setCurrentItem(0, smoothScroll);
 
         FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
-        feedFragment.getNetworkFeed(network);
+        feedFragment.getNetworkFeed(network, refresh);
     }
 
     public ArrayList<Network> getNetworks() {

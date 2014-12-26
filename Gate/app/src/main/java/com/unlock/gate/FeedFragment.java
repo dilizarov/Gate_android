@@ -172,11 +172,12 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         setCurrentPage(1);
     }
 
-    public void getNetworkFeed(Network network) {
+    public void getNetworkFeed(Network network, boolean refresh) {
         ((MainActivity) getActivity()).setTitle(network);
 
         if (!onAggregateAndGettingAggregate(network) &&
-            !onNetworkAndGettingSameNetwork(network)) {
+            !onNetworkAndGettingSameNetwork(network) ||
+            refresh) {
 
             APIRequestManager.getInstance().cancelAllFeedRequests();
 

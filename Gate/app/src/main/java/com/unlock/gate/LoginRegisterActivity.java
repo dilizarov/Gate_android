@@ -8,11 +8,14 @@ import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,7 +32,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.CustomValidator;
 import com.unlock.gate.utils.Fade;
 import com.unlock.gate.utils.RegexConstants;
@@ -40,6 +45,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -49,9 +56,9 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	private enum State {
 		LOGIN, REGISTRATION, FORGOT_PASSWORD
 	}
-	
+
 	private final int EMAIL_REQUEST_INTENT = 1;
-	
+
 	private SharedPreferences mActivityPreferences;
 	private SharedPreferences mSessionPreferences;
 	
@@ -70,7 +77,12 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	private Button commandButton;
 	
 	private State viewState;
-	
+
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private GoogleCloudMessaging gcm;
+    private String regId;
+    private final static String PROPERTY_REG_ID = "registration_id";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -101,7 +113,13 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
             handleToggleLoginRegistration();
             handleCommandButton();
         }
+
 	}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 	
 	private void instantiateViews() {
 		userEmail    = (EditText) findViewById(R.id.userEmail);
@@ -246,66 +264,107 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 			if (mPassword.length() == 0) userPassword.setError(getString(R.string.no_password_inputted));
 		} else if (!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
 		else {
-			try {
-				final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", 
+			final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "",
 						getString(R.string.progress_dialog_server_processing_request), false, true);
-				
-				JSONObject user = new JSONObject();
-				user.put("email", mEmail)
-					.put("password", mPassword);
-			
-			
-				JSONObject params = new JSONObject();
-			
-				params.put("user", user);
-			
-				Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-					@Override
-					public void onResponse(JSONObject response) {
-						
-						storeSessionInformation(response);
 
-                        mActivityPreferences.edit()
-                                            .putString(getString(R.string.last_used_email), mEmail)
-                                            .commit();
-						
-						progressDialog.dismiss();
-						Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
-						Log.d("Correct stuff", response.toString());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
 
-                        Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-					}
-				};
-			
-				Response.ErrorListener errorListener = new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						progressDialog.dismiss();
-						VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-						
-						if (volleyError.isExpectedError()) {
-							JSONObject errorsJSON = volleyError.getErrors();
+                    final Context context = LoginRegisterActivity.this;
+                    boolean gcmRequestFailed = false;
+                    if (gcm == null)
+                        gcm = GoogleCloudMessaging.getInstance(context);
 
-							JSONArray errorsArray = errorsJSON.optJSONArray("errors");
-							String incorrectEmailPassword = errorsArray.optString(0);
-								
-							Crouton.makeText(LoginRegisterActivity.this, incorrectEmailPassword, Style.ALERT)
-									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-									.show();
-						} else {
-							Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
-									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-									.show();
-						}
-					}	
-				};
-			
-				APIRequestManager.getInstance().doRequest().login(params, listener, errorListener);
-			} catch (JSONException ex) {
-				ex.printStackTrace();
-			}
+                    regId = getRegistrationId(context);
+                    if (regId == null) {
+                        try {
+                            regId = gcm.register("222761912510");
+                            storeRegistrationId(context);
+                            Log.v("RegID", regId);
+                        } catch (IOException io) {
+                            gcmRequestFailed = true;
+                        }
+                    }
+
+                    final boolean requestFailed = gcmRequestFailed;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+
+                                if (requestFailed) {
+                                    Butter.down(context, "INTERNET WELPED");
+                                    progressDialog.dismiss();
+                                    return;
+                                }
+
+                                JSONObject user = new JSONObject();
+                                user.put("email", mEmail)
+                                    .put("password", mPassword);
+
+                                JSONObject device = new JSONObject();
+                                device.put("token", regId)
+                                      .put("platform", "android");
+
+                                JSONObject params = new JSONObject();
+
+                                params.put("user", user)
+                                      .put("device", device);
+
+                                Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+
+                                        storeSessionInformation(response);
+
+                                        mActivityPreferences.edit()
+                                                .putString(getString(R.string.last_used_email), mEmail)
+                                                .commit();
+
+                                        progressDialog.dismiss();
+                                        Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
+                                        Log.d("Correct stuff", response.toString());
+
+                                        Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                };
+
+                                Response.ErrorListener errorListener = new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        progressDialog.dismiss();
+                                        VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                                        if (volleyError.isExpectedError()) {
+                                            JSONObject errorsJSON = volleyError.getErrors();
+
+                                            JSONArray errorsArray = errorsJSON.optJSONArray("errors");
+                                            String incorrectEmailPassword = errorsArray.optString(0);
+
+                                            Crouton.makeText(LoginRegisterActivity.this, incorrectEmailPassword, Style.ALERT)
+                                                    .setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+                                                    .show();
+                                        } else {
+                                            Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
+                                                    .setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+                                                    .show();
+                                        }
+                                    }
+                                };
+
+                                APIRequestManager.getInstance().doRequest().login(params, listener, errorListener);
+                            } catch (JSONException ex) {
+                                ex.printStackTrace();
+                            }
+
+                        }
+                    });
+                }
+            }).start();
 		}
 	}
 	
@@ -337,71 +396,110 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
-					
-							try {
-						
-								final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", 
-										getString(R.string.progress_dialog_server_processing_request), false, true);
-								
-								JSONObject user = new JSONObject();
-								user.put("email", mEmail)
-									.put("password", mPassword)
-									.put("name", mFullName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));
-					
-					
-								JSONObject params = new JSONObject();
-					
-								params.put("user", user);
 
-								Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-									@Override
-									public void onResponse(JSONObject response) {
+                            final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "",
+                                    getString(R.string.progress_dialog_server_processing_request), false, true);
 
-										storeSessionInformation(response);
-                                        String nameOnPhone = mActivityPreferences.getString(getString(R.string.name_on_phone), "");
-                                        SharedPreferences.Editor editor = mActivityPreferences.edit();
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
 
-                                        if (mFullName.equals(nameOnPhone)) {
-                                            editor.putBoolean(getString(R.string.used_name_on_phone), true);
+                                    final Context context = LoginRegisterActivity.this;
+                                    boolean gcmRequestFailed = false;
+                                    if (gcm == null)
+                                        gcm = GoogleCloudMessaging.getInstance(context);
+
+                                    regId = getRegistrationId(context);
+                                    if (regId == null) {
+                                        try {
+                                            regId = gcm.register("222761912510");
+                                            storeRegistrationId(context);
+                                            Log.v("RegID", regId);
+                                        } catch (IOException io) {
+                                            gcmRequestFailed = true;
                                         }
+                                    }
 
-                                        editor.putString(getString(R.string.last_used_email), mEmail);
-                                        editor.commit();
+                                    final boolean requestFailed = gcmRequestFailed;
 
-										progressDialog.dismiss();
-										Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
-										Log.d("Correct stuff", response.toString());
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
 
-                                        Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
-									}
-								};
+                                                if (requestFailed) {
+                                                    Butter.down(context, "INTERNET WELPED");
+                                                    progressDialog.dismiss();
+                                                    return;
+                                                }
 
-								Response.ErrorListener errorListener = new Response.ErrorListener() {
-									@Override
-									public void onErrorResponse(VolleyError error) {
-										progressDialog.dismiss();
+                                                JSONObject user = new JSONObject();
+                                                user.put("email", mEmail)
+                                                    .put("password", mPassword)
+                                                    .put("name", mFullName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));
 
-										VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                                                JSONObject device = new JSONObject();
+                                                device.put("token", regId)
+                                                      .put("platform", "android");
 
-										if (volleyError.isExpectedError()) {
-											Crouton.makeText(LoginRegisterActivity.this, volleyError.getPrettyErrors(), Style.ALERT)
-											.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-											.show();
-										} else {
-											Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
-											.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-											.show();
-										}
-									}	
-								};
+                                                JSONObject params = new JSONObject();
 
-								APIRequestManager.getInstance().doRequest().register(params, listener, errorListener);
-							} catch (JSONException ex) {
-								ex.printStackTrace();
-							}
+                                                params.put("user", user)
+                                                      .put("device", device);
 
+                                                Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                                                    @Override
+                                                    public void onResponse(JSONObject response) {
+
+                                                        storeSessionInformation(response);
+                                                        String nameOnPhone = mActivityPreferences.getString(getString(R.string.name_on_phone), "");
+                                                        SharedPreferences.Editor editor = mActivityPreferences.edit();
+
+                                                        if (mFullName.equals(nameOnPhone)) {
+                                                            editor.putBoolean(getString(R.string.used_name_on_phone), true);
+                                                        }
+
+                                                        editor.putString(getString(R.string.last_used_email), mEmail);
+                                                        editor.commit();
+
+                                                        progressDialog.dismiss();
+                                                        Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
+                                                        Log.d("Correct stuff", response.toString());
+
+                                                        Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                };
+
+                                                Response.ErrorListener errorListener = new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+                                                        progressDialog.dismiss();
+
+                                                        VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                                                        if (volleyError.isExpectedError()) {
+                                                            Crouton.makeText(LoginRegisterActivity.this, volleyError.getPrettyErrors(), Style.ALERT)
+                                                                    .setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+                                                                    .show();
+                                                        } else {
+                                                            Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
+                                                                    .setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
+                                                                    .show();
+                                                        }
+                                                    }
+                                                };
+
+                                                APIRequestManager.getInstance().doRequest().register(params, listener, errorListener);
+                                            } catch (JSONException ex) {
+                                                ex.printStackTrace();
+                                            }
+
+                                        }
+                                    });
+                                }
+                            }).start();
 						}
 					});
 			
@@ -423,8 +521,8 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				JSONObject params = new JSONObject();
 			
 				params.put("email", mEmail);
-			
-				Response.Listener<Integer> listener = new Response.Listener<Integer>() {
+
+                Response.Listener<Integer> listener = new Response.Listener<Integer>() {
 					@Override
 					public void onResponse(Integer response) {
 												
@@ -541,7 +639,67 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	@Override
 	public void onLoaderReset(Loader<Cursor> cursorLoader) {
 	}
-	
+
+//    private boolean checkPlayServices() {
+//        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+//        if (resultCode != ConnectionResult.SUCCESS) {
+//            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+//                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+//                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+//            } else {
+//                Log.i("PlayServices", "This device is not supported.");
+//                finish();
+//            }
+//
+//            return false;
+//        }
+//
+//        return true;
+//    }
+
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        String registrationId = prefs.getString(PROPERTY_REG_ID, null);
+        if (registrationId == null) {
+            Log.i("RegistrationId", "Registration not found");
+            return null;
+        }
+
+        int registeredVersion = prefs.getInt("Registered_APP_VERSION", Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        if (registeredVersion != currentVersion) {
+            Log.i("RegistrationId", "Registration not found");
+            return null;
+        }
+
+        return registrationId;
+    }
+
+    private SharedPreferences getGCMPreferences(Context context) {
+        return getSharedPreferences(getString(R.string.gcm_preferences_key), MODE_PRIVATE);
+    }
+
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
+
+    private void storeRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        int appVersion = getAppVersion(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PROPERTY_REG_ID, regId);
+        editor.putInt("Property_APP_VERSION", appVersion);
+        editor.commit();
+    }
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
