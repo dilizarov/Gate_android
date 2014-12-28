@@ -24,15 +24,14 @@
     <uses-feature
         android:name="android.hardware.nfc"
         android:required="true" />
-
-    <android:uses-permission
+    <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
-    <android:uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
     <application
         android:name="com.unlock.gate.MyApplication"
@@ -57,13 +56,14 @@
         <activity
             android:name="com.unlock.gate.MainActivity"
             android:label="Gate"
-            android:theme="@style/GateTheme">
+            android:theme="@style/Gate">
         </activity>
         <activity
             android:name="com.unlock.gate.CommentsActivity"
             android:label="@string/title_activity_comments"
             android:parentActivityName="com.unlock.gate.MainActivity"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Gate">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.unlock.gate.MainActivity" />
@@ -85,7 +85,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_unlock_gate"
             android:parentActivityName="com.unlock.gate.MainActivity"
-            android:theme="@style/GateTheme.NoActionBar" >
+            android:theme="@style/Gate.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.unlock.gate.MainActivity" />

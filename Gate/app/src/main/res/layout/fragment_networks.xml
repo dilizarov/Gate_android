@@ -3,13 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/viewAggregate"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/view_aggregate" />
+    android:layout_height="match_parent"
+    android:background="#FFFFFFFF">
 
     <LinearLayout
         android:id="@+id/networkProgressBarHolder"
@@ -48,12 +43,44 @@
             android:divider="@null"
             android:layout_above="@+id/createNetwork"/>
 
-        <Button
-            android:id="@+id/createNetwork"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="Network"/>
+            <Button
+                android:id="@+id/viewAggregate"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_marginLeft="-5dip"
+                android:layout_marginRight="-5dip"
+                android:layout_marginTop="-5dip"
+                android:layout_marginBottom="-5dip"
+                android:layout_toLeftOf="@+id/buttonSplitter"
+                android:textColor="@android:color/white"
+                android:text="@string/aggregate"/>
+
+            <View
+                android:id="@+id/buttonSplitter"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/createNetwork"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:layout_marginLeft="-5dip"
+                android:layout_marginRight="-5dip"
+                android:layout_marginTop="-5dip"
+                android:layout_marginBottom="-5dip"
+                android:layout_toRightOf="@+id/buttonSplitter"
+                android:textColor="@android:color/white"
+                android:text="@string/create_gate"
+                />
 
     </RelativeLayout>
 

@@ -40,9 +40,9 @@ public class PostViewHelper {
         }
 
         if (post.getUped()) {
-            upPost.setImageResource(R.drawable.ic_smiley);
+            upPost.setImageResource(R.drawable.ic_thumb_up);
         } else {
-            upPost.setImageResource(R.drawable.ic_circle);
+            upPost.setImageResource(R.drawable.ic_greyed_out_thumb_up);
         }
 
         upPost.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +101,7 @@ public class PostViewHelper {
         if (post.getUped()) {
             post.setUped(false);
             post.setUpCount(post.getUpCount() - 1);
-            upPost.setImageResource(R.drawable.ic_circle);
+            upPost.setImageResource(R.drawable.ic_greyed_out_thumb_up);
 
             if (post.getUpCount() == 0) {
                 upCountPost.setVisibility(View.GONE);
@@ -116,7 +116,7 @@ public class PostViewHelper {
         } else {
             post.setUped(true);
             post.setUpCount(post.getUpCount() + 1);
-            upPost.setImageResource(R.drawable.ic_smiley);
+            upPost.setImageResource(R.drawable.ic_thumb_up);
             upCountPost.setText(Integer.toString(post.getUpCount()));
             upCountPost.setVisibility(View.VISIBLE);
             smileyCount.setVisibility(View.VISIBLE);

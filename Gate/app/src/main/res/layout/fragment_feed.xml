@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:background="#FFFFFFFF">
 
     <LinearLayout
         android:id="@+id/feedProgressBarHolder"
@@ -49,7 +50,14 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="Post"/>
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            android:layout_marginLeft="-5dip"
+            android:layout_marginRight="-5dip"
+            android:layout_marginTop="-5dip"
+            android:layout_marginBottom="-5dip"
+            android:textColor="@android:color/white"
+            android:text="Write a Post"/>
 
     </RelativeLayout>
 

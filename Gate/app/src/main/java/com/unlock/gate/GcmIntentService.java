@@ -74,7 +74,7 @@ public class GcmIntentService extends IntentService {
     private void sendToMainActivityNotification(Bundle extras) {
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon)
-                .setContentTitle(extras.getString("gate"))
+                .setContentTitle(extras.getString("title"))
                 .setContentText(extras.getString("summary"))
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle()

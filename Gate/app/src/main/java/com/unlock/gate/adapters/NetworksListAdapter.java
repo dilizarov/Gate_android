@@ -47,6 +47,12 @@ public class NetworksListAdapter extends BaseAdapter {
         if (mInflater == null) mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) convertView = mInflater.inflate(R.layout.network_item, null);
 
+        if (position % 2 == 1) {
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
+        } else {
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.white));
+        }
+
         TextView networkItemName = (TextView) convertView.findViewById(R.id.networkItemName);
         TextView networkUserCount = (TextView) convertView.findViewById(R.id.usersCount);
 

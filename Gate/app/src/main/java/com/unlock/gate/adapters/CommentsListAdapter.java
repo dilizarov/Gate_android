@@ -85,6 +85,13 @@ public class CommentsListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        if (position % 2 == 0) {
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
+        } else {
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.white));
+        }
+
+
         final Comment comment = comments.get(position);
 
         viewHolder.commenterName.setText(comment.getName());
@@ -92,8 +99,8 @@ public class CommentsListAdapter extends BaseAdapter {
         viewHolder.commentTimestamp.setText(comment.getTimestamp());
 
         viewHolder.upComment.setImageResource(comment.getUped()
-                                              ? R.drawable.ic_small_smiley
-                                              : R.drawable.ic_small_circle);
+                                              ? R.drawable.ic_small_thumb_up
+                                              : R.drawable.ic_small_greyed_out_thumb_up);
 
         viewHolder.upCountComment.setText(Integer.toString(comment.getUpCount()));
         if (comment.getUpCount() > 0) {
@@ -147,11 +154,11 @@ public class CommentsListAdapter extends BaseAdapter {
         if (comment.getUped()) {
             comment.setUped(false);
             comment.setUpCount(comment.getUpCount() - 1);
-            viewHolder.upComment.setImageResource(R.drawable.ic_small_circle);
+            viewHolder.upComment.setImageResource(R.drawable.ic_small_greyed_out_thumb_up);
         } else {
             comment.setUped(true);
             comment.setUpCount(comment.getUpCount() + 1);
-            viewHolder.upComment.setImageResource(R.drawable.ic_small_smiley);
+            viewHolder.upComment.setImageResource(R.drawable.ic_small_thumb_up);
         }
 
         viewHolder.upCountComment.setText(Integer.toString(comment.getUpCount()));

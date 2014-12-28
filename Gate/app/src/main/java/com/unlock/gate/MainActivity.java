@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Build;
@@ -69,6 +70,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.pager);
         adapter = new MyPagerAdapter(getSupportFragmentManager());
@@ -79,6 +82,7 @@ public class MainActivity extends FragmentActivity {
         tabs.setBackgroundColor(getResources().getColor(R.color.white));
         tabs.setIndicatorColor(Color.BLACK);
         tabs.setTextColor(Color.BLACK);
+        tabs.setBackgroundColor(Color.WHITE);
 
         tabs.setShouldExpand(true);
         tabs.setViewPager(pager);
@@ -210,7 +214,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_create:
+            case R.id.action_unlock_gates:
                 Intent intent = new Intent(this, UnlockGateActivity.class);
                 intent.putParcelableArrayListExtra("networks", getNetworks());
                 startActivity(intent);

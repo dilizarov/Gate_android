@@ -7,16 +7,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -186,45 +185,47 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
                 // As Gate grows, we'll add more to this that could be done.
                 final CharSequence[] items = {
-                        "Leave " + networks.get(networkIndex).getName()
+                        "Leave"
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case 0:
-                                dialog.dismiss();
-                                AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
-                                buildConfirmation.setMessage(getString(R.string.confirm_delete_network_message))
-                                        .setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
+                builder.setTitle(networks.get(networkIndex).getName())
+                       .setItems(items, new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int item) {
+                               switch (item) {
+                                   case 0:
+                                       dialog.dismiss();
+                                       AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
+                                       buildConfirmation.setMessage(getString(R.string.confirm_delete_network_message))
+                                               .setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(DialogInterface dialogConfirm, int item) {
-                                                dialogConfirm.dismiss();
-                                                //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
+                                                   @Override
+                                                   public void onClick(DialogInterface dialogConfirm, int item) {
+                                                       dialogConfirm.dismiss();
+                                                       //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
 
-                                                leaveNetwork(networks.get(networkIndex));
-                                            }
-                                        })
-                                        .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
+                                                       leaveNetwork(networks.get(networkIndex));
+                                                   }
+                                               })
+                                               .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(DialogInterface dialogConfirm, int item) {
-                                                dialogConfirm.dismiss();
-                                            }
-                                        });
+                                                   @Override
+                                                   public void onClick(DialogInterface dialogConfirm, int item) {
+                                                       dialogConfirm.dismiss();
+                                                   }
+                                               });
 
-                                AlertDialog confirmation = buildConfirmation.create();
-                                confirmation.show();
+                                       AlertDialog confirmation = buildConfirmation.create();
+                                       confirmation.show();
 
-                                break;
-                        }
-                    }
-                });
+                                       break;
+                               }
+                           }
+                       });
 
                 AlertDialog alert = builder.create();
+                alert.setCanceledOnTouchOutside(true);
                 alert.show();
 
                 return true;

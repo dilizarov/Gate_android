@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingTop="4dp"
     android:background="@color/white">
 
     <RelativeLayout
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="8dp"
             android:layout_alignParentRight="true"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"/>
 
     </RelativeLayout>
 
@@ -41,7 +42,7 @@
         android:id="@+id/networkName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:paddingLeft="8dp"
         android:paddingBottom="8dp"
         android:paddingRight="8dp"
@@ -75,7 +76,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="4dp"
-            android:src="@drawable/ic_small_smiley"
+            android:paddingRight="8dp"
+            android:src="@drawable/ic_small_thumb_up"
             android:visibility="gone"/>
 
         <TextView
@@ -83,17 +85,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="8dp"
-            android:layout_marginRight="4dp"
+            android:includeFontPadding="false"
             android:textColor="@color/gate_blue"
-            android:visibility="gone"/>
+            android:visibility="visible"
+            android:text="18143"/>
 
         <ImageView
             android:id="@+id/commentsCountBubble"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="4dp"
+            android:paddingLeft="4dp"
             android:src="@drawable/ic_comment_bubble"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
     </LinearLayout>
 
@@ -108,14 +112,16 @@
             android:id="@+id/upPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_circle" />
+            android:paddingRight="5dp"
+            android:paddingLeft="8dp"
+            android:src="@drawable/ic_greyed_out_thumb_up" />
 
         <ImageView
             android:id="@+id/createComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="2dp"
+            android:layout_marginLeft="12dp"
             android:src="@drawable/ic_create_comment"/>
 
     </LinearLayout>

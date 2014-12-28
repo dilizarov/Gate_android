@@ -398,6 +398,10 @@ public class CommentsActivity extends ListActivity {
 
     @Override
     public void onBackPressed() {
+        Intent intent = getIntent();
+        intent.putExtra("updatedPost", post);
+        setResult(RESULT_OK, intent);
+
         super.onBackPressed();
     }
 
@@ -405,10 +409,6 @@ public class CommentsActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = getIntent();
-                intent.putExtra("updatedPost", post);
-                setResult(RESULT_OK, intent);
-
                 onBackPressed();
                 return true;
             case R.id.action_refresh_comments:
