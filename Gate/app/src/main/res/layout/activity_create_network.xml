@@ -4,10 +4,10 @@
                 android:layout_height="match_parent"
                 tools:context="com.unlock.gate.CreateNetworkActivity">
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
+        android:src="@drawable/ic_action_new"
         android:id="@+id/createNetwork"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -17,7 +17,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/createNetworkName"
-        android:hint="Network name"
+        android:hint="@string/create_gate_hint"
         android:inputType="textShortMessage"
         android:layout_alignBottom="@+id/createNetwork"
         android:layout_alignParentLeft="true"

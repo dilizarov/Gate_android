@@ -11,8 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.unlock.gate.models.Network;
@@ -27,7 +27,7 @@ public class CreatePostActivity extends Activity {
     private Network currentNetwork;
     private ArrayList<Network> networks;
 
-    private Button writePost;
+    private ImageButton writePost;
     private EditText postBody;
     private TextView networkSelection;
 
@@ -53,8 +53,12 @@ public class CreatePostActivity extends Activity {
                 android.R.layout.simple_spinner_dropdown_item, items);
 
         networkSelection = (TextView) findViewById(R.id.networkSelection);
-        writePost        = (Button) findViewById(R.id.writePost);
+        writePost        = (ImageButton) findViewById(R.id.writePost);
         postBody         = (EditText) findViewById(R.id.postBody);
+
+        if (!(postBody.getText().toString().trim().length() > 0))
+            writePost.setEnabled(false);
+
 
         networkSelection.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -4,14 +4,18 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -28,7 +32,6 @@ import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.CustomEditText;
 import com.unlock.gate.utils.PostViewHelper;
 import com.unlock.gate.utils.RegexConstants;
-import com.unlock.gate.utils.SetErrorBugFixer;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
 import org.json.JSONArray;
@@ -49,7 +52,7 @@ public class CommentsActivity extends ListActivity {
     private ListView commentsList;
     private LinearLayout postStats;
     private CustomEditText addComment;
-    private Button sendComment;
+    private ImageButton sendComment;
     private ImageView upPost;
     private ImageView postSmileyCount;
     private ImageView postCommentsCountBubble;
@@ -75,6 +78,8 @@ public class CommentsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
+        getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+
         mSessionPreferences = getSharedPreferences(
                 getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
@@ -89,6 +94,7 @@ public class CommentsActivity extends ListActivity {
 
         setPostBodyClickListener();
         setSendCommentClickListener();
+        setAddCommentTypeListener();
 
         PostViewHelper.handleUpBehavior(this, post, upPost, postUpCountPost, postSmileyCount, postStats);
         PostViewHelper.handleCommentBehavior(this, post, postCommentsCount, postCommentsCountBubble, postStats);
@@ -133,11 +139,12 @@ public class CommentsActivity extends ListActivity {
         noCommentsMessage = (TextView) findViewById(R.id.noCommentsMessage);
         commentsList      = getListView();
         addComment        = (CustomEditText) findViewById(R.id.addComment);
-        sendComment       = (Button) findViewById(R.id.sendComment);
+        sendComment       = (ImageButton) findViewById(R.id.sendComment);
+        if (!(addComment.getText().toString().trim().length() > 0))
+            sendComment.setEnabled(false);
 
         progressBarHolder = (LinearLayout) findViewById(R.id.commentsProgressBarHolder);
 
-        addComment.addTextChangedListener(new SetErrorBugFixer(addComment));
         addComment.setFilters(new InputFilter[] { new InputFilter.LengthFilter(500)});
     }
 
@@ -275,6 +282,31 @@ public class CommentsActivity extends ListActivity {
                     postBody.setText(post.getBody());
                 } else {
                     postBody.setText(cutoffBody());
+                }
+            }
+        });
+    }
+
+    private void setAddCommentTypeListener() {
+        addComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (addComment.getError() != null) addComment.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() > 0) {
+                    sendComment.setEnabled(true);
+                    sendComment.setImageResource(R.drawable.ic_content_send);
+                } else {
+                    sendComment.setEnabled(false);
+                    sendComment.setImageResource(R.drawable.ic_greyed_out_content_send);
                 }
             }
         });

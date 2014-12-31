@@ -4,13 +4,11 @@
                 android:layout_height="match_parent"
                 tools:context="com.unlock.gate.CreatePostActivity">
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
         android:id="@+id/writePost"
-        android:layout_marginRight="-5dip"
-        android:layout_marginTop="-5dip"
+        android:src="@drawable/ic_action_new"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"/>

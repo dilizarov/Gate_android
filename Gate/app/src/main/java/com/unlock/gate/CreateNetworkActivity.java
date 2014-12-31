@@ -8,15 +8,15 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.unlock.gate.utils.Butter;
 
 
 public class CreateNetworkActivity extends Activity {
 
-    private Button createNetwork;
+    private ImageButton createNetwork;
     private EditText createNetworkName;
 
     @Override
@@ -26,8 +26,12 @@ public class CreateNetworkActivity extends Activity {
 
         final Intent intent = getIntent();
 
-        createNetwork     = (Button) findViewById(R.id.createNetwork);
+        createNetwork     = (ImageButton) findViewById(R.id.createNetwork);
         createNetworkName = (EditText) findViewById(R.id.createNetworkName);
+
+        if (!(createNetworkName.getText().toString().trim().length() > 0))
+            createNetwork.setEnabled(false);
+
 
         createNetworkName.addTextChangedListener(new TextWatcher() {
             @Override
