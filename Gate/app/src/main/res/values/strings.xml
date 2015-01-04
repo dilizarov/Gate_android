@@ -80,7 +80,7 @@
 
     <string name="title_activity_create_post">Create Post</string>
     <string name="title_activity_create_network">Create Gate</string>
-    <string name="title_activity_unlock_gate">UnlockGateActivity</string>
+    <string name="title_activity_unlock_gate">Select Gates to unlock...</string>
     <string name="title_activity_welcome">WelcomeActivity</string>
 
 </resources>

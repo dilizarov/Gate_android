@@ -36,7 +36,8 @@
     <application
         android:name="com.unlock.gate.MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/icon"
+        android:icon="@drawable/launcher_icon"
+        android:logo="@drawable/actionbar_logo"
         android:label="@string/app_name"
         android:theme="@style/Gate" >
         <meta-data
@@ -85,7 +86,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_unlock_gate"
             android:parentActivityName="com.unlock.gate.MainActivity"
-            android:theme="@style/Gate.NoActionBar" >
+            android:screenOrientation="portrait"
+            android:theme="@style/Gate" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.unlock.gate.MainActivity" />

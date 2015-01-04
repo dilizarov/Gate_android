@@ -2,7 +2,8 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="#0099cc"
+             android:background="@color/white"
+             android:id="@+id/rootLayout"
              tools:context="com.unlock.gate.UnlockGateActivity">
 
     <RelativeLayout
@@ -10,44 +11,69 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <TextView
-            android:id="@+id/unlockGateMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Unlock the gate to..."
-            android:layout_marginTop="66dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:textSize="20dp"/>
-
         <ListView
             android:id="@+id/networksList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_below="@+id/unlockGateMessage"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:scrollbars="none"
+            android:overScrollMode="never"
+            android:listSelector="@android:color/transparent"
+            android:divider="@null"
             android:layout_above="@+id/ready"/>
 
-        <TextView
+        <Button
             android:id="@+id/ready"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="66dp"
-            android:paddingTop="10dp"
-            android:text="Ready"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_marginLeft="-5dip"
+            android:layout_marginRight="-5dip"
+            android:layout_marginTop="-5dip"
+            android:layout_marginBottom="-5dip"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:textSize="30dp"/>
+            android:textColor="@android:color/white"
+            android:text="Unlock"/>
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/bumpPhones"
+    <ImageView
+        android:id="@+id/img1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Bump phones with recruit"
-        android:visibility="gone" />
+        android:src="@drawable/ic_hardware_phone_android"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/img1side"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_hardware_phone_android_left_side"
+        android:visibility="invisible"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"/>
+
+    <ImageView
+        android:id="@+id/img2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_hardware_phone_android"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/img2side"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_hardware_phone_android_right_side"
+        android:visibility="invisible"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"/>
+
 
 </RelativeLayout>
