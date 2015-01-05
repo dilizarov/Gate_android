@@ -44,24 +44,32 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/noCommentsMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@id/postCommentsDivider"
-        android:layout_above="@+id/createCommentDivider"
-        android:text="There are no comments :(.\n Be the first to make a comment!"
-        android:textColor="@android:color/black"
-        android:visibility="gone"/>
+        android:layout_above="@+id/createCommentDivider">
 
-    <ListView
-        android:id="@id/android:list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:scrollbars="none"
-        android:divider="@null"
-        android:layout_below="@id/postCommentsDivider"
-        android:layout_above="@+id/createCommentDivider"/>
+        <TextView
+            android:id="@+id/noCommentsMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Comments Yet"
+            android:textColor="@android:color/darker_gray"
+            android:paddingBottom="30dp"
+            android:includeFontPadding="false"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
+
+        <ListView
+            android:id="@id/android:list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="none"
+            android:divider="@null"/>
+
+    </RelativeLayout>
 
     <View
         android:id="@+id/createCommentDivider"

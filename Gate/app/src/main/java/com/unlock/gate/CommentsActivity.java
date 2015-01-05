@@ -381,7 +381,8 @@ public class CommentsActivity extends ListActivity {
         post.setCommentCount(creating ? post.getCommentCount() + 1 : comments.size());
         postCommentsCount.setText(Integer.toString(post.getCommentCount()));
 
-        if (wasCommentCountZero) {
+        if (wasCommentCountZero &&
+            post.getCommentCount() > 0) {
             postCommentsCount.setVisibility(View.VISIBLE);
             postCommentsCountBubble.setVisibility(View.VISIBLE);
 

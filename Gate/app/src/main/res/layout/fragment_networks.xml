@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFFFF">
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:id="@+id/networkProgressBarHolder"
@@ -25,24 +25,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/noGatesMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_centerInParent="true"
-            android:text="You've unlocked no Gates. \n Create a Gate or ask a Gatekeeper to let you in one!"
-            android:textColor="@android:color/black"
-            android:visibility="visible"
-            android:layout_above="@+id/createNetwork"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/createNetwork">
 
-        <ListView
-            android:id="@id/android:list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:scrollbars="none"
-            android:divider="@null"
-            android:overScrollMode="never"
-            android:layout_above="@+id/createNetwork"/>
+            <TextView
+                android:id="@+id/noGatesMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Gates Yet"
+                android:textColor="@android:color/darker_gray"
+                android:paddingBottom="30dp"
+                android:includeFontPadding="false"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+
+            <ListView
+                android:id="@id/android:list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:scrollbars="none"
+                android:divider="@null"
+                android:overScrollMode="never"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
+
+        </RelativeLayout>
 
             <Button
                 android:id="@+id/viewAggregate"

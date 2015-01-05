@@ -117,7 +117,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         transformer.getHeaderView().findViewById(R.id.ptr_text)
                 .setBackgroundColor(getResources().getColor(R.color.black));
         transformer.setProgressBarColor(getResources().getColor(R.color.gate_blue));
-        transformer.setPullText("Pulling down the internet...");
+        transformer.setPullText("Pull down the internet...");
         transformer.setRefreshingText("Finding Gates...");
     }
 
