@@ -16,6 +16,7 @@
       <item name="android:popupMenuStyle">@style/ListPopup.Gate</item>
       <item name="android:dropDownListViewStyle">@style/ListSelector.Gate</item>
       <item name="android:actionBarWidgetTheme">@style/Theme.ActionBar.Widget</item>
+
   </style>
 
   <style name="_Gate.NoActionBar" parent="android:Theme.Holo.Light.NoActionBar">

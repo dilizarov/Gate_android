@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 public class APIRequestProxy {
 	
-	private final String BASE_URL = "http://infinite-river-7560.herokuapp.com/api/v1/";
+	private final String BASE_URL = "https://infinite-river-7560.herokuapp.com/api/v1/";
 	
 	private final String SESSION_ENDPOINT = "sessions.json";
 	private final String REGISTRATION_ENDPOINT = "registrations.json";

@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
@@ -110,6 +111,14 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                 .theseChildrenArePullable(getListView(), getListView().getEmptyView())
                 .listener(this)
                 .setup(mPullToRefreshLayout);
+
+        DefaultHeaderTransformer transformer = (DefaultHeaderTransformer) mPullToRefreshLayout
+                .getHeaderTransformer();
+        transformer.getHeaderView().findViewById(R.id.ptr_text)
+                .setBackgroundColor(getResources().getColor(R.color.black));
+        transformer.setProgressBarColor(getResources().getColor(R.color.gate_blue));
+        transformer.setPullText("Pulling down the internet...");
+        transformer.setRefreshingText("Finding Gates...");
     }
 
     @Override
