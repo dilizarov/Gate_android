@@ -404,7 +404,6 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setTitle(Network network) {
-
         getActionBar().setTitle(
                 network == null
                 ? "Aggregate"

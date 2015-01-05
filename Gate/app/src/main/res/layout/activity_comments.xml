@@ -87,8 +87,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/gate_edit_text_background_invisible_underline"
-        android:paddingTop="8dp"
-        android:paddingBottom="6dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
         android:layout_toLeftOf="@id/sendComment"
         android:hint="@string/add_comment_hint" />
 

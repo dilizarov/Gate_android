@@ -73,14 +73,14 @@ public class GcmIntentService extends IntentService {
     // Takes care of when a Post is created
     private void sendToMainActivityNotification(Bundle extras) {
         mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.icon)
+                .setSmallIcon(R.drawable.actionbar_logo)
                 .setContentTitle(extras.getString("title"))
                 .setContentText(extras.getString("summary"))
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(extras.getString("extended_text"))
-                    )
-                .setLights(Color.WHITE, 2, 3)
+                                .bigText(extras.getString("extended_text"))
+                )
+                .setLights(Color.WHITE, 2000, 2000)
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -92,6 +92,7 @@ public class GcmIntentService extends IntentService {
         mBuilder.setContentIntent(contentIntent);
 
         Notification notification = mBuilder.build();
+        notification.ledARGB = 0xffffff;
         notification.tickerText = extras.getString("gate") + "\n" +
                                   extras.getString("summary") + "\n" +
                                   extras.getString("extended_text");
@@ -102,14 +103,14 @@ public class GcmIntentService extends IntentService {
     // Takes care of when a Comment is created, a comment liked or post liked
     private void sendToCommentsActivityNotification(Bundle extras) {
         mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.icon)
+                .setSmallIcon(R.drawable.actionbar_logo)
                 .setContentTitle(extras.getString("title"))
                 .setContentText(extras.getString("summary"))
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(extras.getString("extended_text"))
                 )
-                .setLights(Color.WHITE, 2, 3)
+                .setLights(Color.WHITE, 2000, 2000)
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 
         Intent intent = new Intent(this, CommentsActivity.class);

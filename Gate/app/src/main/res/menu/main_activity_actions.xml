@@ -12,7 +12,7 @@
             <item
                 android:id="@+id/action_logout"
                 android:title="Log out"
-                android:showAsAction="never" />
+                android:showAsAction="never"/>
             <item
                 android:id="@+id/action_offer_advice"
                 android:title="Advice"
@@ -22,7 +22,7 @@
 
     <item
         android:id="@+id/action_unlock_gates"
-        android:title="Create"
+        android:title="Unlock Gates"
         android:icon="@drawable/ic_add_gatekeeper"
         android:showAsAction="always"/>
 

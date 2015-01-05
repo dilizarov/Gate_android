@@ -3,32 +3,34 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <style name="Gate" parent="@style/_Gate"/>
+  <style name="Gate" parent="@style/_Gate" />
   <style name="Gate.NoActionBar" parent="@style/_Gate.NoActionBar"/>
   <style name="Gate.Dialog" parent="@style/_Gate.Dialog" />
 
   <style name="_Gate" parent="android:Theme.Holo.Light.DarkActionBar">
 
-      <item name="android:buttonStyle">@style/ButtonGate</item>
+      <item name="android:buttonStyle">@style/Button.Gate</item>
 
-      <item name="android:imageButtonStyle">@style/ImageButtonGate</item>
+      <item name="android:imageButtonStyle">@style/ImageButton.Gate</item>
 
+      <item name="android:popupMenuStyle">@style/ListPopup.Gate</item>
+      <item name="android:dropDownListViewStyle">@style/ListSelector.Gate</item>
+      <item name="android:actionBarWidgetTheme">@style/Theme.ActionBar.Widget</item>
   </style>
-
 
   <style name="_Gate.NoActionBar" parent="android:Theme.Holo.Light.NoActionBar">
 
-      <item name="android:buttonStyle">@style/ButtonGate</item>
+      <item name="android:buttonStyle">@style/Button.Gate</item>
 
-      <item name="android:imageButtonStyle">@style/ImageButtonGate</item>
+      <item name="android:imageButtonStyle">@style/ImageButton.Gate</item>
 
   </style>
 
   <style name="_Gate.Dialog" parent="android:Theme.Holo.Light.Dialog" >
 
-      <item name="android:buttonStyle">@style/ButtonGate</item>
+      <item name="android:buttonStyle">@style/Button.Gate</item>
 
-      <item name="android:imageButtonStyle">@style/ImageButtonGate</item>
+      <item name="android:imageButtonStyle">@style/ImageButton.Gate</item>
 
   </style>
 </resources>

@@ -3,12 +3,27 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="ButtonGate" parent="android:Widget.Holo.Light.Button">
+    <style name="Button.Gate" parent="android:Widget.Holo.Light.Button">
         <item name="android:background">@drawable/gate_btn_default_holo_light</item>
     </style>
 
-    <style name="ImageButtonGate" parent="android:Widget.Holo.Light.ImageButton">
+    <style name="ImageButton.Gate" parent="android:Widget.Holo.Light.ImageButton">
         <item name="android:background">@drawable/gate_btn_default_holo_light</item>
+    </style>
+
+    <!-- The next 3 are used for the Overflow in MainActivity. Alter with care. -->
+    <style name="Theme.ActionBar.Widget" parent="@android:style/Theme.Holo">
+        <item name="android:popupMenuStyle">@style/ListPopup.Gate</item>
+        <item name="android:dropDownListViewStyle">@style/ListSelector.Gate</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ListPopup.Gate" parent="@android:style/Widget.Holo.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel</item>
+    </style>
+
+    <style name="ListSelector.Gate" parent="@android:style/Widget.Holo.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background</item>
     </style>
 
 
