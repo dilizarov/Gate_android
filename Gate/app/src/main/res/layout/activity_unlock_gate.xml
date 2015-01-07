@@ -6,6 +6,14 @@
              android:id="@+id/rootLayout"
              tools:context="com.unlock.gate.UnlockGateActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lalalala"
+        android:text="REDO IT"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
     <RelativeLayout
         android:id="@+id/networkSelector"
         android:layout_width="fill_parent"
@@ -21,10 +29,10 @@
             android:overScrollMode="never"
             android:listSelector="@android:color/transparent"
             android:divider="@null"
-            android:layout_above="@+id/ready"/>
+            android:layout_above="@+id/unlockButton"/>
 
         <Button
-            android:id="@+id/ready"
+            android:id="@+id/unlockButton"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
@@ -40,51 +48,50 @@
     </RelativeLayout>
 
     <ImageView
-        android:id="@+id/img1"
+        android:id="@+id/leftPhoneImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_hardware_phone_android"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
     <ImageView
-        android:id="@+id/img1side"
+        android:id="@+id/leftPhoneSideImage"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/ic_hardware_phone_android_left_side"
         android:visibility="invisible"
         android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true" />
 
     <ImageView
-        android:id="@+id/img2"
+        android:id="@+id/rightPhoneImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_hardware_phone_android"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
     <ImageView
-        android:id="@+id/img2side"
+        android:id="@+id/rightPhoneSideImage"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/ic_hardware_phone_android_right_side"
         android:visibility="invisible"
         android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
 
     <ImageView
-        android:id="@+id/imgTap"
+        android:id="@+id/tapPhoneImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/action_tap"
         android:visibility="invisible"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
-        android:paddingLeft="24dp"
-    />
+        android:paddingLeft="24dp" />
 
 </RelativeLayout>

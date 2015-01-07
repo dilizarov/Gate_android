@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.unlock.gate.models.Network;
 import com.unlock.gate.utils.Butter;
@@ -36,19 +37,30 @@ public class UnlockGateActivity extends Activity {
 
     private RelativeLayout networkSelector;
     private ListView networksList;
-    private Button ready;
+    private Button unlock;
     private ArrayList<Network> networks;
     private ArrayList<String> selectedNetworkIds;
     private NfcAdapter mNfcAdapter;
     private SharedPreferences mSessionPreferences;
     private ActionBar actionBar;
 
-    ImageView img1;
-    ImageView img1Side;
-    ImageView img2;
-    ImageView img2Side;
-    ImageView imgTap;
+    ImageView leftPhone;
+    ImageView leftPhoneSide;
+    ImageView rightPhone;
+    ImageView rightPhoneSide;
+    ImageView tapPhone;
 
+    private int screenCenterVert;
+    private int leftSideDestination;
+    private int[] leftOriginalPosition;
+    private int[] rightOriginalPosition;
+    private int[] tapPhonePosition;
+    private float phoneCenterX;
+    private float phoneCenterY;
+    private boolean metricsCalculated;
+
+    private final int STEP_DURATION = 2000;
+    private final int FADE_DURATION = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +86,13 @@ public class UnlockGateActivity extends Activity {
     private void instantiateViews() {
         networkSelector = (RelativeLayout) findViewById(R.id.networkSelector);
         networksList    = (ListView) findViewById(R.id.networksList);
-        ready           = (Button) findViewById(R.id.ready);
+        unlock          = (Button) findViewById(R.id.unlockButton);
 
-        img1     = (ImageView) findViewById(R.id.img1);
-        img2     = (ImageView) findViewById(R.id.img2);
-        img1Side = (ImageView) findViewById(R.id.img1side);
-        img2Side = (ImageView) findViewById(R.id.img2side);
-        imgTap   = (ImageView) findViewById(R.id.imgTap);
+        leftPhone      = (ImageView) findViewById(R.id.leftPhoneImage);
+        rightPhone     = (ImageView) findViewById(R.id.rightPhoneImage);
+        leftPhoneSide  = (ImageView) findViewById(R.id.leftPhoneSideImage);
+        rightPhoneSide = (ImageView) findViewById(R.id.rightPhoneSideImage);
+        tapPhone       = (ImageView) findViewById(R.id.tapPhoneImage);
     }
 
     private void bindNetworksToListView() {
@@ -92,13 +104,61 @@ public class UnlockGateActivity extends Activity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 R.layout.simple_list_item_ellipsized_multiple_choice, networkNames);
+
         networksList.setAdapter(adapter);
         networksList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         adapter.notifyDataSetChanged();
     }
 
     private void setReadyClickListener() {
-        ready.setOnClickListener(new View.OnClickListener() {
+
+        TextView lala = (TextView) findViewById(R.id.lalalala);
+
+        lala.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlphaAnimation fadeOut = new AlphaAnimation(1, 0);
+                fadeOut.setDuration(500);
+                fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        rightPhone.setVisibility(View.INVISIBLE);
+                        rightPhone.setImageResource(R.drawable.ic_hardware_phone_android);
+                        AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
+                        fadeIn.setDuration(500);
+                        fadeIn.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                rightPhone.setVisibility(View.VISIBLE);
+                                animateTutorial();
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+                        });
+
+                        rightPhone.startAnimation(fadeIn);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+                rightPhone.startAnimation(fadeOut);
+            }
+        });
+
+        unlock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -136,7 +196,7 @@ public class UnlockGateActivity extends Activity {
                                         networkSelector.setVisibility(View.GONE);
                                         networkSelector.animate().setListener(null);
 
-                                        animatePhoneBumping();
+                                        animateTutorial();
 
                                     }
                                 });
@@ -161,250 +221,199 @@ public class UnlockGateActivity extends Activity {
         });
     }
 
-    public void animatePhoneBumping() {
-        img1.setVisibility(View.VISIBLE);
-        img2.setVisibility(View.VISIBLE);
-
-        RelativeLayout root = (RelativeLayout) findViewById(R.id.rootLayout);
+    public void calculateMetrics() {
         DisplayMetrics dm = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-        Log.v("Height", Integer.toString(dm.heightPixels));
-        Log.v("Width", Integer.toString(dm.widthPixels));
-        Log.v("Measured Height", Integer.toString(root.getMeasuredHeight()));
-        int statusBarOffset = dm.heightPixels - root.getMeasuredHeight() - actionBar.getHeight();
+        screenCenterVert =  dm.widthPixels/2;
+        leftSideDestination = screenCenterVert - leftPhoneSide.getMeasuredWidth();
+        //rightSideDestination is screenCenterVert
 
-        final int originalPos1[] = new int[2];
-        img1Side.getLocationOnScreen(originalPos1);
+        leftOriginalPosition = new int[2];
+        leftPhoneSide.getLocationOnScreen(leftOriginalPosition);
 
-        final int originalPos2[] = new int[2];
-        img2Side.getLocationOnScreen(originalPos2);
+        rightOriginalPosition = new int[2];
+        rightPhoneSide.getLocationOnScreen(rightOriginalPosition);
 
-        int height = img1.getMeasuredHeight();
-        int width  = img1.getMeasuredHeight()/8;
+        tapPhonePosition = new int[2];
+        tapPhone.getLocationOnScreen(tapPhonePosition);
 
-//        ViewGroup.LayoutParams layoutParams = img1Side.getLayoutParams();
-//        layoutParams.height = height;
-//        layoutParams.width = width;
-//        img1Side.setLayoutParams(layoutParams);
-//
-//        layoutParams = img2Side.getLayoutParams();
-//        layoutParams.height = height;
-//        layoutParams.width = width;
-//        img2Side.setLayoutParams(layoutParams);
+        phoneCenterX = leftPhone.getWidth() / 2.0f;
+        phoneCenterY = leftPhone.getHeight() / 2.0f;
 
-        final int mmm = dm.widthPixels/2;
-        final int xDest1 = dm.widthPixels/2 - img1Side.getMeasuredWidth();
-        final int xDest2 = dm.widthPixels/2;
+        metricsCalculated = true;
+    }
 
-        final int yDest = dm.heightPixels/2 - (img1Side.getMeasuredHeight()/2) - statusBarOffset;
+    public void animateTutorial() {
 
-Log.v("width", Integer.toString(img1Side.getMeasuredWidth()));
-        final TranslateAnimation anim1 = new TranslateAnimation(0, xDest1 - originalPos1[0], 0, /*yDest - originalPos1[1]*/0);
-        final TranslateAnimation anim2 = new TranslateAnimation(0, xDest2 - originalPos2[0], 0, /*yDest - originalPos2[1]*/0);
-        anim1.setDuration(1000);
-        anim2.setDuration(1000);
-        anim1.setFillAfter(true);
-        anim2.setFillAfter(true);
+        if (!metricsCalculated) calculateMetrics();
+        kickOffAnimation();
 
-        anim1.setAnimationListener(new Animation.AnimationListener() {
+    }
+
+    public void kickOffAnimation() {
+        // 0 denotes the left phone, 1 denotes the right phone.
+        if (leftPhone.getVisibility() == View.VISIBLE && rightPhone.getVisibility() == View.VISIBLE) {
+            rotatePhone(0);
+            rotatePhone(1);
+        } else {
+            leftPhone.startAnimation(fadePhoneAnimation(0));
+            rightPhone.startAnimation(fadePhoneAnimation(1));
+        }
+    }
+
+    private AlphaAnimation fadePhoneAnimation(final int phone) {
+        AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setDuration(FADE_DURATION);
+        fadeIn.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                phone(phone).setVisibility(View.VISIBLE);
+                rotatePhone(phone);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        return fadeIn;
+    }
+
+    private void rotatePhone(final int phone) {
+        final Rotate3dAnimation rotation = new Rotate3dAnimation(0, phone == 0 ? -90 : 90, phoneCenterX, phoneCenterY, 0, true);
+        rotation.setDuration(STEP_DURATION);
+        rotation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                phone(phone).setVisibility(View.INVISIBLE);
+                phoneSide(phone).setVisibility(View.VISIBLE);
+
+                // Moves the side view back when the intermediate animation (tapping) is complete.
+
+                int xDelta = (phone == 0)
+                ? -(leftSideDestination - leftOriginalPosition[0])
+                : -(screenCenterVert - rightOriginalPosition[0]);
+
+                TranslateAnimation translateSideBack = new TranslateAnimation(0, xDelta, 0, 0);
+                translateSideBack.setDuration(STEP_DURATION);
+                translateSideBack.setStartOffset(5000);
+
+                translateSideBack.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Rotate3dAnimation rotateBack = new Rotate3dAnimation(phone == 0 ? -90 : 90, 0, phoneCenterX, phoneCenterY, 0, true);
+
+                        phoneSide(phone).setVisibility(View.INVISIBLE);
+                        rotateBack.setDuration(STEP_DURATION);
+                        rotateBack.setFillAfter(true);
+                        if (phone == 1)
+                            rightPhone.setImageResource(R.drawable.ic_hardware_phone_android_unlocked);
+
+                        phone(phone).setVisibility(View.VISIBLE);
+                        phone(phone).setAnimation(rotateBack);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+                AnimationSet set = new AnimationSet(false);
+                set.addAnimation(translateSide(phone));
+                set.addAnimation(translateSideBack);
+
+                phoneSide(phone).startAnimation(set);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+        phone(phone).startAnimation(rotation);
+    }
+
+    private TranslateAnimation translateSide(int phone) {
+        int xDelta = (phone == 0)
+        ? leftSideDestination - leftOriginalPosition[0]
+        : screenCenterVert - rightOriginalPosition[0];
+
+        TranslateAnimation translateSide = new TranslateAnimation(0, xDelta, 0, 0);
+        translateSide.setDuration(STEP_DURATION);
+        translateSide.setFillAfter(true);
+
+        if (phone == 0) translateSide.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 actionBar.setTitle("Tap your phone...");
-                final int originalPos3[] = new int[2];
-                imgTap.getLocationOnScreen(originalPos3);
-                AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
-                alphaAnimation.setDuration(500);
 
-                TranslateAnimation anim3 = new TranslateAnimation(0, mmm - originalPos3[0] - imgTap.getMeasuredWidth() - img1Side.getMeasuredWidth() * .2f, 0, /*yDest - originalPos3[1] + img1Side.getHeight()/2*/0);
-                anim3.setDuration(1000);
-                anim3.setStartOffset(500);
-                anim3.setFillAfter(true);
-                anim3.setInterpolator(new OvershootInterpolator());
+                AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
+                fadeIn.setDuration(FADE_DURATION);
+
+                TranslateAnimation translateTap = new TranslateAnimation(0, screenCenterVert - tapPhonePosition[0] - tapPhone.getMeasuredWidth() - leftPhoneSide.getMeasuredWidth() * .2f, 0, 0);
+                translateTap.setDuration(STEP_DURATION);
+                translateTap.setStartOffset(FADE_DURATION);
+                translateTap.setFillAfter(true);
+                translateTap.setInterpolator(new OvershootInterpolator());
 
                 AnimationSet animSet = new AnimationSet(false);
-                animSet.addAnimation(alphaAnimation);
-                animSet.addAnimation(anim3);
+                animSet.addAnimation(fadeIn);
+                animSet.addAnimation(translateTap);
                 animSet.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
-
                     }
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        AlphaAnimation ap = new AlphaAnimation(1, 0);
-                        ap.setDuration(500);
-                        ap.setFillAfter(true);
+                        AlphaAnimation fadeOut = new AlphaAnimation(1, 0);
+                        fadeOut.setDuration(FADE_DURATION);
+                        fadeOut.setFillAfter(true);
 
-//                        ap.setAnimationListener(new Animation.AnimationListener() {
-//                            @Override
-//                            public void onAnimationStart(Animation animation) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onAnimationEnd(Animation animation) {
-//                                img1.setVisibility(View.INVISIBLE);
-//                                img1Side.setVisibility(View.INVISIBLE);
-//                                img2.setVisibility(View.INVISIBLE);
-//                                img2Side.setVisibility(View.INVISIBLE);
-//                                imgTap.setVisibility(View.INVISIBLE);
-//                                img1.clearAnimation();
-//                                img1Side.clearAnimation();
-//                                img2.clearAnimation();
-//                                img2Side.clearAnimation();
-//                                imgTap.clearAnimation();
-//
-//                                img1.setImageResource(R.drawable.ic_hardware_phone_android);
-//                                img2.setImageResource(R.drawable.ic_hardware_phone_android_unlocked);
-//
-//                                AlphaAnimation alphaAnimation1 = new AlphaAnimation(0, 1);
-//                                alphaAnimation1.setDuration(500);
-//                                alphaAnimation1.setFillAfter(true);
-//
-//                                img1.setAnimation(alphaAnimation1);
-//                                img2.setAnimation(alphaAnimation1);
-//                            }
-//
-//                            @Override
-//                            public void onAnimationRepeat(Animation animation) {
-//
-//                            }
-//                        });
-
-                        imgTap.setAnimation(ap);
-//                        img1Side.setAnimation(ap);
-//                        img2Side.setAnimation(ap);
+                        tapPhone.setAnimation(fadeOut);
                     }
 
                     @Override
                     public void onAnimationRepeat(Animation animation) {
-
                     }
                 });
-                imgTap.setAnimation(animSet);
+
+                tapPhone.setAnimation(animSet);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
 
-        final float centerX = img1.getWidth() / 2.0f;
-        final float centerY = img1.getHeight() / 2.0f;
+        return translateSide;
+    };
 
-        final Rotate3dAnimation rotationLeft = new Rotate3dAnimation(0, -90, centerX, centerY, 0, true);
-        final Rotate3dAnimation rotationRight = new Rotate3dAnimation(0, 90, centerX, centerY, 0, true);
-        rotationLeft.setDuration(1000);
-        rotationRight.setDuration(1000);
-        rotationLeft.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
+    private ImageView phone(int phone) {
+        return phone == 0 ? leftPhone : rightPhone;
+    }
 
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                img1.setVisibility(View.INVISIBLE);
-                img1Side.setVisibility(View.VISIBLE);
-                TranslateAnimation trAnm = new TranslateAnimation(0, -(xDest1 - originalPos1[0]), 0, 0);
-                trAnm.setDuration(1000);
-                trAnm.setStartOffset(3500);
-
-                trAnm.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        Rotate3dAnimation rotateBackLeft = new Rotate3dAnimation(-90, 0, centerX, centerY, 0, true);
-
-                        img1Side.setVisibility(View.INVISIBLE);
-                        rotateBackLeft.setDuration(1000);
-                        rotateBackLeft.setFillAfter(true);
-                        img1.setAnimation(rotateBackLeft);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-                AnimationSet set = new AnimationSet(false);
-                set.addAnimation(anim1);
-                set.addAnimation(trAnm);
-
-                img1Side.startAnimation(set);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        rotationRight.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                img2.setVisibility(View.INVISIBLE);
-                img2Side.setVisibility(View.VISIBLE);
-                img2Side.startAnimation(anim2);
-                TranslateAnimation trAnm = new TranslateAnimation(0, -(xDest2 - originalPos2[0]), 0, 0);
-                trAnm.setDuration(1000);
-                trAnm.setStartOffset(3500);
-
-                trAnm.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        Rotate3dAnimation rotateBackRight = new Rotate3dAnimation(90, 0, centerX, centerY, 0, true);
-
-                        img2Side.setVisibility(View.INVISIBLE);
-                        rotateBackRight.setDuration(1000);
-                        rotateBackRight.setFillAfter(true);
-                        img2.setImageResource(R.drawable.ic_hardware_phone_android_unlocked);
-                        img2.setAnimation(rotateBackRight);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-                AnimationSet set = new AnimationSet(false);
-                set.addAnimation(anim2);
-                set.addAnimation(trAnm);
-
-                img2Side.startAnimation(set);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        img1.startAnimation(rotationLeft);
-        img2.startAnimation(rotationRight);
+    private ImageView phoneSide(int phone) {
+        return phone == 0 ? leftPhoneSide : rightPhoneSide;
     }
 
     @Override
