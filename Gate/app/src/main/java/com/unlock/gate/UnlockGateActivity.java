@@ -13,7 +13,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -44,6 +47,7 @@ public class UnlockGateActivity extends Activity {
     ImageView img1Side;
     ImageView img2;
     ImageView img2Side;
+    ImageView imgTap;
 
 
     @Override
@@ -76,6 +80,7 @@ public class UnlockGateActivity extends Activity {
         img2     = (ImageView) findViewById(R.id.img2);
         img1Side = (ImageView) findViewById(R.id.img1side);
         img2Side = (ImageView) findViewById(R.id.img2side);
+        imgTap   = (ImageView) findViewById(R.id.imgTap);
     }
 
     private void bindNetworksToListView() {
@@ -169,10 +174,10 @@ public class UnlockGateActivity extends Activity {
         Log.v("Measured Height", Integer.toString(root.getMeasuredHeight()));
         int statusBarOffset = dm.heightPixels - root.getMeasuredHeight() - actionBar.getHeight();
 
-        int originalPos1[] = new int[2];
+        final int originalPos1[] = new int[2];
         img1Side.getLocationOnScreen(originalPos1);
 
-        int originalPos2[] = new int[2];
+        final int originalPos2[] = new int[2];
         img2Side.getLocationOnScreen(originalPos2);
 
         int height = img1.getMeasuredHeight();
@@ -188,14 +193,15 @@ public class UnlockGateActivity extends Activity {
 //        layoutParams.width = width;
 //        img2Side.setLayoutParams(layoutParams);
 
-        int xDest1 = dm.widthPixels/2 - img1Side.getMeasuredWidth();
-        int xDest2 = dm.widthPixels/2;
+        final int mmm = dm.widthPixels/2;
+        final int xDest1 = dm.widthPixels/2 - img1Side.getMeasuredWidth();
+        final int xDest2 = dm.widthPixels/2;
 
-        int yDest = dm.heightPixels/2 - (img1Side.getMeasuredHeight()/2) - statusBarOffset;
+        final int yDest = dm.heightPixels/2 - (img1Side.getMeasuredHeight()/2) - statusBarOffset;
 
-
-        final TranslateAnimation anim1 = new TranslateAnimation(0, xDest1 - originalPos1[0], 0, yDest - originalPos1[1]);
-        final TranslateAnimation anim2 = new TranslateAnimation(0, xDest2 - originalPos2[0], 0, yDest - originalPos2[1]);
+Log.v("width", Integer.toString(img1Side.getMeasuredWidth()));
+        final TranslateAnimation anim1 = new TranslateAnimation(0, xDest1 - originalPos1[0], 0, /*yDest - originalPos1[1]*/0);
+        final TranslateAnimation anim2 = new TranslateAnimation(0, xDest2 - originalPos2[0], 0, /*yDest - originalPos2[1]*/0);
         anim1.setDuration(1000);
         anim2.setDuration(1000);
         anim1.setFillAfter(true);
@@ -210,6 +216,79 @@ public class UnlockGateActivity extends Activity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 actionBar.setTitle("Tap your phone...");
+                final int originalPos3[] = new int[2];
+                imgTap.getLocationOnScreen(originalPos3);
+                AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
+                alphaAnimation.setDuration(500);
+
+                TranslateAnimation anim3 = new TranslateAnimation(0, mmm - originalPos3[0] - imgTap.getMeasuredWidth() - img1Side.getMeasuredWidth() * .2f, 0, /*yDest - originalPos3[1] + img1Side.getHeight()/2*/0);
+                anim3.setDuration(1000);
+                anim3.setStartOffset(500);
+                anim3.setFillAfter(true);
+                anim3.setInterpolator(new OvershootInterpolator());
+
+                AnimationSet animSet = new AnimationSet(false);
+                animSet.addAnimation(alphaAnimation);
+                animSet.addAnimation(anim3);
+                animSet.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        AlphaAnimation ap = new AlphaAnimation(1, 0);
+                        ap.setDuration(500);
+                        ap.setFillAfter(true);
+
+//                        ap.setAnimationListener(new Animation.AnimationListener() {
+//                            @Override
+//                            public void onAnimationStart(Animation animation) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onAnimationEnd(Animation animation) {
+//                                img1.setVisibility(View.INVISIBLE);
+//                                img1Side.setVisibility(View.INVISIBLE);
+//                                img2.setVisibility(View.INVISIBLE);
+//                                img2Side.setVisibility(View.INVISIBLE);
+//                                imgTap.setVisibility(View.INVISIBLE);
+//                                img1.clearAnimation();
+//                                img1Side.clearAnimation();
+//                                img2.clearAnimation();
+//                                img2Side.clearAnimation();
+//                                imgTap.clearAnimation();
+//
+//                                img1.setImageResource(R.drawable.ic_hardware_phone_android);
+//                                img2.setImageResource(R.drawable.ic_hardware_phone_android_unlocked);
+//
+//                                AlphaAnimation alphaAnimation1 = new AlphaAnimation(0, 1);
+//                                alphaAnimation1.setDuration(500);
+//                                alphaAnimation1.setFillAfter(true);
+//
+//                                img1.setAnimation(alphaAnimation1);
+//                                img2.setAnimation(alphaAnimation1);
+//                            }
+//
+//                            @Override
+//                            public void onAnimationRepeat(Animation animation) {
+//
+//                            }
+//                        });
+
+                        imgTap.setAnimation(ap);
+//                        img1Side.setAnimation(ap);
+//                        img2Side.setAnimation(ap);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                imgTap.setAnimation(animSet);
             }
 
             @Override
@@ -218,13 +297,13 @@ public class UnlockGateActivity extends Activity {
             }
         });
 
-        float centerX = img1.getWidth() / 2.0f;
-        float centerY = img1.getHeight() / 2.0f;
+        final float centerX = img1.getWidth() / 2.0f;
+        final float centerY = img1.getHeight() / 2.0f;
 
         final Rotate3dAnimation rotationLeft = new Rotate3dAnimation(0, -90, centerX, centerY, 0, true);
         final Rotate3dAnimation rotationRight = new Rotate3dAnimation(0, 90, centerX, centerY, 0, true);
-        rotationLeft.setDuration(10000);
-        rotationRight.setDuration(10000);
+        rotationLeft.setDuration(1000);
+        rotationRight.setDuration(1000);
         rotationLeft.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -235,7 +314,37 @@ public class UnlockGateActivity extends Activity {
             public void onAnimationEnd(Animation animation) {
                 img1.setVisibility(View.INVISIBLE);
                 img1Side.setVisibility(View.VISIBLE);
-                img1Side.startAnimation(anim1);
+                TranslateAnimation trAnm = new TranslateAnimation(0, -(xDest1 - originalPos1[0]), 0, 0);
+                trAnm.setDuration(1000);
+                trAnm.setStartOffset(3500);
+
+                trAnm.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Rotate3dAnimation rotateBackLeft = new Rotate3dAnimation(-90, 0, centerX, centerY, 0, true);
+
+                        img1Side.setVisibility(View.INVISIBLE);
+                        rotateBackLeft.setDuration(1000);
+                        rotateBackLeft.setFillAfter(true);
+                        img1.setAnimation(rotateBackLeft);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+                AnimationSet set = new AnimationSet(false);
+                set.addAnimation(anim1);
+                set.addAnimation(trAnm);
+
+                img1Side.startAnimation(set);
             }
 
             @Override
@@ -254,6 +363,38 @@ public class UnlockGateActivity extends Activity {
                 img2.setVisibility(View.INVISIBLE);
                 img2Side.setVisibility(View.VISIBLE);
                 img2Side.startAnimation(anim2);
+                TranslateAnimation trAnm = new TranslateAnimation(0, -(xDest2 - originalPos2[0]), 0, 0);
+                trAnm.setDuration(1000);
+                trAnm.setStartOffset(3500);
+
+                trAnm.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Rotate3dAnimation rotateBackRight = new Rotate3dAnimation(90, 0, centerX, centerY, 0, true);
+
+                        img2Side.setVisibility(View.INVISIBLE);
+                        rotateBackRight.setDuration(1000);
+                        rotateBackRight.setFillAfter(true);
+                        img2.setImageResource(R.drawable.ic_hardware_phone_android_unlocked);
+                        img2.setAnimation(rotateBackRight);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+                AnimationSet set = new AnimationSet(false);
+                set.addAnimation(anim2);
+                set.addAnimation(trAnm);
+
+                img2Side.startAnimation(set);
             }
 
             @Override

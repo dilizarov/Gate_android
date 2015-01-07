@@ -76,4 +76,15 @@
         android:layout_alignParentRight="true"/>
 
 
+    <ImageView
+        android:id="@+id/imgTap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/action_tap"
+        android:visibility="invisible"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="24dp"
+    />
+
 </RelativeLayout>

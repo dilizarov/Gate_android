@@ -56,7 +56,6 @@
             android:layout_height="wrap_content"
             android:text="No Comments Yet"
             android:textColor="@android:color/darker_gray"
-            android:paddingBottom="30dp"
             android:includeFontPadding="false"
             android:visibility="gone"
             android:layout_centerVertical="true"

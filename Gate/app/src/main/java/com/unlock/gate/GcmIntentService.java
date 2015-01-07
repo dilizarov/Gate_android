@@ -97,6 +97,9 @@ public class GcmIntentService extends IntentService {
                                   extras.getString("summary") + "\n" +
                                   extras.getString("extended_text");
 
+
+        //We cancel first so that the tickerText redisplays itself, otherwise it won't if we're just updating.
+        mNotificationManager.cancel(GATE_NOTIFICATION_ID);
         mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
     }
 
@@ -153,6 +156,8 @@ public class GcmIntentService extends IntentService {
                                       extras.getString("summary");
         }
 
+        //We cancel first so that the tickerText redisplays itself, otherwise it won't if we're just updating.
+        mNotificationManager.cancel(GATE_NOTIFICATION_ID);
         mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
     }
 }
