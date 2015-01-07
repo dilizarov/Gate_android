@@ -3,16 +3,19 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:background="@color/white"
-             android:id="@+id/rootLayout"
              tools:context="com.unlock.gate.UnlockGateActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lalalala"
-        android:text="REDO IT"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:id="@+id/tutorialText"
+        android:text="Bump phones"
+        android:textColor="@android:color/darker_gray"
+        android:visibility="invisible"
+        android:layout_above="@+id/leftPhoneImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp"
+        />
 
     <RelativeLayout
         android:id="@+id/networkSelector"

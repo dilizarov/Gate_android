@@ -10,7 +10,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -49,6 +48,7 @@ public class UnlockGateActivity extends Activity {
     ImageView rightPhone;
     ImageView rightPhoneSide;
     ImageView tapPhone;
+    TextView tutorialText;
 
     private int screenCenterVert;
     private int leftSideDestination;
@@ -80,7 +80,7 @@ public class UnlockGateActivity extends Activity {
 
         bindNetworksToListView();
 
-        setReadyClickListener();
+        setUnlockClickListener();
     }
 
     private void instantiateViews() {
@@ -93,6 +93,7 @@ public class UnlockGateActivity extends Activity {
         leftPhoneSide  = (ImageView) findViewById(R.id.leftPhoneSideImage);
         rightPhoneSide = (ImageView) findViewById(R.id.rightPhoneSideImage);
         tapPhone       = (ImageView) findViewById(R.id.tapPhoneImage);
+        tutorialText   = (TextView) findViewById(R.id.tutorialText);
     }
 
     private void bindNetworksToListView() {
@@ -110,53 +111,7 @@ public class UnlockGateActivity extends Activity {
         adapter.notifyDataSetChanged();
     }
 
-    private void setReadyClickListener() {
-
-        TextView lala = (TextView) findViewById(R.id.lalalala);
-
-        lala.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlphaAnimation fadeOut = new AlphaAnimation(1, 0);
-                fadeOut.setDuration(500);
-                fadeOut.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        rightPhone.setVisibility(View.INVISIBLE);
-                        rightPhone.setImageResource(R.drawable.ic_hardware_phone_android);
-                        AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
-                        fadeIn.setDuration(500);
-                        fadeIn.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                rightPhone.setVisibility(View.VISIBLE);
-                                animateTutorial();
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-                            }
-                        });
-
-                        rightPhone.startAnimation(fadeIn);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-
-                rightPhone.startAnimation(fadeOut);
-            }
-        });
+    private void setUnlockClickListener() {
 
         unlock.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,11 +125,9 @@ public class UnlockGateActivity extends Activity {
                         for (int i = 0; i < len; i++) {
 
                               if (networksList.isItemChecked(i)) {
-                                  Log.v("checked item", networks.get(i).getName());
                                   selectedNetworkIds.add(networks.get(i).getId());
                               }
                         }
-
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -187,7 +140,7 @@ public class UnlockGateActivity extends Activity {
                                     return;
                                 }
 
-                                actionBar.setTitle("Bump phones...");
+                                actionBar.setTitle("Tutorial");
 
                                 Fade.hide(networkSelector, new AnimatorListenerAdapter() {
                                     @Override
@@ -257,6 +210,8 @@ public class UnlockGateActivity extends Activity {
             rotatePhone(0);
             rotatePhone(1);
         } else {
+            Fade.setDuration(FADE_DURATION);
+            Fade.show(tutorialText);
             leftPhone.startAnimation(fadePhoneAnimation(0));
             rightPhone.startAnimation(fadePhoneAnimation(1));
         }
@@ -316,9 +271,19 @@ public class UnlockGateActivity extends Activity {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
+                        tutorialText.setText("Gates unlocked");
                         Rotate3dAnimation rotateBack = new Rotate3dAnimation(phone == 0 ? -90 : 90, 0, phoneCenterX, phoneCenterY, 0, true);
 
-                        phoneSide(phone).setVisibility(View.INVISIBLE);
+                        Fade.hide(phoneSide(phone), new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                phoneSide(phone).setAlpha(1f);
+                                phoneSide(phone).setVisibility(View.INVISIBLE);
+                                phoneSide(phone).animate().setListener(null);
+                            }
+                        });
+
                         rotateBack.setDuration(STEP_DURATION);
                         rotateBack.setFillAfter(true);
                         if (phone == 1)
@@ -326,6 +291,13 @@ public class UnlockGateActivity extends Activity {
 
                         phone(phone).setVisibility(View.VISIBLE);
                         phone(phone).setAnimation(rotateBack);
+
+                        tutorialText.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                setReplayTutorialClickListener();
+                            }
+                        }, STEP_DURATION * 3);
                     }
 
                     @Override
@@ -364,7 +336,7 @@ public class UnlockGateActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                actionBar.setTitle("Tap your phone...");
+                tutorialText.setText("Tap your phone");
 
                 AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
                 fadeIn.setDuration(FADE_DURATION);
@@ -407,6 +379,92 @@ public class UnlockGateActivity extends Activity {
 
         return translateSide;
     };
+
+    private void setReplayTutorialClickListener() {
+        tutorialText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlphaAnimation fadeOut = new AlphaAnimation(1, 0);
+                fadeOut.setDuration(FADE_DURATION);
+                fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        AlphaAnimation fadeOutText = new AlphaAnimation(1, 0);
+                        fadeOutText.setDuration(FADE_DURATION);
+                        fadeOutText.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                tutorialText.setVisibility(View.INVISIBLE);
+                                tutorialText.setText("Bump phones");
+                                tutorialText.setOnClickListener(null);
+                                AlphaAnimation fadeInText = new AlphaAnimation(0, 1);
+                                fadeInText.setDuration(FADE_DURATION);
+                                fadeInText.setAnimationListener(new Animation.AnimationListener() {
+                                    @Override
+                                    public void onAnimationStart(Animation animation) {
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animation animation) {
+                                        tutorialText.setVisibility(View.VISIBLE);
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {
+                                    }
+                                });
+
+                                tutorialText.setAnimation(fadeInText);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+                        });
+
+                        tutorialText.setAnimation(fadeOutText);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        rightPhone.setVisibility(View.INVISIBLE);
+                        rightPhone.setImageResource(R.drawable.ic_hardware_phone_android);
+                        AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
+                        fadeIn.setDuration(FADE_DURATION);
+                        fadeIn.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                rightPhone.setVisibility(View.VISIBLE);
+                                animateTutorial();
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+                        });
+
+                        rightPhone.startAnimation(fadeIn);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+                rightPhone.startAnimation(fadeOut);
+            }
+        });
+
+        tutorialText.setText("Press to replay tutorial");
+    }
 
     private ImageView phone(int phone) {
         return phone == 0 ? leftPhone : rightPhone;

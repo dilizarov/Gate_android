@@ -32,9 +32,9 @@ public class Fade {
 			view.animate().alpha(1).setListener(listener);
 		}
 	}
-	
+
 	// the listener passed in must at some point do:
-	//view.setAlpha(1);
+	//view.setAlpha(1f);
 	//view.setVisibility(View.INVISIBLE);
 	//view.animate().setListener(null);
 	//Note, you would call view whatever it is referenced as in the context.
