@@ -310,7 +310,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 
                                         mActivityPreferences.edit()
                                                 .putString(getString(R.string.last_used_email), mEmail)
-                                                .commit();
+                                                .apply();
 
                                         progressDialog.dismiss();
 
@@ -423,7 +423,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                                                         }
 
                                                         editor.putString(getString(R.string.last_used_email), mEmail);
-                                                        editor.commit();
+                                                        editor.apply();
 
                                                         progressDialog.dismiss();
 
@@ -511,7 +511,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				  .putString(getString(R.string.user_email_key),      userData.getString("email"))
 				  .putString(getString(R.string.user_name_key),       userData.getString("name"))
 				  .putString(getString(R.string.user_created_at_key), userData.getString("created_at"))
-				  .commit();
+				  .apply();
 			
 		} catch (JSONException ex) {
 			ex.printStackTrace();
@@ -580,7 +580,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                 userFullName.setText(mFullName);
                 mActivityPreferences.edit()
                                     .putString(getString(R.string.name_on_phone), mFullName)
-                                    .commit();
+                                    .apply();
             }
         }
 	}
@@ -655,7 +655,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
+        editor.apply();
     }
 
     // Register device for Google Cloud Messaging

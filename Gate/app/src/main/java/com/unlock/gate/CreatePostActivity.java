@@ -42,7 +42,7 @@ public class CreatePostActivity extends Activity {
             currentNetwork = savedInstanceState.getParcelable("currentNetwork");
             networks       = savedInstanceState.getParcelableArrayList("networks");
         } else {
-            currentNetwork = (Network) intent.getParcelableExtra("currentNetwork");
+            currentNetwork = intent.getParcelableExtra("currentNetwork");
             networks       = intent.getParcelableArrayListExtra("networks");
         }
 

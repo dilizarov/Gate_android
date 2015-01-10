@@ -3,7 +3,7 @@
       tools:context="com.unlock.gate.CommentsActivity">
     <item
         android:id="@+id/action_refresh_comments"
-        android:title="Refresh"
+        android:title="@string/refresh"
         android:icon="@drawable/ic_refresh"
         android:showAsAction="always"/>
 </menu>

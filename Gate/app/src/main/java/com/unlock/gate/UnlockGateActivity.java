@@ -43,12 +43,12 @@ public class UnlockGateActivity extends Activity {
     private SharedPreferences mSessionPreferences;
     private ActionBar actionBar;
 
-    ImageView leftPhone;
-    ImageView leftPhoneSide;
-    ImageView rightPhone;
-    ImageView rightPhoneSide;
-    ImageView tapPhone;
-    TextView tutorialText;
+    private ImageView leftPhone;
+    private ImageView leftPhoneSide;
+    private ImageView rightPhone;
+    private ImageView rightPhoneSide;
+    private ImageView tapPhone;
+    private TextView tutorialText;
 
     private int screenCenterVert;
     private int leftSideDestination;
@@ -155,7 +155,7 @@ public class UnlockGateActivity extends Activity {
                                 });
 
                                 mNfcAdapter = NfcAdapter.getDefaultAdapter(UnlockGateActivity.this);
-                                if (mNfcAdapter != null & mNfcAdapter.isEnabled()) {
+                                if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
                                     String userId = mSessionPreferences.getString(getString(R.string.user_id_key), null);
                                     String userName = mSessionPreferences.getString(getString(R.string.user_name_key), null);
                                     String networkIds = selectedNetworkIds.toString();
@@ -174,7 +174,7 @@ public class UnlockGateActivity extends Activity {
         });
     }
 
-    public void calculateMetrics() {
+    private void calculateMetrics() {
         DisplayMetrics dm = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -204,7 +204,7 @@ public class UnlockGateActivity extends Activity {
 
     }
 
-    public void kickOffAnimation() {
+    private void kickOffAnimation() {
         // 0 denotes the left phone, 1 denotes the right phone.
         if (leftPhone.getVisibility() == View.VISIBLE && rightPhone.getVisibility() == View.VISIBLE) {
             rotatePhone(0);
@@ -378,7 +378,7 @@ public class UnlockGateActivity extends Activity {
         });
 
         return translateSide;
-    };
+    }
 
     private void setReplayTutorialClickListener() {
         tutorialText.setOnClickListener(new View.OnClickListener() {

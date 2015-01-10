@@ -89,7 +89,7 @@ public class CommentsActivity extends ListActivity {
 
         Intent intent = getIntent();
 
-        post = (Post) intent.getParcelableExtra("post");
+        post = intent.getParcelableExtra("post");
         notification = intent.getBooleanExtra("notification", false);
         creatingComment = intent.getBooleanExtra("creatingComment", false);
         setPostViews();
@@ -99,7 +99,7 @@ public class CommentsActivity extends ListActivity {
         setAddCommentTypeListener();
 
         PostViewHelper.handleUpBehavior(this, post, upPost, postUpCountPost, postSmileyCount, postStats);
-        PostViewHelper.handleCommentBehavior(this, post, postCommentsCount, postCommentsCountBubble, postStats);
+        PostViewHelper.handleCommentBehavior(post, postCommentsCount, postCommentsCountBubble, postStats);
 
         comments = new ArrayList<Comment>();
         adapterComments = new ArrayList<Comment>();
@@ -165,6 +165,7 @@ public class CommentsActivity extends ListActivity {
 
     private void adaptNewCommentsToList() {
 
+        noCommentsMessage.setText(R.string.no_comments_default);
         noCommentsMessage.setVisibility(
                 comments.size() == 0
                 ? View.VISIBLE
@@ -225,9 +226,10 @@ public class CommentsActivity extends ListActivity {
 
                                     if (refreshing && refreshButton != null) {
                                         commentsList.setSelection(listAdapter.getCount() - 1);
-                                        handleCommentCount(false);
                                         refreshButton.setActionView(null);
                                     }
+
+                                    handleCommentCount(false);
                                 }
                             });
                         }
@@ -241,6 +243,11 @@ public class CommentsActivity extends ListActivity {
                 public void onErrorResponse(VolleyError error) {
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                     progressBarHolder.setVisibility(View.GONE);
+
+                    if (comments.size() == 0 && volleyError.isConnectionError()) {
+                        noCommentsMessage.setText(R.string.network_error_message);
+                        noCommentsMessage.setVisibility(View.VISIBLE);
+                    }
 
                     Butter.down(CommentsActivity.this, volleyError.getMessage());
 
@@ -413,9 +420,8 @@ public class CommentsActivity extends ListActivity {
         if (view != null) {
             InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            view.clearFocus();
         }
-
-        view.clearFocus();
     }
 
     private void toggleLoadingComment(boolean loading) {

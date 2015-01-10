@@ -70,6 +70,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setting background of actionbar to black.
         getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -179,8 +180,8 @@ public class MainActivity extends FragmentActivity {
         @Override
         public Fragment getItem(int position) {
             switch(position) {
-                case 0:  return FeedFragment.newInstance(position);
-                case 1:  return NetworksFragment.newInstance(position);
+                case 0:  return FeedFragment.newInstance();
+                case 1:  return NetworksFragment.newInstance();
             }
 
             return null;
@@ -339,7 +340,7 @@ public class MainActivity extends FragmentActivity {
 
             progressDialog.dismiss();
             SharedPreferences.Editor editor = mSessionPreferences.edit();
-            editor.clear().commit();
+            editor.clear().apply();
 
             Intent intent = new Intent(MainActivity.this, LoginRegisterActivity.class);
             startActivity(intent);
@@ -349,18 +350,6 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-
-    public void createPost() {
-        Toast.makeText(this, "Making feed_item", Toast.LENGTH_SHORT).show();
-    }
-
-    public void createNetwork() {
-        Toast.makeText(this, "Making network", Toast.LENGTH_SHORT).show();
-    }
-
-    public void createKey() {
-        Toast.makeText(this, "Making key", Toast.LENGTH_SHORT).show();
-    }
 
     public void showFeed(Network network, boolean refresh, boolean smoothScroll) {
         pager.setCurrentItem(0, smoothScroll);

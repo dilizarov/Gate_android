@@ -3,7 +3,6 @@ package com.unlock.gate;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
@@ -16,7 +15,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -54,7 +52,6 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
  */
 public class FeedFragment extends ListFragment implements OnRefreshListener {
 
-    private static final String ARG_POSITION = "position";
     private ListView feed;
     private Button createPost;
     private FeedListAdapter listAdapter;
@@ -71,20 +68,15 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     private TextView noPostsMessage;
     private LinearLayout progressBarHolder;
-    private RelativeLayout feedPostButtonHolder;
 
     private ProgressBar postLoading;
 
     private final int CREATE_POST_INTENT = 1;
     private final int UPDATE_POST_INTENT = 2;
 
-    private int position;
-
-    public static FeedFragment newInstance(int position) {
+    public static FeedFragment newInstance() {
         FeedFragment fragment = new FeedFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_POSITION, position);
-        fragment.setArguments(args);
+
         return fragment;
     }
     public FeedFragment() {
@@ -94,9 +86,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            position = getArguments().getInt(ARG_POSITION);
-        }
     }
 
     @Override
@@ -147,7 +136,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         noPostsMessage = (TextView) this.getActivity().findViewById(R.id.noPostsMessage);
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
-        feedPostButtonHolder = (RelativeLayout) this.getActivity().findViewById(R.id.feedPostButtonHolder);
 
         postLoading = (ProgressBar) this.getActivity().findViewById(R.id.postLoading);
 
@@ -198,7 +186,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
             currentNetwork = network;
             feed.setSelection(0);
-            feedPostButtonHolder.setVisibility(View.GONE);
             progressBarHolder.setVisibility(View.VISIBLE);
             infiniteScrollListener.setAtEndOfList(false);
             requestPostsAndPopulateListView(true, true);
@@ -284,7 +271,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                     adaptNewPostsToFeed();
 
                                     infiniteScrollListener.setHadProblemsLoading(false);
-                                    feedPostButtonHolder.setVisibility(View.VISIBLE);
                                 }
                             });
                         }
@@ -295,12 +281,18 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
                     if (refreshing) mPullToRefreshLayout.setRefreshComplete();
                     progressBarHolder.setVisibility(View.GONE);
 
+                    if (posts.size() == 0 && volleyError.isConnectionError()) {
+                        noPostsMessage.setText(R.string.network_error_message);
+                        noPostsMessage.setVisibility(View.VISIBLE);
+                    }
+
                     infiniteScrollListener.setHadProblemsLoading(true);
 
-                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                     Butter.downUnlessButtered(getActivity(), volleyError.getMessage());
 
                 }
@@ -331,7 +323,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     }
 
     private void adaptNewPostsToFeed() {
-
+        noPostsMessage.setText(R.string.no_posts_default);
         noPostsMessage.setVisibility(
                 posts.size() == 0
                 ? View.VISIBLE
@@ -409,7 +401,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 Log.v("ACTUAL", Integer.toString(getActivity().RESULT_OK));
                 if (resultCode == getActivity().RESULT_OK) {
 
-                    final Network network = (Network) data.getParcelableExtra("network");
+                    final Network network = data.getParcelableExtra("network");
                     // We only need to show a post is loading if we're on the same network
                     // or if we're in the Aggregate
                     if (onNetworkAndGettingSameNetwork(network) || currentNetwork == null)
@@ -547,11 +539,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     private ArrayList<Network> getNetworks() {
         return ((MainActivity) getActivity()).getNetworks();
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
     }
 
 }

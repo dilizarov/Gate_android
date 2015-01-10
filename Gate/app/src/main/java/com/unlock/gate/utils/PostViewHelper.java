@@ -82,7 +82,7 @@ public class PostViewHelper {
         });
     }
 
-    public static void handleCommentBehavior(final Context context, final Post post, TextView commentsCount, ImageView commentsCountBubble, LinearLayout postStats) {
+    public static void handleCommentBehavior(final Post post, TextView commentsCount, ImageView commentsCountBubble, LinearLayout postStats) {
         commentsCount.setText(Integer.toString(post.getCommentCount()));
 
         if (post.getCommentCount() > 0) {

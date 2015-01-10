@@ -7,7 +7,7 @@ import android.view.View;
 
 public class Fade {
 
-	static long DURATION = 250;
+	private static long DURATION = 250;
 	
 	public static void setDuration(long duration) {
 		if (duration >= 0) {

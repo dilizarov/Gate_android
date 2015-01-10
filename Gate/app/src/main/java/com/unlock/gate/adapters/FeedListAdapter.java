@@ -3,7 +3,6 @@ package com.unlock.gate.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,6 @@ public class FeedListAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<Post> posts;
     private Network network;
-    private SharedPreferences mSessionPreferences;
 
     static class ViewHolder {
         TextView name;
@@ -108,7 +106,7 @@ public class FeedListAdapter extends BaseAdapter {
         viewHolder.timestamp.setText(post.getTimestamp());
 
         PostViewHelper.handleUpBehavior(context, post, viewHolder.upPost, viewHolder.upCountPost, viewHolder.smileyCount, viewHolder.postStats);
-        PostViewHelper.handleCommentBehavior(context, post, viewHolder.commentsCount, viewHolder.commentsCountBubble, viewHolder.postStats);
+        PostViewHelper.handleCommentBehavior(post, viewHolder.commentsCount, viewHolder.commentsCountBubble, viewHolder.postStats);
 
         viewHolder.createComment.setOnClickListener(new View.OnClickListener() {
             @Override

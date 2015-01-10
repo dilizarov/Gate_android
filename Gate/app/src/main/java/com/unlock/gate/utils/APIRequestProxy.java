@@ -257,18 +257,6 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void getPost(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-
-        String url = BASE_URL + "posts/" + params.optString("post_id") + ".json?";
-
-        url += "user_id=" + params.optString("user_id");
-        url += "&auth_token=" + params.optString("auth_token");
-
-        JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, params, listener, errorListener);
-
-        mRequestQueue.add(request);
-    }
-
     public void cancelAllFeedRequests() {
         mRequestQueue.cancelAll(FEED_TAG);
     }

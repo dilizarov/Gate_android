@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,10 +38,6 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 /**
  * A fragment representing a list of Items.
- * <p/>
- * <p/>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
  */
 public class NetworksFragment extends ListFragment implements OnRefreshListener {
 
@@ -63,10 +58,6 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
     private final int CREATE_NETWORK_INTENT = 1;
 
-    private int position;
-
-    //private OnFragmentInteractionListener mListener;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -75,21 +66,15 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
     }
 
     // TODO: Rename and change types of parameters
-    public static NetworksFragment newInstance(int position) {
+    public static NetworksFragment newInstance() {
         NetworksFragment fragment = new NetworksFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_POSITION, position);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            position = getArguments().getInt(ARG_POSITION);
-        }
     }
 
     @Override
@@ -291,10 +276,15 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                     if (refreshing) mPullToRefreshLayout.setRefreshComplete();
                     progressBarHolder.setVisibility(View.GONE);
 
-                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                    if (networks.size() == 0 && volleyError.isConnectionError()) {
+                        noGatesMessage.setText(R.string.network_error_message);
+                        noGatesMessage.setVisibility(View.VISIBLE);
+                    }
+
                     Butter.down(getActivity(), volleyError.getMessage());
                 }
             };
@@ -316,7 +306,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
                     .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
-            Response.Listener listener = new Response.Listener<Integer>() {
+            Response.Listener<Integer> listener = new Response.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
                     //Don't do anything. Eagerly did actions assuming the request succeeds.
@@ -462,6 +452,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
 
     public void adaptNewGatesToList() {
 
+        noGatesMessage.setText(R.string.no_gates_default);
         noGatesMessage.setVisibility(
                 networks.size() == 0
                 ? View.VISIBLE
@@ -476,11 +467,6 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
         adapterNetworks.clear();
         adapterNetworks.addAll(networks);
         listAdapter.notifyDataSetChanged();
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
     }
 
 }

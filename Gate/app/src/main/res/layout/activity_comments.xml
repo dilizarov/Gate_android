@@ -46,7 +46,7 @@
             android:id="@+id/noCommentsMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Comments Yet"
+            android:text="@string/no_comments_default"
             android:textColor="@android:color/darker_gray"
             android:includeFontPadding="false"
             android:visibility="gone"

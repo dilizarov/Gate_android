@@ -23,17 +23,17 @@ import java.util.List;
  * Created by davidilizarov on 12/23/14.
  */
 public class GcmIntentService extends IntentService {
-    public static final int POST_CREATED_NOTIFICATION = 42;
-    public static final int COMMENT_CREATED_NOTIFICATION = 126;
-    public static final int POST_LIKED_NOTIFICATION = 168;
-    public static final int COMMENT_LIKED_NOTIFICATION = 210;
+    private static final int POST_CREATED_NOTIFICATION = 42;
+    private static final int COMMENT_CREATED_NOTIFICATION = 126;
+    private static final int POST_LIKED_NOTIFICATION = 168;
+    private static final int COMMENT_LIKED_NOTIFICATION = 210;
 
-    public static final int GATE_NOTIFICATION_ID = 1;
+    private static final int GATE_NOTIFICATION_ID = 1;
 
-    public static int notification_type;
+    private static int notification_type;
 
     private NotificationManager mNotificationManager;
-    NotificationCompat.Builder mBuilder;
+    private NotificationCompat.Builder mBuilder;
 
     public GcmIntentService() {
         super("GcmIntentService");

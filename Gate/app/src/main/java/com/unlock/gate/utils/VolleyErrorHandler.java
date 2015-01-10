@@ -36,24 +36,27 @@ public class VolleyErrorHandler {
 
         deriveStatusCode();
 
-        if( error instanceof NetworkError) {
-            mErrorType = Error.NETWORK;
+        if(error instanceof NetworkError || error instanceof TimeoutError) {
+            mErrorType = error instanceof NetworkError
+                         ? Error.NETWORK
+                         : Error.TIMEOUT;
+
             mMessage = MyApplication.getContext().getString(R.string.volley_network_error);
-        } else if( error instanceof ServerError) {
-            mErrorType = Error.SERVER;
+        } else if((error instanceof ServerError && mStatusCode >= 500) ||
+                   error instanceof ParseError) {
+            // Volley Documentation is incorrect. ServerError is supposed to
+            // be used for only 5xx errors, but it encompasses every error but a select few.
+            mErrorType = error instanceof ServerError
+                    ? Error.SERVER
+                    : Error.PARSE;
+
             mMessage = MyApplication.getContext().getString(R.string.volley_common_error);
-        } else if( error instanceof AuthFailureError) {
+        } else if(error instanceof AuthFailureError) {
             mErrorType = Error.AUTH;
             mMessage = MyApplication.getContext().getString(R.string.volley_auth_error);
-        } else if( error instanceof ParseError) {
-            mErrorType = Error.PARSE;
-            mMessage = MyApplication.getContext().getString(R.string.volley_common_error);
-        } else if( error instanceof NoConnectionError) {
+        } else if(error instanceof NoConnectionError) {
             mErrorType = Error.NOCONNECTION;
             mMessage = MyApplication.getContext().getString(R.string.volley_no_connection_error);
-        } else if( error instanceof TimeoutError) {
-            mErrorType = Error.TIMEOUT;
-            mMessage = MyApplication.getContext().getString(R.string.volley_timeout_error);
         } else {
             mErrorType = Error.EXPECTED;
             deriveErrorData();
@@ -75,6 +78,12 @@ public class VolleyErrorHandler {
 	public JSONObject getErrors() {
 		return mJSONErrors;
 	}
+
+    public boolean isConnectionError() {
+        return mErrorType == Error.NETWORK ||
+               mErrorType == Error.TIMEOUT ||
+               mErrorType == Error.NOCONNECTION;
+    }
 
 	public boolean isExpectedError() {
 		return mErrorType == Error.EXPECTED;
