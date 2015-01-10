@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -178,7 +177,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     public void onRefreshStarted(View view) {
         infiniteScrollListener.setAtEndOfList(false);
         requestPostsAndPopulateListView(true);
-        setCurrentPage(1);
     }
 
     public void getNetworkFeed(Network network, boolean refresh) {
@@ -264,14 +262,15 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
                                     if (refreshing) {
+                                        setCurrentPage(1);
                                         mPullToRefreshLayout.setRefreshComplete();
                                         if (changingGates)
-                                            Toast.makeText(getActivity(),
+                                            Butter.down(getActivity(),
                                                     currentNetwork == null
                                                     ? "Aggregate"
-                                                    : currentNetwork.getName(), Toast.LENGTH_LONG).show();
+                                                    : currentNetwork.getName());
                                         else
-                                            Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_LONG).show();
+                                            Butter.down(getActivity(), "Refreshed");
                                     }
 
                                     progressBarHolder.setVisibility(View.GONE);
@@ -281,7 +280,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                                     infiniteScrollListener.setHadProblemsLoading(false);
                                     feedPostButtonHolder.setVisibility(View.VISIBLE);
-
                                 }
                             });
                         }
@@ -402,6 +400,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case CREATE_POST_INTENT:
+                Log.v("RESULT CODE", Integer.toString(resultCode));
+                Log.v("ACTUAL", Integer.toString(getActivity().RESULT_OK));
                 if (resultCode == getActivity().RESULT_OK) {
                     final Network network = (Network) data.getParcelableExtra("network");
                     final String postBody = data.getStringExtra("postBody")
@@ -440,8 +440,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                     adaptNewPostsToFeed();
                                     feed.setSelection(0);
                                 } else {
-                                    //Crouton/Toast stuff.
-                                    Toast.makeText(getActivity(), "Successfully posted to another network", Toast.LENGTH_LONG).show();
+                                    Butter.down(getActivity(), "Successfully posted to another Gate");
                                 }
 
                             }
@@ -457,11 +456,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                 intent.putExtra("networks", getNetworks());
                                 intent.putExtra("postBody", postBody);
 
-                                if (volleyError.isExpectedError()) {
-                                    intent.putExtra("errors", volleyError.getErrors().toString());
-                                } else {
-                                    intent.putExtra("errorMessage", volleyError.getMessage());
-                                }
+                                intent.putExtra("errorMessage", volleyError.getMessage());
 
                                 startActivityForResult(intent, CREATE_POST_INTENT);
                             }

@@ -64,9 +64,7 @@ public class CreateNetworkActivity extends Activity {
 
         if (intent.getStringExtra("networkName") != null) createNetworkName.append(intent.getStringExtra("networkName"));
 
-        if (intent.getStringExtra("errors") != null) {
-            Butter.between(this, intent.getStringExtra("errors"));
-        } else if (intent.getStringExtra("errorMessage") != null) {
+        if (intent.getStringExtra("errorMessage") != null) {
             Butter.between(this, intent.getStringExtra("errorMessage"));
         }
     }

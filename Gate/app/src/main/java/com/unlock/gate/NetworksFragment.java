@@ -328,6 +328,8 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                 public void onErrorResponse(VolleyError error) {
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
+                    // We're just packing one Gate into failedGates because
+                    // addGatesToArrayList takes in an ArrayList
                     ArrayList<Network> failedNetworks = new ArrayList<Network>();
                     failedNetworks.add(network);
                     addNetworksToArrayList(failedNetworks);
@@ -395,11 +397,7 @@ public class NetworksFragment extends ListFragment implements OnRefreshListener 
                                 Intent intent = new Intent(getActivity(), CreateNetworkActivity.class);
                                 intent.putExtra("networkName", networkName);
 
-                                if (volleyError.isExpectedError()) {
-                                    intent.putExtra("errors", volleyError.getPrettyErrors());
-                                } else {
-                                    intent.putExtra("errorMessage", volleyError.getMessage());
-                                }
+                                intent.putExtra("errorMessage", volleyError.getMessage());
 
                                 startActivityForResult(intent, CREATE_NETWORK_INTENT);
                             }

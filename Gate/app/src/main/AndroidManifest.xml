@@ -24,13 +24,12 @@
     <uses-feature
         android:name="android.hardware.nfc"
         android:required="true" />
+
     <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+        android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
     <application
@@ -40,9 +39,14 @@
         android:logo="@drawable/actionbar_logo"
         android:label="@string/app_name"
         android:theme="@style/Gate" >
+
         <meta-data
             android:name="android.nfc.disable_beam_default"
             android:value="true" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name="com.unlock.gate.LoginRegisterActivity"

@@ -59,7 +59,7 @@ public class UnlockGateActivity extends Activity {
     private float phoneCenterY;
     private boolean metricsCalculated;
 
-    private final int STEP_DURATION = 2000;
+    private final int STEP_DURATION = 1500;
     private final int FADE_DURATION = 500;
 
     @Override
@@ -262,7 +262,7 @@ public class UnlockGateActivity extends Activity {
 
                 TranslateAnimation translateSideBack = new TranslateAnimation(0, xDelta, 0, 0);
                 translateSideBack.setDuration(STEP_DURATION);
-                translateSideBack.setStartOffset(5000);
+                translateSideBack.setStartOffset(2 * (STEP_DURATION + FADE_DURATION));
 
                 translateSideBack.setAnimationListener(new Animation.AnimationListener() {
                     @Override

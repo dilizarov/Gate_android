@@ -86,8 +86,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="8dp"
             android:textColor="@color/gate_blue"
-            android:visibility="visible"
-            android:text="18143"/>
+            android:visibility="visible"/>
 
         <ImageView
             android:id="@+id/commentsCountBubble"

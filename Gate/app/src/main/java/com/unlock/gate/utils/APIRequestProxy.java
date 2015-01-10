@@ -65,7 +65,7 @@ public class APIRequestProxy {
 	}
 
     public void sendForgottonPasswordEmail(JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
-        String url = "http://infinite-river-7560.herokuapp.com/forgot_password?email=" + params.optString("email");
+        String url = "https://infinite-river-7560.herokuapp.com/forgot_password?email=" + params.optString("email");
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
 

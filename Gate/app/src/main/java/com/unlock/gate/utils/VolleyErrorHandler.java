@@ -33,31 +33,31 @@ public class VolleyErrorHandler {
 	
 	public VolleyErrorHandler(VolleyError error) {
 		this.mError = error;
-		if (existsNetworkResponse()) {
-			mErrorType = Error.EXPECTED;
-			deriveStatusCode();
-			deriveErrorData();
-		} else {
-			if( error instanceof NetworkError) {
-				mErrorType = Error.NETWORK;
-				mMessage = MyApplication.getContext().getString(R.string.volley_network_error);
-			} else if( error instanceof ServerError) {
-				mErrorType = Error.SERVER;
-				mMessage = MyApplication.getContext().getString(R.string.volley_server_error);
-			} else if( error instanceof AuthFailureError) {
-				mErrorType = Error.AUTH;
-				mMessage = MyApplication.getContext().getString(R.string.volley_auth_error);
-			} else if( error instanceof ParseError) {
-				mErrorType = Error.PARSE;
-				mMessage = MyApplication.getContext().getString(R.string.volley_parse_error);
-			} else if( error instanceof NoConnectionError) {
-				mErrorType = Error.NOCONNECTION;
-				mMessage = MyApplication.getContext().getString(R.string.volley_no_connection_error);
-			} else if( error instanceof TimeoutError) {
-				mErrorType = Error.TIMEOUT;
-				mMessage = MyApplication.getContext().getString(R.string.volley_timeout_error);
-			}
-		}
+
+        deriveStatusCode();
+
+        if( error instanceof NetworkError) {
+            mErrorType = Error.NETWORK;
+            mMessage = MyApplication.getContext().getString(R.string.volley_network_error);
+        } else if( error instanceof ServerError) {
+            mErrorType = Error.SERVER;
+            mMessage = MyApplication.getContext().getString(R.string.volley_common_error);
+        } else if( error instanceof AuthFailureError) {
+            mErrorType = Error.AUTH;
+            mMessage = MyApplication.getContext().getString(R.string.volley_auth_error);
+        } else if( error instanceof ParseError) {
+            mErrorType = Error.PARSE;
+            mMessage = MyApplication.getContext().getString(R.string.volley_common_error);
+        } else if( error instanceof NoConnectionError) {
+            mErrorType = Error.NOCONNECTION;
+            mMessage = MyApplication.getContext().getString(R.string.volley_no_connection_error);
+        } else if( error instanceof TimeoutError) {
+            mErrorType = Error.TIMEOUT;
+            mMessage = MyApplication.getContext().getString(R.string.volley_timeout_error);
+        } else {
+            mErrorType = Error.EXPECTED;
+            deriveErrorData();
+        }
 	}
 	
 	public Error getErrorType() {
@@ -76,23 +76,6 @@ public class VolleyErrorHandler {
 		return mJSONErrors;
 	}
 
-    public String getPrettyErrors() {
-        if (!this.isExpectedError()) return null;
-
-        JSONArray errorsArray = mJSONErrors.optJSONArray("errors");
-
-        StringBuilder errorString = new StringBuilder();
-
-        int j = errorsArray.length();
-        for (int i = 0; i < j; i++) {
-            Log.v("error " + i, errorsArray.optString(i, ""));
-            if (i != 0) errorString.append("\n");
-            errorString.append(errorsArray.optString(i));
-        }
-
-        return errorString.toString();
-    }
-
 	public boolean isExpectedError() {
 		return mErrorType == Error.EXPECTED;
 	}
@@ -102,18 +85,40 @@ public class VolleyErrorHandler {
 	}
 	
 	private void deriveStatusCode() {
-		mStatusCode = mError.networkResponse.statusCode;
+        if (mError.networkResponse != null && mError.networkResponse.statusCode > 0) {
+            mStatusCode = mError.networkResponse.statusCode;
+        } else {
+            // The request didn't even leave the phone. Any positive Status Code
+            // implies that the request is coming back from the server.
+            mStatusCode = -1;
+        }
 	}
 	
 	private void deriveErrorData() {
-		if (mError.networkResponse.data == null) mJSONErrors = null;
+		if (existsNetworkResponse() && mError.networkResponse.data == null) {
+            mJSONErrors = null;
+            mMessage = MyApplication.getContext().getString(R.string.volley_unknown_error);
+            return;
+        }
 		
 		try {
 			String jsonString = new String(mError.networkResponse.data, "utf-8");
-			Log.d("JSON Info", jsonString);
 			mJSONErrors = new JSONObject(jsonString);
+
+            JSONArray errorsArray = mJSONErrors.optJSONArray("errors");
+
+            StringBuilder errorString = new StringBuilder();
+
+            int j = errorsArray.length();
+            for (int i = 0; i < j; i++) {
+                if (i != 0) errorString.append("\n");
+                errorString.append(errorsArray.optString(i));
+            }
+
+            mMessage = errorString.toString();
+
 		} catch (UnsupportedEncodingException uee) {
-			
+			Log.v("String Encoding Error", "Problem converting error data from server to utf-8. Talk to Rails people.");
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}

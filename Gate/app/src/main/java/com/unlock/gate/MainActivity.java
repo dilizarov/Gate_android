@@ -205,34 +205,6 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_actions, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_unlock_gates:
-                Intent intent = new Intent(this, UnlockGateActivity.class);
-                intent.putParcelableArrayListExtra("networks", getNetworks());
-                startActivity(intent);
-                return true;
-            case R.id.action_offer_advice:
-                test_post_bump();
-                return true;
-            case R.id.action_logout:
-                progressDialog = ProgressDialog.show(MainActivity.this, "",
-                        getString(R.string.progress_dialog_server_processing_request), false, true);
-                logout();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
@@ -273,7 +245,6 @@ public class MainActivity extends FragmentActivity {
                             int len = jsonNetworks.length();
 
                             final ArrayList<Network> newNetworks = new ArrayList<Network>();
-                            final ArrayList<String> networkNames = new ArrayList<String>();
 
                             for (int i = 0; i < len; i++) {
                                 JSONObject jsonNetwork = jsonNetworks.optJSONObject(i);
@@ -282,16 +253,19 @@ public class MainActivity extends FragmentActivity {
                                         jsonNetwork.optInt("users_count"),
                                         jsonNetwork.optJSONObject("creator").optString("name"));
 
-                                networkNames.add(network.getName());
                                 newNetworks.add(network);
                             }
 
-                            Collections.sort(networkNames, String.CASE_INSENSITIVE_ORDER);
                             Collections.sort(newNetworks, new Comparator<Network>() {
                                 public int compare(Network n1, Network n2) {
                                     return n1.getName().compareToIgnoreCase(n2.getName());
                                 }
                             });
+
+
+                            // Required for use as CharSequence[] items later for list of Strings.
+                            final ArrayList<String> networkNames = new ArrayList<String>();
+                            for (Network network : newNetworks) networkNames.add(network.getName());
 
                             final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
                             networksFragment.addNetworksToArrayList(newNetworks);
@@ -326,10 +300,7 @@ public class MainActivity extends FragmentActivity {
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                     progressDialog.dismiss();
 
-                    if (volleyError.isExpectedError())
-                        Butter.down(MainActivity.this, volleyError.getPrettyErrors());
-                    else
-                        Butter.down(MainActivity.this, volleyError.getMessage());
+                    Butter.down(MainActivity.this, volleyError.getMessage());
                 }
             };
 
@@ -444,7 +415,6 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void run() {
                 final ArrayList<Network> newNetworks = new ArrayList<Network>();
-                final ArrayList<String> networkNames = new ArrayList<String>();
 
                 for (int i = 0; i < 14; i++) {
                     Network network = new Network("wowowowow" + i,
@@ -452,16 +422,17 @@ public class MainActivity extends FragmentActivity {
                             14,
                             "Squidward" + i);
 
-                    networkNames.add(network.getName());
                     newNetworks.add(network);
                 }
 
-                Collections.sort(networkNames, String.CASE_INSENSITIVE_ORDER);
                 Collections.sort(newNetworks, new Comparator<Network>() {
                     public int compare(Network n1, Network n2) {
                         return n1.getName().compareToIgnoreCase(n2.getName());
                     }
                 });
+
+                final ArrayList<String> networkNames = new ArrayList<String>();
+                for (Network network : newNetworks) networkNames.add(network.getName());
 
                 final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
                 networksFragment.addNetworksToArrayList(newNetworks);
@@ -478,8 +449,8 @@ public class MainActivity extends FragmentActivity {
                                 .setItems(items, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        Toast.makeText(MainActivity.this, "No", Toast.LENGTH_LONG).show();
+
+                                        Toast.makeText(MainActivity.this, newNetworks.get(which).getName(), Toast.LENGTH_LONG).show();
                                     }
                                 }).create().show();
                     }
@@ -500,5 +471,41 @@ public class MainActivity extends FragmentActivity {
                     Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_unlock_gates:
+                if (getNetworks().size() == 0) {
+                    pager.setCurrentItem(1, true);
+
+                    Butter.between(this, "You have no Gates to unlock");
+                } else {
+                    Intent intent = new Intent(this, UnlockGateActivity.class);
+                    intent.putParcelableArrayListExtra("networks", getNetworks());
+                    startActivity(intent);
+                }
+
+                return true;
+            case R.id.action_offer_advice:
+                test_post_bump();
+                return true;
+            case R.id.action_logout:
+                progressDialog = ProgressDialog.show(MainActivity.this, "",
+                        getString(R.string.progress_dialog_server_processing_request), false, true);
+                logout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
 }

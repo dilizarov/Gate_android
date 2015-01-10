@@ -25,31 +25,28 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.Butter;
+import com.unlock.gate.utils.CustomEditText;
 import com.unlock.gate.utils.CustomValidator;
 import com.unlock.gate.utils.Fade;
 import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.SetErrorBugFixer;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-
-import de.keyboardsurfer.android.widget.crouton.Configuration;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class LoginRegisterActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 	
@@ -66,9 +63,9 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	private String mPassword;
 	private String mFullName;
 	
-	private EditText userEmail;
-	private EditText userPassword;
-	private EditText userFullName;
+	private CustomEditText userEmail;
+	private CustomEditText userPassword;
+	private CustomEditText userFullName;
 	
 	private TextView forgotPassword;
 	private TextView terms;
@@ -82,6 +79,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
     private GoogleCloudMessaging gcm;
     private String regId;
     private final static String PROPERTY_REG_ID = "registration_id";
+    private final static String PROPERTY_APP_VERSION = "app_version";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,11 +101,15 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
         } else {
             instantiateViews();
 
+            // External services just make it easier to get and set at the same time.
             getAndSetEmail();
             getAndSetFullName();
 
-            //handling sets up event listeners and actions.
-            //Only handleCommandButton actually communicates to the server
+            if (userEmail.getText().length() == 0) userEmail.requestFocus();
+            else userPassword.requestFocus();
+
+            // handling sets up event listeners and actions.
+            // Only handleCommandButton actually communicates to the server
             handleForgotPassword();
             handleTerms();
             handleToggleLoginRegistration();
@@ -119,12 +121,14 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
     @Override
     protected void onResume() {
         super.onResume();
+
+        checkPlayServices();
     }
 	
 	private void instantiateViews() {
-		userEmail    = (EditText) findViewById(R.id.userEmail);
-		userPassword = (EditText) findViewById(R.id.userPassword);
-		userFullName = (EditText) findViewById(R.id.userFullName);
+		userEmail    = (CustomEditText) findViewById(R.id.userEmail);
+		userPassword = (CustomEditText) findViewById(R.id.userPassword);
+		userFullName = (CustomEditText) findViewById(R.id.userFullName);
 		
 		//Required due to Android bug:
 		//Essentially, depending on the keyboard user uses (like SwiftKey, etc.)
@@ -259,11 +263,12 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		mEmail    = userEmail.getText().toString();
 		mPassword = userPassword.getText().toString();
 		
-		if (mEmail.length() == 0 || mPassword.length() == 0) {
-			if (mEmail.length() == 0)    userEmail.setError(getString(R.string.no_email_inputted));
-			if (mPassword.length() == 0) userPassword.setError(getString(R.string.no_password_inputted));
-		} else if (!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
-		else {
+		if (mEmail.length() == 0 || mPassword.length() == 0 || !CustomValidator.isValidEmail(mEmail)) {
+			if (mEmail.length() == 0) userEmail.setError(getString(R.string.no_email_inputted));
+            else if (!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
+
+            if (mPassword.length() == 0) userPassword.setError(getString(R.string.no_password_inputted));
+		} else {
 			final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "",
 						getString(R.string.progress_dialog_server_processing_request), false, true);
 
@@ -271,31 +276,15 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                 @Override
                 public void run() {
 
-                    final Context context = LoginRegisterActivity.this;
-                    boolean gcmRequestFailed = false;
-                    if (gcm == null)
-                        gcm = GoogleCloudMessaging.getInstance(context);
-
-                    regId = getRegistrationId(context);
-                    if (regId == null) {
-                        try {
-                            regId = gcm.register("222761912510");
-                            storeRegistrationId(context);
-                            Log.v("RegID", regId);
-                        } catch (IOException io) {
-                            gcmRequestFailed = true;
-                        }
-                    }
-
-                    final boolean requestFailed = gcmRequestFailed;
+                    final boolean deviceRegistered = registerDevice();
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
 
-                                if (requestFailed) {
-                                    Butter.down(context, "INTERNET WELPED");
+                                if (!deviceRegistered) {
+                                    Butter.down(LoginRegisterActivity.this, "INTERNET WELPED");
                                     progressDialog.dismiss();
                                     return;
                                 }
@@ -324,8 +313,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                                                 .commit();
 
                                         progressDialog.dismiss();
-                                        Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
-                                        Log.d("Correct stuff", response.toString());
 
                                         Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
                                         startActivity(intent);
@@ -339,20 +326,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                                         progressDialog.dismiss();
                                         VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
-                                        if (volleyError.isExpectedError()) {
-                                            JSONObject errorsJSON = volleyError.getErrors();
-
-                                            JSONArray errorsArray = errorsJSON.optJSONArray("errors");
-                                            String incorrectEmailPassword = errorsArray.optString(0);
-
-                                            Crouton.makeText(LoginRegisterActivity.this, incorrectEmailPassword, Style.ALERT)
-                                                    .setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-                                                    .show();
-                                        } else {
-                                            Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
-                                                    .setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-                                                    .show();
-                                        }
+                                        Butter.between(LoginRegisterActivity.this, volleyError.getMessage());
                                     }
                                 };
 
@@ -373,13 +347,18 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		mPassword = userPassword.getText().toString(); //Not really one to judge if space is in password.
 		mFullName = userFullName.getText().toString().trim();
 	
-		if (mEmail.length() == 0 || mPassword.length() == 0 || mFullName.length() == 0) {
-			if (mEmail.length() == 0)    userEmail.setError(getString(R.string.no_email_inputted));
-			if (mPassword.length() == 0) userPassword.setError(getString(R.string.no_password_inputted));
-			if (mFullName.length() == 0) userFullName.setError(getString(R.string.no_name_inputted));
-		} else if (!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
-		else {
+		if (mEmail.length() == 0 || mPassword.length() == 0 || mFullName.length() == 0 || !CustomValidator.isValidEmail(mEmail)) {
 
+            if (mEmail.length() == 0) userEmail.setError(getString(R.string.no_email_inputted));
+            else if (!CustomValidator.isValidEmail(mEmail))
+                userEmail.setError(getString(R.string.improper_email_format));
+
+            if (mPassword.length() == 0)
+                userPassword.setError(getString(R.string.no_password_inputted));
+
+            if (mFullName.length() == 0)
+                userFullName.setError(getString(R.string.no_name_inputted));
+        } else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(getString(R.string.confirm_registration_dialog_title))
 					.setMessage(getString(R.string.confirm_registration))
@@ -404,31 +383,15 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                                 @Override
                                 public void run() {
 
-                                    final Context context = LoginRegisterActivity.this;
-                                    boolean gcmRequestFailed = false;
-                                    if (gcm == null)
-                                        gcm = GoogleCloudMessaging.getInstance(context);
-
-                                    regId = getRegistrationId(context);
-                                    if (regId == null) {
-                                        try {
-                                            regId = gcm.register("222761912510");
-                                            storeRegistrationId(context);
-                                            Log.v("RegID", regId);
-                                        } catch (IOException io) {
-                                            gcmRequestFailed = true;
-                                        }
-                                    }
-
-                                    final boolean requestFailed = gcmRequestFailed;
+                                    final boolean deviceRegistered = registerDevice();
 
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             try {
 
-                                                if (requestFailed) {
-                                                    Butter.down(context, "INTERNET WELPED");
+                                                if (!deviceRegistered) {
+                                                    Butter.down(LoginRegisterActivity.this, "INTERNET WELPED");
                                                     progressDialog.dismiss();
                                                     return;
                                                 }
@@ -463,8 +426,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                                                         editor.commit();
 
                                                         progressDialog.dismiss();
-                                                        Crouton.showText(LoginRegisterActivity.this, response.toString(), Style.CONFIRM);
-                                                        Log.d("Correct stuff", response.toString());
 
                                                         Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
                                                         startActivity(intent);
@@ -476,18 +437,9 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
                                                         progressDialog.dismiss();
-
                                                         VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
-                                                        if (volleyError.isExpectedError()) {
-                                                            Crouton.makeText(LoginRegisterActivity.this, volleyError.getPrettyErrors(), Style.ALERT)
-                                                                    .setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-                                                                    .show();
-                                                        } else {
-                                                            Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
-                                                                    .setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-                                                                    .show();
-                                                        }
+                                                        Butter.between(LoginRegisterActivity.this, volleyError.getMessage());
                                                     }
                                                 };
 
@@ -527,10 +479,8 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 					public void onResponse(Integer response) {
 												
 						progressDialog.dismiss();
-						
-						Crouton.makeText(LoginRegisterActivity.this, getString(R.string.forgotton_password_email_sent), Style.CONFIRM)
-								.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-								.show();
+
+                        Butter.between(LoginRegisterActivity.this, getString(R.string.forgotton_password_email_sent));
 					}
 				};
 			
@@ -539,17 +489,9 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 					public void onErrorResponse(VolleyError error) {
 						progressDialog.dismiss();
 						VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-						
-						if (volleyError.isExpectedError()) {
-							Crouton.makeText(LoginRegisterActivity.this, getString(R.string.forgotton_password_email_not_registered), Style.ALERT)
-									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-									.show();
-						} else {
-							Crouton.makeText(LoginRegisterActivity.this, volleyError.getMessage(), Style.ALERT)
-									.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build())
-									.show();
-						}
-					}	
+
+                        Butter.between(LoginRegisterActivity.this, volleyError.getMessage());
+					}
 				};
 			
 				APIRequestManager.getInstance().doRequest().sendForgottonPasswordEmail(params, listener, errorListener);
@@ -603,9 +545,16 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	}
 	
 	private void getAndSetFullName() {
-		// Use ContactContracts.Profile to try to get full name
-        if (!mActivityPreferences.getBoolean(getString(R.string.used_name_on_phone), false))
-            getLoaderManager().initLoader(0, null, this);
+
+		// Use ContactContracts.Profile to try to get full name if we haven't already got it
+        if (!mActivityPreferences.getBoolean(getString(R.string.used_name_on_phone), false)) {
+            if (mActivityPreferences.contains(getString(R.string.name_on_phone))) {
+                mFullName = mActivityPreferences.getString(getString(R.string.name_on_phone), null);
+                userFullName.setText(mFullName);
+            } else {
+                getLoaderManager().initLoader(0, null, this);
+            }
+        }
 	}
 	
 	@Override
@@ -640,32 +589,41 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	public void onLoaderReset(Loader<Cursor> cursorLoader) {
 	}
 
-//    private boolean checkPlayServices() {
-//        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-//        if (resultCode != ConnectionResult.SUCCESS) {
-//            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-//                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-//                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-//            } else {
-//                Log.i("PlayServices", "This device is not supported.");
-//                finish();
-//            }
-//
-//            return false;
-//        }
-//
-//        return true;
-//    }
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST, new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+
+                                // They MUST have Google Play Services.
+                                // This prevents them pressing back in the dialog
+                                // and going along their merry way.
+                                checkPlayServices();
+                            }
+                        }).show();
+            } else {
+                Butter.between(this, "This device is not supported because it can't access the Google Play Store.");
+                finish();
+            }
+
+            return false;
+      }
+
+        return true;
+    }
 
     private String getRegistrationId(Context context) {
-        final SharedPreferences prefs = getGCMPreferences(context);
+        final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(PROPERTY_REG_ID, null);
         if (registrationId == null) {
             Log.i("RegistrationId", "Registration not found");
             return null;
         }
 
-        int registeredVersion = prefs.getInt("Registered_APP_VERSION", Integer.MIN_VALUE);
+        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
             Log.i("RegistrationId", "Registration not found");
@@ -675,7 +633,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
         return registrationId;
     }
 
-    private SharedPreferences getGCMPreferences(Context context) {
+    private SharedPreferences getGCMPreferences() {
         return getSharedPreferences(getString(R.string.gcm_preferences_key), MODE_PRIVATE);
     }
 
@@ -692,12 +650,34 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
     }
 
     private void storeRegistrationId(Context context) {
-        final SharedPreferences prefs = getGCMPreferences(context);
+        final SharedPreferences prefs = getGCMPreferences();
         int appVersion = getAppVersion(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
-        editor.putInt("Property_APP_VERSION", appVersion);
+        editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+    }
+
+    // Register device for Google Cloud Messaging
+    // Note: gcm.register(Sender_ID) is a blocking method.
+    private boolean registerDevice() {
+        boolean gcmRequestSucceeded = true;
+
+        if (gcm == null)
+            gcm = GoogleCloudMessaging.getInstance(this);
+
+        regId = getRegistrationId(this);
+        if (regId == null) {
+            try {
+                regId = gcm.register("222761912510");
+                storeRegistrationId(this);
+                Log.v("RegID", regId);
+            } catch (IOException io) {
+                gcmRequestSucceeded = false;
+            }
+        }
+
+        return gcmRequestSucceeded;
     }
 
 	@Override

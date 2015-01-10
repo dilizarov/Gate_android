@@ -114,9 +114,7 @@ public class CreatePostActivity extends Activity {
 
         if (intent.getStringExtra("postBody") != null) postBody.setText(intent.getStringExtra("postBody"));
 
-        if (intent.getStringExtra("errors") != null) {
-            Butter.between(this, intent.getStringExtra("errors"));
-        } else if (intent.getStringExtra("errorMessage") != null) {
+        if (intent.getStringExtra("errorMessage") != null) {
             Butter.between(this, intent.getStringExtra("errorMessage"));
         }
     }

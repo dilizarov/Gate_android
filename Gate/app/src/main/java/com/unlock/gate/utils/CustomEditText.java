@@ -6,6 +6,10 @@ import android.view.KeyEvent;
 import android.widget.EditText;
 
 /**
+ * The purpose of this is so that when one presses the Back
+ * key of an EditText, it will lose its focus. To work most optimally and expected
+ * you will want the XMLs top-level layout to be focusable & focusableInTouchMode.
+ *
  * Created by davidilizarov on 12/20/14.
  */
 public class CustomEditText extends EditText {

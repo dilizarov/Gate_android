@@ -57,6 +57,8 @@ public class CommentsActivity extends ListActivity {
     private ImageView postSmileyCount;
     private ImageView postCommentsCountBubble;
 
+    private ProgressBar commentLoading;
+
     private Menu menu;
     private MenuItem refreshButton;
 
@@ -142,6 +144,8 @@ public class CommentsActivity extends ListActivity {
         sendComment       = (ImageButton) findViewById(R.id.sendComment);
         if (!(addComment.getText().toString().trim().length() > 0))
             sendComment.setEnabled(false);
+
+        commentLoading = (ProgressBar) findViewById(R.id.commentLoading);
 
         progressBarHolder = (LinearLayout) findViewById(R.id.commentsProgressBarHolder);
 
@@ -314,9 +318,10 @@ public class CommentsActivity extends ListActivity {
 
     private void sendComment(final String comment) {
         try {
-
             hideKeyboard();
             addComment.setText("");
+
+            toggleLoadingComment(true);
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
@@ -331,6 +336,7 @@ public class CommentsActivity extends ListActivity {
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    toggleLoadingComment(false);
 
                     JSONObject jsonComment = response.optJSONObject("comment");
                     Comment comment = new Comment(
@@ -353,15 +359,14 @@ public class CommentsActivity extends ListActivity {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    toggleLoadingComment(false);
+
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
                     addComment.append(comment);
                     showKeyboard(addComment);
 
-                    if (volleyError.isExpectedError())
-                        Butter.between(CommentsActivity.this, volleyError.getPrettyErrors());
-                    else
-                        Butter.between(CommentsActivity.this, volleyError.getMessage());
+                    Butter.down(CommentsActivity.this, volleyError.getMessage());
                 }
             };
 
@@ -411,6 +416,18 @@ public class CommentsActivity extends ListActivity {
         }
 
         view.clearFocus();
+    }
+
+    private void toggleLoadingComment(boolean loading) {
+        if (loading) {
+            addComment.setVisibility(View.INVISIBLE);
+            sendComment.setVisibility(View.INVISIBLE);
+            commentLoading.setVisibility(View.VISIBLE);
+        } else {
+            commentLoading.setVisibility(View.GONE);
+            addComment.setVisibility(View.VISIBLE);
+            sendComment.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
