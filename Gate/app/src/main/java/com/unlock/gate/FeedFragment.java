@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -71,6 +72,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private TextView noPostsMessage;
     private LinearLayout progressBarHolder;
     private RelativeLayout feedPostButtonHolder;
+
+    private ProgressBar postLoading;
 
     private final int CREATE_POST_INTENT = 1;
     private final int UPDATE_POST_INTENT = 2;
@@ -145,6 +148,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         noPostsMessage = (TextView) this.getActivity().findViewById(R.id.noPostsMessage);
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.feedProgressBarHolder);
         feedPostButtonHolder = (RelativeLayout) this.getActivity().findViewById(R.id.feedPostButtonHolder);
+
+        postLoading = (ProgressBar) this.getActivity().findViewById(R.id.postLoading);
 
         createPost = (Button) this.getActivity().findViewById(R.id.createPost);
 
@@ -403,7 +408,13 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 Log.v("RESULT CODE", Integer.toString(resultCode));
                 Log.v("ACTUAL", Integer.toString(getActivity().RESULT_OK));
                 if (resultCode == getActivity().RESULT_OK) {
+
                     final Network network = (Network) data.getParcelableExtra("network");
+                    // We only need to show a post is loading if we're on the same network
+                    // or if we're in the Aggregate
+                    if (onNetworkAndGettingSameNetwork(network) || currentNetwork == null)
+                        postLoading.setVisibility(View.VISIBLE);
+
                     final String postBody = data.getStringExtra("postBody")
                                                 .replaceAll(RegexConstants.NEW_LINE, "\n")
                                                 .replaceAll(RegexConstants.DOUBLE_SPACE, " ");
@@ -439,6 +450,16 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                     posts.add(0, post);
                                     adaptNewPostsToFeed();
                                     feed.setSelection(0);
+
+                                    // If we don't postDelayed, this clashes with setSelection
+                                    // functionality.
+                                    feed.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            postLoading.setVisibility(View.GONE);
+                                        }
+                                    }, 200);
+
                                 } else {
                                     Butter.down(getActivity(), "Successfully posted to another Gate");
                                 }
@@ -449,6 +470,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                         Response.ErrorListener errorListener = new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
+                                postLoading.setVisibility(View.GONE);
                                 VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
                                 Intent intent = new Intent(getActivity(), CreatePostActivity.class);
