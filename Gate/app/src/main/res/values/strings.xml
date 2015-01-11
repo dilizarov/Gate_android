@@ -13,7 +13,7 @@
     <string name="user_last_gate_viewed_key">UserLastGate</string>
     <string name="yes_caps">YES</string>
     <string name="no_caps">NO</string>
-    <string name="network_error_message">Something went wrong.</string>
+    <string name="gate_error_message">Something went wrong.</string>
 
     <!-- UnlockGatesActivity specific -->
     <string name="unlock">Unlock</string>
@@ -42,15 +42,14 @@
     <string name="forgotton_password_email_sent">Email sent</string>
     <string name="progress_dialog_server_processing_request">Robots processing...</string>
     <string name="confirm_registration_dialog_title">One more step...</string>
-    <string name="confirm_registration">"Tap YES to indicate you have read the Privacy Policy and that you agree to our Terms of Service"</string>
-
+    <string name="confirm_registration">Tap YES to indicate you have read the Privacy Policy and that you agree to our Terms of Service</string>
 
     <!-- VolleyErrorHandler specific -->
     <string name="volley_network_error">We couldn\'t connect to the internet</string>
     <string name="volley_no_connection_error">Check your internet connection</string>
     <string name="volley_auth_error">Gatekeeper, you are unauthorized to perform this action</string>
     <string name="volley_common_error">We made a mistake somewhere. Robots are investigating.</string>
-    <string name="volley_unknown_error">We found a mistake somewhere. Robots apologize for not providing more information.</string>
+    <string name="volley_unknown_error">We found a mistake somewhere. Robots suggest reviewing your data.</string>
 
     <!-- MainActivity specific -->
     <string-array name="tabs">
@@ -61,8 +60,8 @@
     <string name="logout">Log out</string>
     <string name="settings">Settings</string>
 
-    <!-- NetworksFragment specific -->
-    <string name="confirm_delete_network_message">Are you sure you want to leave the network? Any of your keys that give access to the network will be destroyed. **The network will be destroyed if you are the only user in it.</string>
+    <!-- GatesFragment specific -->
+    <string name="confirm_delete_gate_message">Are you sure you want to leave this Gate?</string>
     <string name="aggregate">Aggregate</string>
     <string name="create_gate">Create a Gate</string>
     <string name="create_gate_hint">Gate name</string>
@@ -80,7 +79,7 @@
     <string name="title_activity_comments">Comments</string>
     <string name="add_comment_hint">Add a comment</string>
     <string name="no_comment_inputted">A comment can\'t be blank</string>
-    <string name="over_500_characters_inputted">Please limit your comment to 500 characters</string>
+    <string name="over_500_characters_inputted">Limit your comment to 500 characters</string>
     <string name="no_comments_default">No Comments Yet</string>
     <string name="refresh">Refresh</string>
 
@@ -89,8 +88,7 @@
     <string name="write_post_hint">Write a post</string>
 
     <string name="title_activity_create_post">Create Post</string>
-    <string name="title_activity_create_network">Create Gate</string>
+    <string name="title_activity_create_gate">Create Gate</string>
     <string name="title_activity_unlock_gate">Select Gates to unlock...</string>
-    <string name="title_activity_welcome">WelcomeActivity</string>
 
 </resources>

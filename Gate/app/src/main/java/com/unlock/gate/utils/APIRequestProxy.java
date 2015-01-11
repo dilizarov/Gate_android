@@ -10,7 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.unlock.gate.R;
 import com.unlock.gate.models.Comment;
-import com.unlock.gate.models.Network;
+import com.unlock.gate.models.Gate;
 import com.unlock.gate.models.Post;
 
 import org.json.JSONObject;
@@ -21,7 +21,7 @@ public class APIRequestProxy {
 	
 	private final String SESSION_ENDPOINT = "sessions.json";
 	private final String REGISTRATION_ENDPOINT = "registrations.json";
-    private final String NETWORKS_ENDPOINT = "networks.json";
+    private final String GATES_ENDPOINT = "gates.json";
     private final String AGGREGATE_ENDPOINT = "aggregate.json";
 
     private final String FEED_TAG = "feed_requests";
@@ -72,9 +72,9 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void getNetworks(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void getGates(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         //Sadly, Volley does not offer a very fluid experience for get requests with params.
-        String url = getAbsoluteUrl(NETWORKS_ENDPOINT);
+        String url = getAbsoluteUrl(GATES_ENDPOINT);
 
         url = addAuthAsURLParams(url, params);
 
@@ -83,14 +83,14 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void leaveNetwork(Network network, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+    public void leaveGate(Gate gate, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
         //TODO: Probably want to figure out a better way to make these resourcesful strings with consideration of getAbsoluteUrl method.
         //TODO: Not a big deal though
 
         StringBuilder buildUrl  = new StringBuilder(BASE_URL);
-        buildUrl.append("networks")
+        buildUrl.append("gates")
                 .append("/")
-                .append(network.getId())
+                .append(gate.getId())
                 .append("/")
                 .append("leave.json");
 
@@ -101,12 +101,12 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void getNetworkPosts(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void getGatePosts(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 
         StringBuilder buildUrl = new StringBuilder(BASE_URL);
-        buildUrl.append("networks")
+        buildUrl.append("gates")
                 .append("/")
-                .append(params.optString("network_id"))
+                .append(params.optString("gate_id"))
                 .append("/")
                 .append("posts.json");
 
@@ -181,12 +181,12 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void createPost(Network network, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void createPost(Gate gate, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 
         StringBuilder buildUrl = new StringBuilder(BASE_URL);
-        buildUrl.append("networks")
+        buildUrl.append("gates")
                 .append("/")
-                .append(network.getId())
+                .append(gate.getId())
                 .append("/")
                 .append("posts.json");
 
@@ -195,14 +195,14 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void createNetwork(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void createGate(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 
-        JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(NETWORKS_ENDPOINT), params, listener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(GATES_ENDPOINT), params, listener, errorListener);
 
         mRequestQueue.add(request);
     }
 
-    public void grantAccessToNetworks(String gatekeeperId, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void grantAccessToGates(String gatekeeperId, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 
         StringBuilder buildUrl  = new StringBuilder(BASE_URL);
         buildUrl.append("gatekeepers")

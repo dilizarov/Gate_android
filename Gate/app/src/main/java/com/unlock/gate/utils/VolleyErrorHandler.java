@@ -89,7 +89,7 @@ public class VolleyErrorHandler {
 		return mErrorType == Error.EXPECTED;
 	}
 	
-	private boolean existsNetworkResponse() {
+	private boolean existsGateResponse() {
 		return (mError.networkResponse != null);
 	}
 	
@@ -104,7 +104,7 @@ public class VolleyErrorHandler {
 	}
 	
 	private void deriveErrorData() {
-		if (existsNetworkResponse() && mError.networkResponse.data == null) {
+		if (existsGateResponse() && mError.networkResponse.data == null) {
             mJSONErrors = null;
             mMessage = MyApplication.getContext().getString(R.string.volley_unknown_error);
             return;

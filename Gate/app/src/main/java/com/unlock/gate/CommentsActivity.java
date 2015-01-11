@@ -43,7 +43,7 @@ import java.util.ArrayList;
 public class CommentsActivity extends ListActivity {
 
     private TextView postName;
-    private TextView postNetworkName;
+    private TextView postGateName;
     private TextView postTimestamp;
     private TextView postBody;
     private TextView postCommentsCount;
@@ -125,7 +125,7 @@ public class CommentsActivity extends ListActivity {
 
     private void instantiateViews() {
         postName          = (TextView) findViewById(R.id.name);
-        postNetworkName   = (TextView) findViewById(R.id.networkName);
+        postGateName   = (TextView) findViewById(R.id.gateName);
         postTimestamp     = (TextView) findViewById(R.id.timestamp);
         postBody          = (TextView) findViewById(R.id.body);
         postUpCountPost   = (TextView) findViewById(R.id.upCountPost);
@@ -154,7 +154,7 @@ public class CommentsActivity extends ListActivity {
 
     private void setPostViews() {
         postName.setText(post.getName());
-        postNetworkName.setText(post.getNetworkName());
+        postGateName.setText(post.getGateName());
 
         postBody.setText(
                 (post.getBody().length() > BODY_CUTOFF) ? cutoffBody() : post.getBody()
@@ -245,7 +245,7 @@ public class CommentsActivity extends ListActivity {
                     progressBarHolder.setVisibility(View.GONE);
 
                     if (comments.size() == 0 && volleyError.isConnectionError()) {
-                        noCommentsMessage.setText(R.string.network_error_message);
+                        noCommentsMessage.setText(R.string.gate_error_message);
                         noCommentsMessage.setVisibility(View.VISIBLE);
                     }
 

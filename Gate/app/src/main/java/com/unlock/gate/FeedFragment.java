@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.unlock.gate.adapters.FeedListAdapter;
-import com.unlock.gate.models.Network;
+import com.unlock.gate.models.Gate;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.Butter;
@@ -64,7 +64,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     private InfiniteScrollListener infiniteScrollListener;
 
-    private Network currentNetwork;
+    private Gate currentGate;
 
     private TextView noPostsMessage;
     private LinearLayout progressBarHolder;
@@ -126,8 +126,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
         //Handles the case of when a user backs out of the App. We want to have them back at their
-        //original network viewed.
-        currentNetwork = Network.deserialize(mSessionPreferences.getString(getString(R.string.user_last_gate_viewed_key), null));
+        //original gate viewed.
+        currentGate = Gate.deserialize(mSessionPreferences.getString(getString(R.string.user_last_gate_viewed_key), null));
 
         feed = getListView();
 
@@ -143,7 +143,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         if (savedInstanceState != null) {
             posts            = savedInstanceState.getParcelableArrayList("posts");
-            currentNetwork   = savedInstanceState.getParcelable("currentNetwork");
+            currentGate   = savedInstanceState.getParcelable("currentGate");
             infiniteScrollTimeBuffer =
                     (DateTime) savedInstanceState.getSerializable("infiniteScrollTimeBuffer");
             currentPage      = savedInstanceState.getInt("currentPage");
@@ -160,7 +160,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             setInfiniteScrollListener(false);
         }
 
-        ((MainActivity) getActivity()).setTitle(currentNetwork);
+        ((MainActivity) getActivity()).setTitle(currentGate);
 
         setListViewItemClickListener();
         setCreatePostClickListener();
@@ -172,19 +172,19 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         requestPostsAndPopulateListView(true);
     }
 
-    public void getNetworkFeed(Network network, boolean refresh) {
-        ((MainActivity) getActivity()).setTitle(network);
+    public void getGateFeed(Gate gate, boolean refresh) {
+        ((MainActivity) getActivity()).setTitle(gate);
 
-        if (!onAggregateAndGettingAggregate(network) &&
-            !onNetworkAndGettingSameNetwork(network) ||
+        if (!onAggregateAndGettingAggregate(gate) &&
+            !onGateAndGettingSameGate(gate) ||
             refresh) {
 
             APIRequestManager.getInstance().cancelAllFeedRequests();
 
             mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
-                    (network != null) ? network.serialize() : null).apply();
+                    (gate != null) ? gate.serialize() : null).apply();
 
-            currentNetwork = network;
+            currentGate = gate;
             feed.setSelection(0);
             progressBarHolder.setVisibility(View.VISIBLE);
             infiniteScrollListener.setAtEndOfList(false);
@@ -238,8 +238,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                 Post post = new Post(jsonPost.optString("external_id"),
                                         jsonPost.optJSONObject("user").optString("name"),
                                         jsonPost.optString("body"),
-                                        jsonPost.optJSONObject("network").optString("external_id"),
-                                        jsonPost.optJSONObject("network").optString("name"),
+                                        jsonPost.optJSONObject("gate").optString("external_id"),
+                                        jsonPost.optJSONObject("gate").optString("name"),
                                         jsonPost.optInt("comments_count"),
                                         jsonPost.optInt("up_count"),
                                         jsonPost.optBoolean("uped"),
@@ -258,9 +258,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                         mPullToRefreshLayout.setRefreshComplete();
                                         if (changingGates)
                                             Butter.down(getActivity(),
-                                                    currentNetwork == null
+                                                    currentGate == null
                                                     ? "Aggregate"
-                                                    : currentNetwork.getName());
+                                                    : currentGate.getName());
                                         else
                                             Butter.down(getActivity(), "Refreshed");
                                     }
@@ -287,7 +287,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                     progressBarHolder.setVisibility(View.GONE);
 
                     if (posts.size() == 0 && volleyError.isConnectionError()) {
-                        noPostsMessage.setText(R.string.network_error_message);
+                        noPostsMessage.setText(R.string.gate_error_message);
                         noPostsMessage.setVisibility(View.VISIBLE);
                     }
 
@@ -298,11 +298,11 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 }
             };
 
-            if (currentNetwork == null) {
+            if (currentGate == null) {
                 APIRequestManager.getInstance().doRequest().getAggregate(params, listener, errorListener);
             } else {
-                params.put("network_id", currentNetwork.getId());
-                APIRequestManager.getInstance().doRequest().getNetworkPosts(params, listener, errorListener);
+                params.put("gate_id", currentGate.getId());
+                APIRequestManager.getInstance().doRequest().getGatePosts(params, listener, errorListener);
             }
         } catch (JSONException ex) {
             ex.printStackTrace();
@@ -331,11 +331,11 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         );
 
         if (listAdapter == null) {
-            listAdapter = new FeedListAdapter(getActivity(), adapterPosts, currentNetwork);
+            listAdapter = new FeedListAdapter(getActivity(), adapterPosts, currentGate);
             feed.setAdapter(listAdapter);
         }
 
-        listAdapter.setNetwork(currentNetwork);
+        listAdapter.setGate(currentGate);
         adapterPosts.clear();
         adapterPosts.addAll(posts);
         listAdapter.notifyDataSetChanged();
@@ -346,7 +346,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         super.onSaveInstanceState(outState);
 
         outState.putParcelableArrayList("posts", posts);
-        outState.putParcelable("currentNetwork", currentNetwork);
+        outState.putParcelable("currentGate", currentGate);
         outState.putSerializable("infiniteScrollTimeBuffer", infiniteScrollTimeBuffer);
         outState.putInt("feedsFirstVisiblePosition", firstVisiblePost());
         outState.putInt("topOfFeed", topOfFeed());
@@ -386,8 +386,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CreatePostActivity.class);
-                intent.putExtra("currentNetwork", currentNetwork);
-                intent.putExtra("networks", getNetworks());
+                intent.putExtra("currentGate", currentGate);
+                intent.putExtra("gates", getGates());
                 startActivityForResult(intent, CREATE_POST_INTENT);
             }
         });
@@ -401,10 +401,10 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 Log.v("ACTUAL", Integer.toString(getActivity().RESULT_OK));
                 if (resultCode == getActivity().RESULT_OK) {
 
-                    final Network network = data.getParcelableExtra("network");
-                    // We only need to show a post is loading if we're on the same network
+                    final Gate gate = data.getParcelableExtra("gate");
+                    // We only need to show a post is loading if we're on the same gate
                     // or if we're in the Aggregate
-                    if (onNetworkAndGettingSameNetwork(network) || currentNetwork == null)
+                    if (onGateAndGettingSameGate(gate) || currentGate == null)
                         postLoading.setVisibility(View.VISIBLE);
 
                     final String postBody = data.getStringExtra("postBody")
@@ -425,15 +425,15 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                             @Override
                             public void onResponse(JSONObject response) {
 
-                                if (currentNetwork == null ||
-                                    onNetworkAndGettingSameNetwork(network)) {
+                                if (currentGate == null ||
+                                    onGateAndGettingSameGate(gate)) {
 
                                     JSONObject jsonPost = response.optJSONObject("post");
                                     Post post = new Post(jsonPost.optString("external_id"),
                                             jsonPost.optJSONObject("user").optString("name"),
                                             jsonPost.optString("body"),
-                                            jsonPost.optJSONObject("network").optString("external_id"),
-                                            jsonPost.optJSONObject("network").optString("name"),
+                                            jsonPost.optJSONObject("gate").optString("external_id"),
+                                            jsonPost.optJSONObject("gate").optString("name"),
                                             jsonPost.optInt("comments_count"),
                                             jsonPost.optInt("up_count"),
                                             jsonPost.optBoolean("uped"),
@@ -466,8 +466,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                 VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
                                 Intent intent = new Intent(getActivity(), CreatePostActivity.class);
-                                intent.putExtra("currentNetwork", network);
-                                intent.putExtra("networks", getNetworks());
+                                intent.putExtra("currentGate", gate);
+                                intent.putExtra("gates", getGates());
                                 intent.putExtra("postBody", postBody);
 
                                 intent.putExtra("errorMessage", volleyError.getMessage());
@@ -476,7 +476,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                             }
                         };
 
-                        APIRequestManager.getInstance().doRequest().createPost(network, params, listener, errorListener);
+                        APIRequestManager.getInstance().doRequest().createPost(gate, params, listener, errorListener);
                     } catch (JSONException ex) {
                         ex.printStackTrace();
                     }
@@ -523,13 +523,13 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         return (v == null) ? 0 : v.getTop();
     }
 
-    private boolean onAggregateAndGettingAggregate(Network network) {
-        return currentNetwork == null && network == null;
+    private boolean onAggregateAndGettingAggregate(Gate gate) {
+        return currentGate == null && gate == null;
     }
 
-    private boolean onNetworkAndGettingSameNetwork(Network network) {
-        return currentNetwork != null && network != null &&
-               currentNetwork.getId().equals(network.getId());
+    private boolean onGateAndGettingSameGate(Gate gate) {
+        return currentGate != null && gate != null &&
+               currentGate.getId().equals(gate.getId());
     }
 
     private void setCurrentPage(int page) {
@@ -537,8 +537,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         infiniteScrollListener.setCurrentPage(currentPage);
     }
 
-    private ArrayList<Network> getNetworks() {
-        return ((MainActivity) getActivity()).getNetworks();
+    private ArrayList<Gate> getGates() {
+        return ((MainActivity) getActivity()).getGates();
     }
 
 }

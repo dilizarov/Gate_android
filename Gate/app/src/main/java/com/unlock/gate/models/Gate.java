@@ -8,12 +8,12 @@ import com.google.gson.Gson;
 /**
  * Created by davidilizarov on 10/27/14.
  */
-public class Network implements Parcelable {
+public class Gate implements Parcelable {
     private String id, name, usersCount, creator;
 
-    public Network(){}
+    public Gate(){}
 
-    public Network(String id, String name, int usersCount, String creator) {
+    public Gate(String id, String name, int usersCount, String creator) {
         this.id = id;
         this.name = name;
         this.usersCount = Integer.toString(usersCount);
@@ -57,15 +57,15 @@ public class Network implements Parcelable {
         return gson.toJson(this);
     }
 
-    static public Network deserialize(String serializedNetwork) {
-        if (serializedNetwork == null) return null;
+    static public Gate deserialize(String serializedGate) {
+        if (serializedGate == null) return null;
 
         Gson gson = new Gson();
-        return gson.fromJson(serializedNetwork, Network.class);
+        return gson.fromJson(serializedGate, Gate.class);
     }
 
     //Parcelable implementation
-    public Network(Parcel in) {
+    public Gate(Parcel in) {
         String[] data = new String[4];
 
         in.readStringArray(data);
@@ -92,12 +92,12 @@ public class Network implements Parcelable {
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Network createFromParcel(Parcel in) {
-            return new Network(in);
+        public Gate createFromParcel(Parcel in) {
+            return new Gate(in);
         }
 
-        public Network[] newArray(int size) {
-            return new Network[size];
+        public Gate[] newArray(int size) {
+            return new Gate[size];
         }
     };
 }

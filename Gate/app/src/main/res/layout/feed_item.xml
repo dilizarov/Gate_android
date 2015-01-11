@@ -45,7 +45,7 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/networkName"
+        android:id="@+id/gateName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"

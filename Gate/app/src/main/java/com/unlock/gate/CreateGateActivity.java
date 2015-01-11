@@ -8,32 +8,33 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.unlock.gate.utils.Butter;
+import com.unlock.gate.utils.CustomEditText;
 
 
-public class CreateNetworkActivity extends Activity {
+public class CreateGateActivity extends Activity {
 
-    private ImageButton createNetwork;
-    private EditText createNetworkName;
+    private ImageButton createGate;
+    private CustomEditText createGateName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_network);
+        setContentView(R.layout.activity_create_gate);
 
         final Intent intent = getIntent();
 
-        createNetwork     = (ImageButton) findViewById(R.id.createNetwork);
-        createNetworkName = (EditText) findViewById(R.id.createNetworkName);
+        createGate     = (ImageButton) findViewById(R.id.createGate);
+        createGateName = (CustomEditText) findViewById(R.id.createGateName);
+        createGateName.requestFocus();
 
-        if (!(createNetworkName.getText().toString().trim().length() > 0))
-            createNetwork.setEnabled(false);
+        if (!(createGateName.getText().toString().trim().length() > 0))
+            createGate.setEnabled(false);
 
 
-        createNetworkName.addTextChangedListener(new TextWatcher() {
+        createGateName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -46,15 +47,15 @@ public class CreateNetworkActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().trim().length() > 0) createNetwork.setEnabled(true);
-                else createNetwork.setEnabled(false);
+                if (s.toString().trim().length() > 0) createGate.setEnabled(true);
+                else createGate.setEnabled(false);
             }
         });
 
-        createNetwork.setOnClickListener(new View.OnClickListener() {
+        createGate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.putExtra("networkName", createNetworkName.getText().toString().trim());
+                intent.putExtra("gateName", createGateName.getText().toString().trim());
                 setResult(RESULT_OK, intent);
 
                 finish();
@@ -62,7 +63,7 @@ public class CreateNetworkActivity extends Activity {
             }
         });
 
-        if (intent.getStringExtra("networkName") != null) createNetworkName.append(intent.getStringExtra("networkName"));
+        if (intent.getStringExtra("gateName") != null) createGateName.append(intent.getStringExtra("gateName"));
 
         if (intent.getStringExtra("errorMessage") != null) {
             Butter.between(this, intent.getStringExtra("errorMessage"));
@@ -73,7 +74,7 @@ public class CreateNetworkActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_network, menu);
+        getMenuInflater().inflate(R.menu.menu_create_gate, menu);
         return true;
     }
 

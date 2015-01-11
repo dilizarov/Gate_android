@@ -24,7 +24,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.unlock.gate.models.Network;
+import com.unlock.gate.models.Gate;
 import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.Fade;
 import com.unlock.gate.utils.NfcUtils;
@@ -34,11 +34,11 @@ import java.util.ArrayList;
 
 public class UnlockGateActivity extends Activity {
 
-    private RelativeLayout networkSelector;
-    private ListView networksList;
+    private RelativeLayout gateSelector;
+    private ListView gatesList;
     private Button unlock;
-    private ArrayList<Network> networks;
-    private ArrayList<String> selectedNetworkIds;
+    private ArrayList<Gate> gates;
+    private ArrayList<String> selectedGateIds;
     private NfcAdapter mNfcAdapter;
     private SharedPreferences mSessionPreferences;
     private ActionBar actionBar;
@@ -70,22 +70,22 @@ public class UnlockGateActivity extends Activity {
         actionBar = getActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
 
-        networks = getIntent().getParcelableArrayListExtra("networks");
+        gates = getIntent().getParcelableArrayListExtra("gates");
         mSessionPreferences = getSharedPreferences(
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
 
-        selectedNetworkIds = new ArrayList<String>();
+        selectedGateIds = new ArrayList<String>();
 
         instantiateViews();
 
-        bindNetworksToListView();
+        bindGatesToListView();
 
         setUnlockClickListener();
     }
 
     private void instantiateViews() {
-        networkSelector = (RelativeLayout) findViewById(R.id.networkSelector);
-        networksList    = (ListView) findViewById(R.id.networksList);
+        gateSelector = (RelativeLayout) findViewById(R.id.gateSelector);
+        gatesList    = (ListView) findViewById(R.id.gatesList);
         unlock          = (Button) findViewById(R.id.unlockButton);
 
         leftPhone      = (ImageView) findViewById(R.id.leftPhoneImage);
@@ -96,18 +96,18 @@ public class UnlockGateActivity extends Activity {
         tutorialText   = (TextView) findViewById(R.id.tutorialText);
     }
 
-    private void bindNetworksToListView() {
-        String[] networkNames = new String[networks.size()];
+    private void bindGatesToListView() {
+        String[] gateNames = new String[gates.size()];
 
-        int len = networks.size();
+        int len = gates.size();
         for (int i = 0; i < len; i++)
-            networkNames[i] = networks.get(i).getName();
+            gateNames[i] = gates.get(i).getName();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.simple_list_item_ellipsized_multiple_choice, networkNames);
+                R.layout.simple_list_item_ellipsized_multiple_choice, gateNames);
 
-        networksList.setAdapter(adapter);
-        networksList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        gatesList.setAdapter(adapter);
+        gatesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         adapter.notifyDataSetChanged();
     }
 
@@ -121,11 +121,11 @@ public class UnlockGateActivity extends Activity {
                     @Override
                     public void run() {
 
-                        int len = networksList.getCount();
+                        int len = gatesList.getCount();
                         for (int i = 0; i < len; i++) {
 
-                              if (networksList.isItemChecked(i)) {
-                                  selectedNetworkIds.add(networks.get(i).getId());
+                              if (gatesList.isItemChecked(i)) {
+                                  selectedGateIds.add(gates.get(i).getId());
                               }
                         }
 
@@ -133,7 +133,7 @@ public class UnlockGateActivity extends Activity {
                             @Override
                             public void run() {
 
-                                if (selectedNetworkIds.size() == 0) {
+                                if (selectedGateIds.size() == 0) {
                                     Butter.between(UnlockGateActivity.this,
                                             "You must unlock at least one gate");
 
@@ -142,12 +142,12 @@ public class UnlockGateActivity extends Activity {
 
                                 actionBar.setTitle("Tutorial");
 
-                                Fade.hide(networkSelector, new AnimatorListenerAdapter() {
+                                Fade.hide(gateSelector, new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
-                                        networkSelector.setAlpha(1);
-                                        networkSelector.setVisibility(View.GONE);
-                                        networkSelector.animate().setListener(null);
+                                        gateSelector.setAlpha(1);
+                                        gateSelector.setVisibility(View.GONE);
+                                        gateSelector.animate().setListener(null);
 
                                         animateTutorial();
 
@@ -158,11 +158,11 @@ public class UnlockGateActivity extends Activity {
                                 if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
                                     String userId = mSessionPreferences.getString(getString(R.string.user_id_key), null);
                                     String userName = mSessionPreferences.getString(getString(R.string.user_name_key), null);
-                                    String networkIds = selectedNetworkIds.toString();
-                                    networkIds = networkIds.substring(1, networkIds.length() - 1);
+                                    String gateIds = selectedGateIds.toString();
+                                    gateIds = gateIds.substring(1, gateIds.length() - 1);
 
                                     mNfcAdapter.setNdefPushMessage(
-                                            NfcUtils.stringsToNdefMessage(userId, userName, networkIds), UnlockGateActivity.this);
+                                            NfcUtils.stringsToNdefMessage(userId, userName, gateIds), UnlockGateActivity.this);
                                 }
 
                             }

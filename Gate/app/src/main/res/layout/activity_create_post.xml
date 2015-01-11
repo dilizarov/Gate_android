@@ -2,6 +2,8 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 tools:context="com.unlock.gate.CreatePostActivity">
 
     <ImageButton
@@ -13,7 +15,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"/>
 
-    <EditText
+    <com.unlock.gate.utils.CustomEditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
@@ -27,20 +29,21 @@
         android:lines="6"
         android:gravity="top"
         android:background="@android:color/transparent"
-        android:paddingLeft="4dp"
+        android:paddingLeft="8dp"
         android:paddingRight="4dp"
         android:hint="Write a post"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/networkSelection"
+        android:id="@+id/gateSelection"
         android:layout_above="@+id/postBody"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/writePost"
         android:text="Select a Gate"
         android:scrollHorizontally="true"
+        android:paddingLeft="8dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@android:color/darker_gray"

@@ -11,12 +11,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.unlock.gate.models.Network;
+import com.unlock.gate.models.Gate;
 import com.unlock.gate.utils.Butter;
+import com.unlock.gate.utils.CustomEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +24,12 @@ import java.util.List;
 
 public class CreatePostActivity extends Activity {
 
-    private Network currentNetwork;
-    private ArrayList<Network> networks;
+    private Gate currentGate;
+    private ArrayList<Gate> gates;
 
     private ImageButton writePost;
-    private EditText postBody;
-    private TextView networkSelection;
+    private CustomEditText postBody;
+    private TextView gateSelection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,38 +39,39 @@ public class CreatePostActivity extends Activity {
         final Intent intent = getIntent();
 
         if (savedInstanceState != null) {
-            currentNetwork = savedInstanceState.getParcelable("currentNetwork");
-            networks       = savedInstanceState.getParcelableArrayList("networks");
+            currentGate = savedInstanceState.getParcelable("currentGate");
+            gates       = savedInstanceState.getParcelableArrayList("gates");
         } else {
-            currentNetwork = intent.getParcelableExtra("currentNetwork");
-            networks       = intent.getParcelableArrayListExtra("networks");
+            currentGate = intent.getParcelableExtra("currentGate");
+            gates       = intent.getParcelableArrayListExtra("gates");
         }
 
         final List<String> items = new ArrayList<String>();
-        for ( Network network : networks) items.add(network.getName());
+        for ( Gate gate : gates) items.add(gate.getName());
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, items);
 
-        networkSelection = (TextView) findViewById(R.id.networkSelection);
+        gateSelection = (TextView) findViewById(R.id.gateSelection);
         writePost        = (ImageButton) findViewById(R.id.writePost);
-        postBody         = (EditText) findViewById(R.id.postBody);
+        postBody         = (CustomEditText) findViewById(R.id.postBody);
+        postBody.requestFocus();
 
         if (!(postBody.getText().toString().trim().length() > 0))
             writePost.setEnabled(false);
 
 
-        networkSelection.setOnClickListener(new View.OnClickListener() {
+        gateSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(CreatePostActivity.this)
                                .setAdapter(adapter, new DialogInterface.OnClickListener() {
                                    @Override
                                    public void onClick(DialogInterface dialog, int which) {
-                                       currentNetwork = networks.get(which);
-                                       networkSelection.setText(items.get(which));
+                                       currentGate = gates.get(which);
+                                       gateSelection.setText(items.get(which));
 
-                                       if (currentNetwork != null &&
+                                       if (currentGate != null &&
                                            postBody.getText().toString().trim().length() > 0) writePost.setEnabled(true);
                                        else writePost.setEnabled(false);
 
@@ -94,7 +95,7 @@ public class CreatePostActivity extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().trim().length() > 0 &&
-                    currentNetwork != null) writePost.setEnabled(true);
+                    currentGate != null) writePost.setEnabled(true);
                 else writePost.setEnabled(false);
             }
         });
@@ -102,7 +103,7 @@ public class CreatePostActivity extends Activity {
         writePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.putExtra("network", currentNetwork);
+                intent.putExtra("gate", currentGate);
                 intent.putExtra("postBody", postBody.getText().toString().trim());
                 setResult(RESULT_OK, intent);
 
@@ -110,7 +111,7 @@ public class CreatePostActivity extends Activity {
             }
         });
 
-        if (currentNetwork != null) networkSelection.setText(currentNetwork.getName());
+        if (currentGate != null) gateSelection.setText(currentGate.getName());
 
         if (intent.getStringExtra("postBody") != null) postBody.setText(intent.getStringExtra("postBody"));
 
@@ -131,8 +132,8 @@ public class CreatePostActivity extends Activity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable("currentNetwork", currentNetwork);
-        outState.putParcelableArrayList("networks", networks);
+        outState.putParcelable("currentGate", currentGate);
+        outState.putParcelableArrayList("gates", gates);
     }
 
 

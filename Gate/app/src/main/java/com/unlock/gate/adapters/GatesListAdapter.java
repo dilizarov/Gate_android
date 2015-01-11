@@ -9,32 +9,32 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.unlock.gate.R;
-import com.unlock.gate.models.Network;
+import com.unlock.gate.models.Gate;
 
 import java.util.List;
 
 /**
  * Created by davidilizarov on 10/27/14.
  */
-public class NetworksListAdapter extends BaseAdapter {
+public class GatesListAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater mInflater;
-    private List<Network> networkItems;
+    private List<Gate> gateItems;
 
-    public NetworksListAdapter(Context context, List<Network> networkItems) {
+    public GatesListAdapter(Context context, List<Gate> gateItems) {
         this.context = context;
-        this.networkItems = networkItems;
+        this.gateItems = gateItems;
     }
 
     @Override
     public int getCount() {
-        return networkItems.size();
+        return gateItems.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return networkItems.get(position);
+        return gateItems.get(position);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class NetworksListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (mInflater == null) mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null) convertView = mInflater.inflate(R.layout.network_item, null);
+        if (convertView == null) convertView = mInflater.inflate(R.layout.gate_item, null);
 
         if (position % 2 == 1) {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
@@ -53,16 +53,16 @@ public class NetworksListAdapter extends BaseAdapter {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
 
-        TextView networkItemName = (TextView) convertView.findViewById(R.id.networkItemName);
-        TextView networkUserCount = (TextView) convertView.findViewById(R.id.usersCount);
+        TextView gateItemName = (TextView) convertView.findViewById(R.id.gateItemName);
+        TextView gateUserCount = (TextView) convertView.findViewById(R.id.usersCount);
 
-        Network network = networkItems.get(position);
+        Gate gate = gateItems.get(position);
 
-        networkItemName.setText(network.getName());
-        networkUserCount.setText(context.getResources()
+        gateItemName.setText(gate.getName());
+        gateUserCount.setText(context.getResources()
                 .getQuantityString(R.plurals.users_count,
-                                   network.getUsersCount(),
-                                   network.getUsersCount()));
+                                   gate.getUsersCount(),
+                                   gate.getUsersCount()));
 
         return convertView;
     }

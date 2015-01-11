@@ -7,7 +7,7 @@
     android:background="#FFFFFF">
 
     <LinearLayout
-        android:id="@+id/networkProgressBarHolder"
+        android:id="@+id/gateProgressBarHolder"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,7 +28,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/createNetwork">
+            android:layout_above="@+id/createGate">
 
             <TextView
                 android:id="@+id/noGatesMessage"
@@ -78,7 +78,7 @@
                 android:visibility="invisible" />
 
             <Button
-                android:id="@+id/createNetwork"
+                android:id="@+id/createGate"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"

@@ -25,4 +25,5 @@
     <style name="ListSelector.Gate" parent="@android:style/Widget.Holo.ListView.DropDown">
         <item name="android:listSelector">@drawable/selectable_background</item>
     </style>
+
 </resources>

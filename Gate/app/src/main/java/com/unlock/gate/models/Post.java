@@ -17,17 +17,17 @@ import org.joda.time.Years;
  * implementation much simpler. Conversions when getting and setting are easy.
  */
 public class Post implements Parcelable {
-    private String id, name, body, networkId, networkName, commentCount, upCount, uped, timestamp;
+    private String id, name, body, gateId, gateName, commentCount, upCount, uped, timestamp;
     private DateTime timeCreated;
 
     public Post(){}
 
-    public Post(String id, String name, String body, String networkId, String networkName, int commentCount, int upCount, boolean uped, String timeCreated) {
+    public Post(String id, String name, String body, String gateId, String gateName, int commentCount, int upCount, boolean uped, String timeCreated) {
         this.id = id;
         this.name = name;
         this.body = body;
-        this.networkId = networkId;
-        this.networkName = networkName;
+        this.gateId = gateId;
+        this.gateName = gateName;
         this.commentCount = Integer.toString(commentCount);
         this.upCount = Integer.toString(upCount);
         this.uped = Boolean.toString(uped);
@@ -35,12 +35,12 @@ public class Post implements Parcelable {
         setTimestamp();
     }
 
-    public Post(String id, String name, String body, String networkId, String networkName, String commentCount, String upCount, String uped, String timeCreated) {
+    public Post(String id, String name, String body, String gateId, String gateName, String commentCount, String upCount, String uped, String timeCreated) {
         this.id = id;
         this.name = name;
         this.body = body;
-        this.networkId = networkId;
-        this.networkName = networkName;
+        this.gateId = gateId;
+        this.gateName = gateName;
         this.commentCount = commentCount;
         this.upCount = upCount;
         this.uped = uped;
@@ -72,20 +72,20 @@ public class Post implements Parcelable {
         this.body = body;
     }
 
-    public String getNetworkId() {
-        return networkId;
+    public String getGateId() {
+        return gateId;
     }
 
-    public void setNetworkId(String networkId) {
-        this.networkId = networkId;
+    public void setGateId(String gateId) {
+        this.gateId = gateId;
     }
 
-    public String getNetworkName() {
-        return networkName;
+    public String getGateName() {
+        return gateName;
     }
 
-    public void setNetworkName(String networkName) {
-        this.networkName = networkName;
+    public void setGateName(String gateName) {
+        this.gateName = gateName;
     }
 
     public int getCommentCount() {
@@ -154,8 +154,8 @@ public class Post implements Parcelable {
         this.id           = data[0];
         this.name         = data[1];
         this.body         = data[2];
-        this.networkId    = data[3];
-        this.networkName  = data[4];
+        this.gateId    = data[3];
+        this.gateName  = data[4];
         this.commentCount = data[5];
         this.upCount      = data[6];
         this.uped         = data[7];
@@ -174,8 +174,8 @@ public class Post implements Parcelable {
             this.id,
             this.name,
             this.body,
-            this.networkId,
-            this.networkName,
+            this.gateId,
+            this.gateName,
             this.commentCount,
             this.upCount,
             this.uped,

@@ -3,6 +3,8 @@ package com.unlock.gate;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,12 +27,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.astuetz.PagerSlidingTabStrip;
-import com.unlock.gate.models.Network;
+import com.unlock.gate.models.Gate;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.NfcUtils;
@@ -65,6 +66,27 @@ public class MainActivity extends FragmentActivity {
 
     private AlertDialog activateNfcDialog;
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE,
+                                                     NfcAdapter.STATE_OFF);
+
+                switch (state) {
+                    case NfcAdapter.STATE_OFF:
+                    case NfcAdapter.STATE_TURNING_OFF:
+                    case NfcAdapter.STATE_ON:
+                    case NfcAdapter.STATE_TURNING_ON:
+                        checkNFCEnabled();
+                        break;
+                }
+            }
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,55 +114,18 @@ public class MainActivity extends FragmentActivity {
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        // This will keep tabs on NFC and fire off when it is turned on/off/etc.
+        if (mNfcAdapter != null) {
+            IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+            this.registerReceiver(mReceiver, filter);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        if (mNfcAdapter != null) {
-            if (mNfcAdapter.isEnabled()) {
-                if (activateNfcDialog != null && activateNfcDialog.isShowing())
-                    activateNfcDialog.cancel();
-
-                configureNFC();
-                mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
-                        mNdefExchangeFilters, null);
-            } else {
-                if (activateNfcDialog == null) {
-                    activateNfcDialog = new AlertDialog.Builder(this)
-                        .setTitle("Please activate NFC")
-                        .setMessage("NFC is required to use Gate and does not drain any battery")
-                        .setCancelable(false)
-                        .setPositiveButton("Activate", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                    Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
-                                    startActivity(intent);
-                                } else {
-                                    Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                                    startActivity(intent);
-                                }
-                            }
-                        }).create();
-                }
-
-                // I use the handler postDelayed because when someone logs in,
-                // sometimes everything happens so fast the Keyboard doesn't have
-                // time to leave the view. So in the background, you still see the keyboard.
-                // By waiting 100 milliseconds, you basically guarantee that the keyboard is gone
-                // and the difference in time honestly isn't even noticeable.
-                if (!activateNfcDialog.isShowing() &&
-                    !airplaneModeIsOn())
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            activateNfcDialog.show();
-                        }
-                    }, 100);
-            }
-        }
+        checkNFCEnabled();
 
         Intent callingIntent = getIntent();
         Bundle extras = callingIntent.getExtras();
@@ -156,6 +141,13 @@ public class MainActivity extends FragmentActivity {
 
         if (mNfcAdapter != null && mNfcAdapter.isEnabled())
             mNfcAdapter.disableForegroundDispatch(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        this.unregisterReceiver(mReceiver);
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -181,7 +173,7 @@ public class MainActivity extends FragmentActivity {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:  return FeedFragment.newInstance();
-                case 1:  return NetworksFragment.newInstance();
+                case 1:  return GatesFragment.newInstance();
             }
 
             return null;
@@ -216,23 +208,23 @@ public class MainActivity extends FragmentActivity {
 
             final String gatekeeperId      = payload.get(0);
             final String gatekeeperName    = payload.get(1);
-            String grantedNetworkIdsString = payload.get(2);
+            String grantedGateIdsString = payload.get(2);
 
-            //grantedNetworkIdsString is "id, id2, id3, id4, id5" where idx is a UUID.
-            ArrayList<String> grantedNetworkIds = new ArrayList<String>(Arrays.asList(grantedNetworkIdsString.split(", ")));
+            //grantedGateIdsString is "id, id2, id3, id4, id5" where idx is a UUID.
+            ArrayList<String> grantedGateIds = new ArrayList<String>(Arrays.asList(grantedGateIdsString.split(", ")));
 
             progressDialog = ProgressDialog.show(MainActivity.this, "", "Unlocking gates...", false, true);
-            grantAccessToNetworks(grantedNetworkIds, gatekeeperId, gatekeeperName);
+            grantAccessToGates(grantedGateIds, gatekeeperId, gatekeeperName);
         }
     }
 
-    public void grantAccessToNetworks(ArrayList<String> grantedNetworkIds, String gatekeeperId, final String gatekeeperName) {
+    public void grantAccessToGates(ArrayList<String> grantedGateIds, String gatekeeperId, final String gatekeeperName) {
         try {
 
             JSONObject params = new JSONObject();
             params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
                   .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null))
-                  .put("network_ids", new JSONArray(grantedNetworkIds));
+                  .put("gate_ids", new JSONArray(grantedGateIds));
 
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
@@ -242,49 +234,49 @@ public class MainActivity extends FragmentActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            JSONArray jsonNetworks = response.optJSONArray("networks");
-                            int len = jsonNetworks.length();
+                            JSONArray jsonGates = response.optJSONArray("gates");
+                            int len = jsonGates.length();
 
-                            final ArrayList<Network> newNetworks = new ArrayList<Network>();
+                            final ArrayList<Gate> newGates = new ArrayList<Gate>();
 
                             for (int i = 0; i < len; i++) {
-                                JSONObject jsonNetwork = jsonNetworks.optJSONObject(i);
-                                Network network = new Network(jsonNetwork.optString("external_id"),
-                                        jsonNetwork.optString("name"),
-                                        jsonNetwork.optInt("users_count"),
-                                        jsonNetwork.optJSONObject("creator").optString("name"));
+                                JSONObject jsonGate = jsonGates.optJSONObject(i);
+                                Gate gate = new Gate(jsonGate.optString("external_id"),
+                                        jsonGate.optString("name"),
+                                        jsonGate.optInt("users_count"),
+                                        jsonGate.optJSONObject("creator").optString("name"));
 
-                                newNetworks.add(network);
+                                newGates.add(gate);
                             }
 
-                            Collections.sort(newNetworks, new Comparator<Network>() {
-                                public int compare(Network n1, Network n2) {
+                            Collections.sort(newGates, new Comparator<Gate>() {
+                                public int compare(Gate n1, Gate n2) {
                                     return n1.getName().compareToIgnoreCase(n2.getName());
                                 }
                             });
 
 
                             // Required for use as CharSequence[] items later for list of Strings.
-                            final ArrayList<String> networkNames = new ArrayList<String>();
-                            for (Network network : newNetworks) networkNames.add(network.getName());
+                            final ArrayList<String> gateNames = new ArrayList<String>();
+                            for (Gate gate : newGates) gateNames.add(gate.getName());
 
-                            final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
-                            networksFragment.addNetworksToArrayList(newNetworks);
+                            final GatesFragment gatesFragment = (GatesFragment) adapter.getRegisteredFragment(1);
+                            gatesFragment.addGatesToArrayList(newGates);
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
 
-                                    networksFragment.adaptNewGatesToList();
+                                    gatesFragment.adaptNewGatesToList();
 
-                                    CharSequence[] items = networkNames.toArray(new CharSequence[networkNames.size()]);
+                                    CharSequence[] items = gateNames.toArray(new CharSequence[gateNames.size()]);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                    builder.setTitle(gatekeeperName + " granted you access to these networks...")
+                                    builder.setTitle(gatekeeperName + " granted you access to these Gates...")
                                            .setItems(items, new DialogInterface.OnClickListener() {
                                                @Override
                                                public void onClick(DialogInterface dialog, int which) {
                                                    dialog.dismiss();
-                                                   showFeed(newNetworks.get(which), false, true);
+                                                   showFeed(newGates.get(which), false, true);
                                                }
                                            }).create().show();
                                 }
@@ -305,7 +297,7 @@ public class MainActivity extends FragmentActivity {
                 }
             };
 
-            APIRequestManager.getInstance().doRequest().grantAccessToNetworks(gatekeeperId, params, listener, errorListener);
+            APIRequestManager.getInstance().doRequest().grantAccessToGates(gatekeeperId, params, listener, errorListener);
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
@@ -351,23 +343,23 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-    public void showFeed(Network network, boolean refresh, boolean smoothScroll) {
+    public void showFeed(Gate gate, boolean refresh, boolean smoothScroll) {
         pager.setCurrentItem(0, smoothScroll);
 
         FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
-        feedFragment.getNetworkFeed(network, refresh);
+        feedFragment.getGateFeed(gate, refresh);
     }
 
-    public ArrayList<Network> getNetworks() {
-        NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
-        return networksFragment.getNetworks();
+    public ArrayList<Gate> getGates() {
+        GatesFragment gatesFragment = (GatesFragment) adapter.getRegisteredFragment(1);
+        return gatesFragment.getGates();
     }
 
-    public void setTitle(Network network) {
+    public void setTitle(Gate gate) {
         getActionBar().setTitle(
-                network == null
+                gate == null
                 ? "Aggregate"
-                : network.getName()
+                : gate.getName()
         );
     }
 
@@ -398,56 +390,50 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private void test_post_bump() {
+    private void checkNFCEnabled() {
+        if (mNfcAdapter != null) {
+            if (mNfcAdapter.isEnabled()) {
+                if (activateNfcDialog != null && activateNfcDialog.isShowing())
+                    activateNfcDialog.cancel();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<Network> newNetworks = new ArrayList<Network>();
-
-                for (int i = 0; i < 14; i++) {
-                    Network network = new Network("wowowowow" + i,
-                            "zgme" + i,
-                            14,
-                            "Squidward" + i);
-
-                    newNetworks.add(network);
+                configureNFC();
+                mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
+                        mNdefExchangeFilters, null);
+            } else {
+                if (activateNfcDialog == null) {
+                    activateNfcDialog = new AlertDialog.Builder(this)
+                            .setTitle("Activate NFC")
+                            .setMessage("NFC (near field communication) is required to use Gate. NFC does not drain any battery.")
+                            .setCancelable(false)
+                            .setPositiveButton("Activate", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+                                        startActivity(intent);
+                                    } else {
+                                        Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                                        startActivity(intent);
+                                    }
+                                }
+                            }).create();
                 }
 
-                Collections.sort(newNetworks, new Comparator<Network>() {
-                    public int compare(Network n1, Network n2) {
-                        return n1.getName().compareToIgnoreCase(n2.getName());
-                    }
-                });
-
-                final ArrayList<String> networkNames = new ArrayList<String>();
-                for (Network network : newNetworks) networkNames.add(network.getName());
-
-                final NetworksFragment networksFragment = (NetworksFragment) adapter.getRegisteredFragment(1);
-                networksFragment.addNetworksToArrayList(newNetworks);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        networksFragment.adaptNewGatesToList();
-
-                        CharSequence[] items = networkNames.toArray(new CharSequence[networkNames.size()]);
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setTitle("Irene Nguyen" + " granted you access to these networks...")
-                                .setItems(items, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                        Toast.makeText(MainActivity.this, newNetworks.get(which).getName(), Toast.LENGTH_LONG).show();
-                                    }
-                                }).create().show();
-                    }
-                });
-
+                // I use the handler postDelayed because when someone logs in,
+                // sometimes everything happens so fast the Keyboard doesn't have
+                // time to leave the view. So in the background, you still see the keyboard.
+                // By waiting 100 milliseconds, you basically guarantee that the keyboard is gone
+                // and the difference in time honestly isn't even noticeable.
+                if (!activateNfcDialog.isShowing() &&
+                        !airplaneModeIsOn())
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            activateNfcDialog.show();
+                        }
+                    }, 100);
             }
-        }).start();
-
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -472,19 +458,16 @@ public class MainActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_unlock_gates:
-                if (getNetworks().size() == 0) {
+                if (getGates().size() == 0) {
                     pager.setCurrentItem(1, true);
 
                     Butter.between(this, "You have no Gates to unlock");
                 } else {
                     Intent intent = new Intent(this, UnlockGateActivity.class);
-                    intent.putParcelableArrayListExtra("networks", getNetworks());
+                    intent.putParcelableArrayListExtra("gates", getGates());
                     startActivity(intent);
                 }
 
-                return true;
-            case R.id.action_offer_advice:
-                test_post_bump();
                 return true;
             case R.id.action_logout:
                 progressDialog = ProgressDialog.show(MainActivity.this, "",

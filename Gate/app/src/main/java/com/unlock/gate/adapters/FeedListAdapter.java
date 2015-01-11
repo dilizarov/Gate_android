@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.unlock.gate.CommentsActivity;
 import com.unlock.gate.MainActivity;
 import com.unlock.gate.R;
-import com.unlock.gate.models.Network;
+import com.unlock.gate.models.Gate;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.PostViewHelper;
 
@@ -29,14 +29,14 @@ public class FeedListAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater mInflater;
     private List<Post> posts;
-    private Network network;
+    private Gate gate;
 
     static class ViewHolder {
         TextView name;
         TextView body;
         TextView timestamp;
         TextView commentsCount;
-        TextView networkName;
+        TextView gateName;
         ImageView createComment;
         ImageView commentsCountBubble;
         ImageView smileyCount;
@@ -45,10 +45,10 @@ public class FeedListAdapter extends BaseAdapter {
         LinearLayout postStats;
     }
 
-    public FeedListAdapter(Context context, List<Post> posts, Network network) {
+    public FeedListAdapter(Context context, List<Post> posts, Gate gate) {
         this.context = context;
         this.posts = posts;
-        this.network = network;
+        this.gate = gate;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class FeedListAdapter extends BaseAdapter {
             viewHolder.body                = (TextView) convertView.findViewById(R.id.body);
             viewHolder.timestamp           = (TextView) convertView.findViewById(R.id.timestamp);
             viewHolder.commentsCount       = (TextView) convertView.findViewById(R.id.commentsCount);
-            viewHolder.networkName         = (TextView) convertView.findViewById(R.id.networkName);
+            viewHolder.gateName         = (TextView) convertView.findViewById(R.id.gateName);
             viewHolder.createComment       = (ImageView) convertView.findViewById(R.id.createComment);
             viewHolder.commentsCountBubble = (ImageView) convertView.findViewById(R.id.commentsCountBubble);
             viewHolder.smileyCount         = (ImageView) convertView.findViewById(R.id.smileyCount);
@@ -119,18 +119,18 @@ public class FeedListAdapter extends BaseAdapter {
             }
         });
 
-        if (network == null) {
-            viewHolder.networkName.setText(post.getNetworkName());
-            viewHolder.networkName.setVisibility(View.VISIBLE);
+        if (gate == null) {
+            viewHolder.gateName.setText(post.getGateName());
+            viewHolder.gateName.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.networkName.setVisibility(View.GONE);
+            viewHolder.gateName.setVisibility(View.GONE);
         }
 
         return convertView;
     }
 
-    public void setNetwork(Network network) {
-        this.network = network;
+    public void setGate(Gate gate) {
+        this.gate = gate;
     }
 
 }

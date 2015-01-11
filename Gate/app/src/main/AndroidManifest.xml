@@ -80,8 +80,8 @@
             android:windowSoftInputMode="stateVisible" >
         </activity>
         <activity
-            android:name="com.unlock.gate.CreateNetworkActivity"
-            android:label="@string/title_activity_create_network"
+            android:name="com.unlock.gate.CreateGateActivity"
+            android:label="@string/title_activity_create_gate"
             android:theme="@style/Gate.Dialog"
             android:windowSoftInputMode="stateVisible" >
         </activity>
