@@ -179,8 +179,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             !onGateAndGettingSameGate(gate) ||
             refresh) {
 
-            APIRequestManager.getInstance().cancelAllFeedRequests();
-
             mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
                     (gate != null) ? gate.serialize() : null).apply();
 
@@ -214,7 +212,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 if (page > 0) params.put("page", page);
 
                 if (infiniteScrollTimeBuffer != null)
-                    params.put("infinite_scroll_time_buffer", infiniteScrollTimeBuffer);
+                    params.put("infinite-scroll-time-buffer", infiniteScrollTimeBuffer);
             }
 
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
@@ -301,8 +299,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             if (currentGate == null) {
                 APIRequestManager.getInstance().doRequest().getAggregate(params, listener, errorListener);
             } else {
-                params.put("gate_id", currentGate.getId());
-                APIRequestManager.getInstance().doRequest().getGatePosts(params, listener, errorListener);
+                APIRequestManager.getInstance().doRequest().getGatePosts(currentGate, params, listener, errorListener);
             }
         } catch (JSONException ex) {
             ex.printStackTrace();

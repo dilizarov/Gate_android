@@ -13,12 +13,16 @@ import com.unlock.gate.models.Comment;
 import com.unlock.gate.models.Gate;
 import com.unlock.gate.models.Post;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class APIRequestProxy {
 	
 	private final String BASE_URL = "https://infinite-river-7560.herokuapp.com/api/v1/";
-	
+
+    private final String ANDROID_API_KEY = "placeholder";
+
 	private final String SESSION_ENDPOINT = "sessions.json";
 	private final String REGISTRATION_ENDPOINT = "registrations.json";
     private final String GATES_ENDPOINT = "gates.json";
@@ -29,10 +33,14 @@ public class APIRequestProxy {
 	private RequestQueue mRequestQueue;
 
     private Context context;
-	
+    private SharedPreferences mSessionPreferences;
+
 	APIRequestProxy(Context context) {
         this.context = context;
 		mRequestQueue = Volley.newRequestQueue(context.getApplicationContext());
+        mSessionPreferences = context.getSharedPreferences(
+                context.getString(R.string.session_shared_preferences_key),
+                Context.MODE_PRIVATE);
 	}
 	
 	private String getAbsoluteUrl(String endpoint) {
@@ -40,16 +48,48 @@ public class APIRequestProxy {
 	}
 
     // Requires user_id and auth_token as params
-    private String addAuthAsURLParams(String url, JSONObject params) {
-        StringBuilder buildURLParams = new StringBuilder(url);
-        buildURLParams.append("?")
-                      .append("user_id=")
-                      .append(params.optString("user_id"))
-                      .append("&")
-                      .append("auth_token=")
-                      .append(params.optString("auth_token"));
+//    private String addAuthAsURLParams(String url, JSONObject params) {
+//        StringBuilder buildURLParams = new StringBuilder(url);
+//        buildURLParams.append("?")
+//                      .append("user_id=")
+//                      .append(params.optString("user_id"))
+//                      .append("&")
+//                      .append("auth_token=")
+//                      .append(params.optString("auth_token"));
+//
+//        return buildURLParams.toString();
+//    }
 
-        return buildURLParams.toString();
+    public String convertParamsToUrlParams(JSONObject params) {
+        StringBuilder buildUrlParams = new StringBuilder();
+
+        JSONArray keys = params.names();
+        if (keys == null) return "";
+
+        int len = keys.length();
+        for (int i = 0; i < len; i++) {
+            if (i == 0) buildUrlParams.append("?");
+            else buildUrlParams.append("&");
+
+            buildUrlParams.append(keys.optString(i))
+                          .append("=")
+                          .append(params.optString(keys.optString(i)));
+        }
+
+        return buildUrlParams.toString();
+    }
+
+    public JSONObject addAuthToParams(JSONObject params) {
+        try {
+            params.put("user_id",
+                    mSessionPreferences.getString(context.getString(R.string.user_id_key), null));
+            params.put("auth_token",
+                    mSessionPreferences.getString(context.getString(R.string.user_auth_token_key), null));
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+
+        return params;
     }
 	
 	public void login(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
@@ -65,7 +105,9 @@ public class APIRequestProxy {
 	}
 
     public void sendForgottonPasswordEmail(JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
-        String url = "https://infinite-river-7560.herokuapp.com/forgot_password?email=" + params.optString("email");
+        String url = "https://infinite-river-7560.herokuapp.com/forgot_password";
+
+        url += convertParamsToUrlParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
 
@@ -73,10 +115,11 @@ public class APIRequestProxy {
     }
 
     public void getGates(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        //Sadly, Volley does not offer a very fluid experience for get requests with params.
         String url = getAbsoluteUrl(GATES_ENDPOINT);
 
-        url = addAuthAsURLParams(url, params);
+        addAuthToParams(params);
+
+        url += convertParamsToUrlParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
@@ -84,44 +127,25 @@ public class APIRequestProxy {
     }
 
     public void leaveGate(Gate gate, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
-        //TODO: Probably want to figure out a better way to make these resourcesful strings with consideration of getAbsoluteUrl method.
-        //TODO: Not a big deal though
+        String url = BASE_URL + "gates/" + gate.getId() + "/leave.json";
 
-        StringBuilder buildUrl  = new StringBuilder(BASE_URL);
-        buildUrl.append("gates")
-                .append("/")
-                .append(gate.getId())
-                .append("/")
-                .append("leave.json");
+        addAuthToParams(params);
 
-        String url = addAuthAsURLParams(buildUrl.toString(), params);
+        url += convertParamsToUrlParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.DELETE, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }
 
-    public void getGatePosts(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void getGatePosts(Gate gate, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        cancelAllFeedRequests();
 
-        StringBuilder buildUrl = new StringBuilder(BASE_URL);
-        buildUrl.append("gates")
-                .append("/")
-                .append(params.optString("gate_id"))
-                .append("/")
-                .append("posts.json");
+        String url = BASE_URL + "gates/" + gate.getId() + "/posts.json";
 
-        String url = addAuthAsURLParams(buildUrl.toString(), params);
+        addAuthToParams(params);
 
-        StringBuilder addPageAndBuffer = new StringBuilder(url);
-
-        if (params.optInt("page", -1) != -1) addPageAndBuffer.append("&page=")
-                                                             .append(params.optInt("page"));
-
-        if (params.opt("infinite_scroll_time_buffer") != null)
-            addPageAndBuffer.append("&infinite-scroll-time-buffer=")
-                            .append(params.opt("infinite_scroll_time_buffer"));
-
-        url = addPageAndBuffer.toString();
+        url += convertParamsToUrlParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
@@ -131,18 +155,13 @@ public class APIRequestProxy {
     }
 
     public void getAggregate(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        cancelAllFeedRequests();
 
         String url = getAbsoluteUrl(AGGREGATE_ENDPOINT);
-        url = addAuthAsURLParams(url, params);
-        StringBuilder buildUrl = new StringBuilder(url);
-        if (params.optInt("page", -1) != -1) buildUrl.append("&page=")
-                                                     .append(params.optInt("page"));
 
-        if (params.opt("infinite_scroll_time_buffer") != null)
-            buildUrl.append("&infinite-scroll-time-buffer=")
-                    .append(params.opt("infinite_scroll_time_buffer"));
+        addAuthToParams(params);
 
-        url = buildUrl.toString();
+        url += convertParamsToUrlParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
@@ -151,16 +170,12 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void getComments(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void getComments(Post post, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "posts/" + post.getId() + "/comments.json";
 
-        StringBuilder buildUrl = new StringBuilder(BASE_URL);
-        buildUrl.append("posts")
-                .append("/")
-                .append(params.optString("post_id"))
-                .append("/")
-                .append("comments.json");
+        addAuthToParams(params);
 
-        String url = addAuthAsURLParams(buildUrl.toString(), params);
+        url += convertParamsToUrlParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
@@ -168,59 +183,45 @@ public class APIRequestProxy {
     }
 
     public void createComment(Post post, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "posts/" + post.getId() + "/comments.json";
 
-        StringBuilder buildUrl = new StringBuilder(BASE_URL);
-        buildUrl.append("posts")
-                .append("/")
-                .append(post.getId())
-                .append("/")
-                .append("comments.json");
+        addAuthToParams(params);
 
-        JsonObjectRequest request = new JsonObjectRequest(Method.POST, buildUrl.toString(), params, listener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }
 
     public void createPost(Gate gate, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "gates/" + gate.getId() + "/posts.json";
 
-        StringBuilder buildUrl = new StringBuilder(BASE_URL);
-        buildUrl.append("gates")
-                .append("/")
-                .append(gate.getId())
-                .append("/")
-                .append("posts.json");
+        addAuthToParams(params);
 
-        JsonObjectRequest request = new JsonObjectRequest(Method.POST, buildUrl.toString(), params, listener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }
 
     public void createGate(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(GATES_ENDPOINT), params, listener, errorListener);
 
         mRequestQueue.add(request);
     }
 
     public void grantAccessToGates(String gatekeeperId, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "gatekeepers/" + gatekeeperId + "/grant_access.json";
 
-        StringBuilder buildUrl  = new StringBuilder(BASE_URL);
-        buildUrl.append("gatekeepers")
-                .append("/")
-                .append(gatekeeperId)
-                .append("/")
-                .append("grant_access.json");
+        addAuthToParams(params);
 
-        JsonObjectRequest request = new JsonObjectRequest(Method.POST, buildUrl.toString(), params, listener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }
 
     public void logout(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        //TODO: Probably want to figure out a better way to make these resourcesful strings with consideration of getAbsoluteUrl method.
-        //TODO: Not a big deal though
-
         String url = BASE_URL + "sessions/logout.json";
+
+        addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
 
@@ -228,14 +229,11 @@ public class APIRequestProxy {
     }
 
     public void upPost(Post post, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL + "posts/" + post.getId() + "/up.json?";
+        String url = BASE_URL + "posts/" + post.getId() + "/up.json";
 
-        SharedPreferences session = context.getSharedPreferences(context.getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
+        addAuthToParams(params);
 
-        if (params.optBoolean("revert")) url += "revert=true&";
-
-        url += "user_id=" + session.getString(context.getString(R.string.user_id_key), null);
-        url += "&auth_token=" + session.getString(context.getString(R.string.user_auth_token_key), null);
+        url += convertParamsToUrlParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
 
@@ -243,14 +241,11 @@ public class APIRequestProxy {
     }
 
     public void upComment(Comment comment, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL + "comments/" + comment.getId() + "/up.json?";
+        String url = BASE_URL + "comments/" + comment.getId() + "/up.json";
 
-        SharedPreferences session = context.getSharedPreferences(context.getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
+        addAuthToParams(params);
 
-        if (params.optBoolean("revert")) url += "revert=true&";
-
-        url += "user_id=" + session.getString(context.getString(R.string.user_id_key), null);
-        url += "&auth_token=" + session.getString(context.getString(R.string.user_auth_token_key), null);
+        url += convertParamsToUrlParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
 

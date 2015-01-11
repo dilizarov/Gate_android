@@ -154,7 +154,7 @@ public class MainActivity extends FragmentActivity {
 
         this.unregisterReceiver(mReceiver);
     }
-    
+
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
         SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 

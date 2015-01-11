@@ -304,8 +304,9 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
         try {
 
             JSONObject params = new JSONObject();
-            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+            params.put("one", "two");
+//            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
+//                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
             Response.Listener<Integer> listener = new Response.Listener<Integer>() {
                 @Override

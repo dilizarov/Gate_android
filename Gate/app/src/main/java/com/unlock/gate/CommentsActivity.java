@@ -257,7 +257,7 @@ public class CommentsActivity extends ListActivity {
                 }
             };
 
-            APIRequestManager.getInstance().doRequest().getComments(params, listener, errorListener);
+            APIRequestManager.getInstance().doRequest().getComments(post, params, listener, errorListener);
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
