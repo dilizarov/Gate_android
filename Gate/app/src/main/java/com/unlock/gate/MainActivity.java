@@ -114,6 +114,11 @@ public class MainActivity extends FragmentActivity {
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         // This will keep tabs on NFC and fire off when it is turned on/off/etc.
         if (mNfcAdapter != null) {
@@ -144,12 +149,12 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
 
         this.unregisterReceiver(mReceiver);
     }
-
+    
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
         SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
