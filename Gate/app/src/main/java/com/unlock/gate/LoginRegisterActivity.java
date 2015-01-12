@@ -284,7 +284,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                             try {
 
                                 if (!deviceRegistered) {
-                                    Butter.down(LoginRegisterActivity.this, "INTERNET WELPED");
+                                    Butter.down(LoginRegisterActivity.this, getString(R.string.volley_network_error));
                                     progressDialog.dismiss();
                                     return;
                                 }
@@ -391,7 +391,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                                             try {
 
                                                 if (!deviceRegistered) {
-                                                    Butter.down(LoginRegisterActivity.this, "INTERNET WELPED");
+                                                    Butter.down(LoginRegisterActivity.this, getString(R.string.volley_network_error));
                                                     progressDialog.dismiss();
                                                     return;
                                                 }

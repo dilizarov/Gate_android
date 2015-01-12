@@ -203,10 +203,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         try {
 
             JSONObject params = new JSONObject();
-            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
-
-            Log.v("page", Integer.toString(page));
 
             if (!refreshing) {
                 if (page > 0) params.put("page", page);
@@ -410,8 +406,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                     try {
                         JSONObject params = new JSONObject();
-                        params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                              .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
                         JSONObject post = new JSONObject();
                         post.put("body", postBody);

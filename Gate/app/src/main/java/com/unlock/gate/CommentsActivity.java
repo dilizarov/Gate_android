@@ -184,83 +184,76 @@ public class CommentsActivity extends ListActivity {
     }
 
     private void requestCommentsAndPopulateListView(final boolean refreshing) {
-        try {
 
-            JSONObject params = new JSONObject();
-            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null))
-                  .put("post_id", post.getId());
+        JSONObject params = new JSONObject();
 
-            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
 
-                    final JSONObject jsonResponse = response;
+                final JSONObject jsonResponse = response;
 
-                    new Thread(new Runnable() {
+                new Thread(new Runnable() {
 
-                        public void run() {
-                            comments.clear();
+                    public void run() {
+                        comments.clear();
 
-                            JSONArray jsonComments = jsonResponse.optJSONArray("comments");
-                            int len = jsonComments.length();
-                            for (int i = 0; i < len; i++) {
-                                JSONObject jsonComment = jsonComments.optJSONObject(i);
-                                Comment comment = new Comment(jsonComment.optString("external_id"),
-                                        jsonComment.optJSONObject("user").optString("name"),
-                                        jsonComment.optString("body"),
-                                        jsonComment.optInt("up_count"),
-                                        jsonComment.optBoolean("uped"),
-                                        jsonComment.optString("created_at"));
+                        JSONArray jsonComments = jsonResponse.optJSONArray("comments");
+                        int len = jsonComments.length();
+                        for (int i = 0; i < len; i++) {
+                            JSONObject jsonComment = jsonComments.optJSONObject(i);
+                            Comment comment = new Comment(jsonComment.optString("external_id"),
+                                    jsonComment.optJSONObject("user").optString("name"),
+                                    jsonComment.optString("body"),
+                                    jsonComment.optInt("up_count"),
+                                    jsonComment.optBoolean("uped"),
+                                    jsonComment.optString("created_at"));
 
-                                comments.add(comment);
-                            }
-
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    adaptNewCommentsToList();
-                                    progressBarHolder.setVisibility(View.GONE);
-
-                                    if (notification) commentsList.setSelection(
-                                            listAdapter.getCount() - 1);
-
-                                    if (refreshing && refreshButton != null) {
-                                        commentsList.setSelection(listAdapter.getCount() - 1);
-                                        refreshButton.setActionView(null);
-                                    }
-
-                                    handleCommentCount(false);
-                                }
-                            });
+                            comments.add(comment);
                         }
 
-                    }).start();
-                }
-            };
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                adaptNewCommentsToList();
+                                progressBarHolder.setVisibility(View.GONE);
 
-            Response.ErrorListener errorListener = new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-                    progressBarHolder.setVisibility(View.GONE);
+                                if (notification) commentsList.setSelection(
+                                        listAdapter.getCount() - 1);
 
-                    if (comments.size() == 0 && volleyError.isConnectionError()) {
-                        noCommentsMessage.setText(R.string.gate_error_message);
-                        noCommentsMessage.setVisibility(View.VISIBLE);
+                                if (refreshing && refreshButton != null) {
+                                    commentsList.setSelection(listAdapter.getCount() - 1);
+                                    refreshButton.setActionView(null);
+                                }
+
+                                handleCommentCount(false);
+                            }
+                        });
                     }
 
-                    Butter.down(CommentsActivity.this, volleyError.getMessage());
+                }).start();
+            }
+        };
 
-                    if (refreshing && refreshButton != null) {
-                        refreshButton.setActionView(null);
-                    }
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                progressBarHolder.setVisibility(View.GONE);
+
+                if (comments.size() == 0 && volleyError.isConnectionError()) {
+                    noCommentsMessage.setText(R.string.gate_error_message);
+                    noCommentsMessage.setVisibility(View.VISIBLE);
                 }
-            };
 
-            APIRequestManager.getInstance().doRequest().getComments(post, params, listener, errorListener);
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-        }
+                Butter.down(CommentsActivity.this, volleyError.getMessage());
+
+                if (refreshing && refreshButton != null) {
+                    refreshButton.setActionView(null);
+                }
+            }
+        };
+
+        APIRequestManager.getInstance().doRequest().getComments(post, params, listener, errorListener);
     }
 
     private void setSendCommentClickListener() {
@@ -331,8 +324,6 @@ public class CommentsActivity extends ListActivity {
             toggleLoadingComment(true);
 
             JSONObject params = new JSONObject();
-            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
             JSONObject commentJson = new JSONObject();
             commentJson.put("body", comment.replaceAll(RegexConstants.NEW_LINE, "\n")

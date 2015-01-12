@@ -91,8 +91,8 @@ public class APIRequestProxy {
 
         return params;
     }
-	
-	public void login(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+
+    public void login(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 		JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(SESSION_ENDPOINT), params, listener, errorListener);
 		
 		mRequestQueue.add(request);
@@ -203,6 +203,8 @@ public class APIRequestProxy {
     }
 
     public void createGate(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        addAuthToParams(params);
+
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(GATES_ENDPOINT), params, listener, errorListener);
 
         mRequestQueue.add(request);
@@ -239,6 +241,7 @@ public class APIRequestProxy {
 
         mRequestQueue.add(request);
     }
+
 
     public void upComment(Comment comment, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "comments/" + comment.getId() + "/up.json";

@@ -229,71 +229,65 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     }
 
     private void requestGatesAndPopulateListView(final boolean refreshing) {
-        try {
 
-            JSONObject params = new JSONObject();
-            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+        JSONObject params = new JSONObject();
 
-            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(final JSONObject response) {
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(final JSONObject response) {
 
-                    new Thread(new Runnable() {
+                new Thread(new Runnable() {
 
-                        public void run() {
-                            gates.clear();
+                    public void run() {
+                        gates.clear();
 
-                            JSONArray jsonGates = response.optJSONArray("gates");
-                            int len = jsonGates.length();
-                            for (int i = 0; i < len; i++) {
-                                JSONObject jsonGate = jsonGates.optJSONObject(i);
-                                Gate gate = new Gate(jsonGate.optString("external_id"),
-                                        jsonGate.optString("name"),
-                                        jsonGate.optInt("users_count"),
-                                        jsonGate.optJSONObject("creator").optString("name"));
+                        JSONArray jsonGates = response.optJSONArray("gates");
+                        int len = jsonGates.length();
+                        for (int i = 0; i < len; i++) {
+                            JSONObject jsonGate = jsonGates.optJSONObject(i);
+                            Gate gate = new Gate(jsonGate.optString("external_id"),
+                                    jsonGate.optString("name"),
+                                    jsonGate.optInt("users_count"),
+                                    jsonGate.optJSONObject("creator").optString("name"));
 
-                                gates.add(gate);
-                            }
-
-                            getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    if (refreshing) {
-                                        mPullToRefreshLayout.setRefreshComplete();
-                                        Butter.down(getActivity(), "Refreshed");
-                                    } else {
-                                        progressBarHolder.setVisibility(View.GONE);
-                                    }
-
-                                    adaptNewGatesToList();
-                                }
-                            });
+                            gates.add(gate);
                         }
 
-                    }).start();
-                }
-            };
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                if (refreshing) {
+                                    mPullToRefreshLayout.setRefreshComplete();
+                                    Butter.down(getActivity(), "Refreshed");
+                                } else {
+                                    progressBarHolder.setVisibility(View.GONE);
+                                }
 
-            Response.ErrorListener errorListener = new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-                    if (refreshing) mPullToRefreshLayout.setRefreshComplete();
-                    progressBarHolder.setVisibility(View.GONE);
-
-                    if (gates.size() == 0 && volleyError.isConnectionError()) {
-                        noGatesMessage.setText(R.string.gate_error_message);
-                        noGatesMessage.setVisibility(View.VISIBLE);
+                                adaptNewGatesToList();
+                            }
+                        });
                     }
 
-                    Butter.down(getActivity(), volleyError.getMessage());
-                }
-            };
+                }).start();
+            }
+        };
 
-            APIRequestManager.getInstance().doRequest().getGates(params, listener, errorListener);
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-        }
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                if (refreshing) mPullToRefreshLayout.setRefreshComplete();
+                progressBarHolder.setVisibility(View.GONE);
+
+                if (gates.size() == 0 && volleyError.isConnectionError()) {
+                    noGatesMessage.setText(R.string.gate_error_message);
+                    noGatesMessage.setVisibility(View.VISIBLE);
+                }
+
+                Butter.down(getActivity(), volleyError.getMessage());
+            }
+        };
+
+        APIRequestManager.getInstance().doRequest().getGates(params, listener, errorListener);
     }
 
     private void leaveGate(final Gate gate) {
@@ -301,40 +295,33 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
         adaptNewGatesToList();
         Butter.down(getActivity(), "Left " + gate.getName());
 
-        try {
+        JSONObject params = new JSONObject();
 
-            JSONObject params = new JSONObject();
-            params.put("one", "two");
-//            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-//                    .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
+        Response.Listener<Integer> listener = new Response.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+                //Don't do anything. Eagerly did actions assuming the request succeeds.
+            }
+        };
 
-            Response.Listener<Integer> listener = new Response.Listener<Integer>() {
-                @Override
-                public void onResponse(Integer response) {
-                    //Don't do anything. Eagerly did actions assuming the request succeeds.
-                }
-            };
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
-            Response.ErrorListener errorListener = new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                // We're just packing one Gate into failedGates because
+                // addGatesToArrayList takes in an ArrayList
+                ArrayList<Gate> failedGates = new ArrayList<Gate>();
+                failedGates.add(gate);
+                addGatesToArrayList(failedGates);
+                adaptNewGatesToList();
 
-                    // We're just packing one Gate into failedGates because
-                    // addGatesToArrayList takes in an ArrayList
-                    ArrayList<Gate> failedGates = new ArrayList<Gate>();
-                    failedGates.add(gate);
-                    addGatesToArrayList(failedGates);
-                    adaptNewGatesToList();
+                Butter.down(getActivity(), volleyError.getMessage());
+            }
+        };
 
-                    Butter.down(getActivity(), volleyError.getMessage());
-                }
-            };
+        APIRequestManager.getInstance().doRequest().leaveGate(gate, params, listener, errorListener);
 
-            APIRequestManager.getInstance().doRequest().leaveGate(gate, params, listener, errorListener);
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-        }
     }
 
     private void setCreateGateClickListener() {
@@ -356,8 +343,6 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
 
                     try {
                         JSONObject params = new JSONObject();
-                        params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                              .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
                         JSONObject gate = new JSONObject();
                         gate.put("name", gateName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));

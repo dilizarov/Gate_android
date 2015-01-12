@@ -227,9 +227,7 @@ public class MainActivity extends FragmentActivity {
         try {
 
             JSONObject params = new JSONObject();
-            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null))
-                  .put("gate_ids", new JSONArray(grantedGateIds));
+            params.put("gate_ids", new JSONArray(grantedGateIds));
 
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
@@ -312,8 +310,6 @@ public class MainActivity extends FragmentActivity {
         try {
 
             JSONObject params = new JSONObject();
-            params.put("user_id", mSessionPreferences.getString(getString(R.string.user_id_key), null))
-                  .put("auth_token", mSessionPreferences.getString(getString(R.string.user_auth_token_key), null));
 
             JSONObject device = new JSONObject();
             device.put("token", getSharedPreferences(getString(R.string.gcm_preferences_key), MODE_PRIVATE)
