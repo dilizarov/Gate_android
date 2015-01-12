@@ -80,6 +80,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
     private String regId;
     private final static String PROPERTY_REG_ID = "registration_id";
     private final static String PROPERTY_APP_VERSION = "app_version";
+    private final String SENDER_ID = "222761912510";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -154,12 +155,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 			public void onClick(View v) {
 				forgotPassword.setVisibility(View.INVISIBLE);
 				Fade.hide(userPassword, new AnimatorListenerAdapter() {
-					public void onAnimationEnd(Animator animation) {
-						userPassword.setAlpha(1);
-						userPassword.setVisibility(View.INVISIBLE);
-						userPassword.animate().setListener(null);
-					}
-					
+
 					public void onAnimationStart(Animator animation) {
 						commandButton.setText(R.string.send_email);
 						toggleRegistrationLogin.setText(R.string.toggle_login);
@@ -220,9 +216,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 					} else {
 						Fade.hide(userFullName, new AnimatorListenerAdapter() {
 							public void onAnimationEnd(Animator animation) {
-								userFullName.setAlpha(1);
-								userFullName.setVisibility(View.INVISIBLE);
-								userFullName.animate().setListener(null);
 								forgotPassword.setVisibility(View.VISIBLE);
 							}
 							
@@ -669,9 +662,8 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
         regId = getRegistrationId(this);
         if (regId == null) {
             try {
-                regId = gcm.register("222761912510");
+                regId = gcm.register(SENDER_ID);
                 storeRegistrationId(this);
-                Log.v("RegID", regId);
             } catch (IOException io) {
                 gcmRequestSucceeded = false;
             }

@@ -30,6 +30,8 @@ public class GcmIntentService extends IntentService {
 
     private static final int GATE_NOTIFICATION_ID = 1;
 
+    private static final int NOTIF_LIGHT_INTERVAL = 2000;
+
     private static int notification_type;
 
     private NotificationManager mNotificationManager;
@@ -80,7 +82,7 @@ public class GcmIntentService extends IntentService {
                 .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(extras.getString("extended_text"))
                 )
-                .setLights(Color.WHITE, 2000, 2000)
+                .setLights(Color.WHITE, NOTIF_LIGHT_INTERVAL, NOTIF_LIGHT_INTERVAL)
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -92,7 +94,6 @@ public class GcmIntentService extends IntentService {
         mBuilder.setContentIntent(contentIntent);
 
         Notification notification = mBuilder.build();
-        notification.ledARGB = 0xffffff;
         notification.tickerText = extras.getString("gate") + "\n" +
                                   extras.getString("summary") + "\n" +
                                   extras.getString("extended_text");
@@ -113,7 +114,7 @@ public class GcmIntentService extends IntentService {
                 .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(extras.getString("extended_text"))
                 )
-                .setLights(Color.WHITE, 2000, 2000)
+                .setLights(Color.WHITE, NOTIF_LIGHT_INTERVAL, NOTIF_LIGHT_INTERVAL)
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 
         Intent intent = new Intent(this, CommentsActivity.class);

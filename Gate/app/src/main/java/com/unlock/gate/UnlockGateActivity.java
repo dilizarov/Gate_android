@@ -145,12 +145,7 @@ public class UnlockGateActivity extends Activity {
                                 Fade.hide(gateSelector, new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
-                                        gateSelector.setAlpha(1);
-                                        gateSelector.setVisibility(View.GONE);
-                                        gateSelector.animate().setListener(null);
-
                                         animateTutorial();
-
                                     }
                                 });
 
@@ -274,15 +269,7 @@ public class UnlockGateActivity extends Activity {
                         tutorialText.setText("Gates unlocked");
                         Rotate3dAnimation rotateBack = new Rotate3dAnimation(phone == 0 ? -90 : 90, 0, phoneCenterX, phoneCenterY, 0, true);
 
-                        Fade.hide(phoneSide(phone), new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                phoneSide(phone).setAlpha(1f);
-                                phoneSide(phone).setVisibility(View.INVISIBLE);
-                                phoneSide(phone).animate().setListener(null);
-                            }
-                        });
+                        Fade.hide(phoneSide(phone));
 
                         rotateBack.setDuration(STEP_DURATION);
                         rotateBack.setFillAfter(true);

@@ -2,6 +2,7 @@ package com.unlock.gate.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
@@ -47,19 +48,6 @@ public class APIRequestProxy {
 		return BASE_URL + endpoint;
 	}
 
-    // Requires user_id and auth_token as params
-//    private String addAuthAsURLParams(String url, JSONObject params) {
-//        StringBuilder buildURLParams = new StringBuilder(url);
-//        buildURLParams.append("?")
-//                      .append("user_id=")
-//                      .append(params.optString("user_id"))
-//                      .append("&")
-//                      .append("auth_token=")
-//                      .append(params.optString("auth_token"));
-//
-//        return buildURLParams.toString();
-//    }
-
     public String convertParamsToUrlParams(JSONObject params) {
         StringBuilder buildUrlParams = new StringBuilder();
 
@@ -76,6 +64,8 @@ public class APIRequestProxy {
                           .append(params.optString(keys.optString(i)));
         }
 
+
+        Log.v("converted Params", buildUrlParams.toString());
         return buildUrlParams.toString();
     }
 

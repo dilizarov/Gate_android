@@ -3,14 +3,12 @@ package com.unlock.gate;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,7 +64,6 @@ public class CommentsActivity extends ListActivity {
     private ArrayList<Comment> comments;
     private ArrayList<Comment> adapterComments;
     private CommentsListAdapter listAdapter;
-    private SharedPreferences mSessionPreferences;
     private boolean creatingComment;
 
     private boolean notification;
@@ -81,9 +78,6 @@ public class CommentsActivity extends ListActivity {
         setContentView(R.layout.activity_comments);
 
         getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
-
-        mSessionPreferences = getSharedPreferences(
-                getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
         instantiateViews();
 
@@ -278,8 +272,6 @@ public class CommentsActivity extends ListActivity {
             public void onClick(View v) {
 
                 String body = postBody.getText().toString();
-
-                Log.v("Body Size", Integer.toString(body.length()));
 
                 if (body.length() < BODY_CUTOFF) return;
                 else if (body.length() == BODY_CUTOFF && body.substring(BODY_CUTOFF - 3, BODY_CUTOFF).equals("...")) {

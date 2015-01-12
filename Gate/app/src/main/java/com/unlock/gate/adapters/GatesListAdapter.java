@@ -20,21 +20,26 @@ public class GatesListAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater mInflater;
-    private List<Gate> gateItems;
+    private List<Gate> gates;
 
-    public GatesListAdapter(Context context, List<Gate> gateItems) {
+    static class ViewHolder {
+        TextView gateItemName;
+        TextView gateUserCount;
+    }
+
+    public GatesListAdapter(Context context, List<Gate> gates) {
         this.context = context;
-        this.gateItems = gateItems;
+        this.gates = gates;
     }
 
     @Override
     public int getCount() {
-        return gateItems.size();
+        return gates.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return gateItems.get(position);
+        return gates.get(position);
     }
 
     @Override
@@ -44,8 +49,21 @@ public class GatesListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewHolder;
+
         if (mInflater == null) mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null) convertView = mInflater.inflate(R.layout.gate_item, null);
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.gate_item, null);
+
+            viewHolder = new ViewHolder();
+
+            viewHolder.gateItemName  = (TextView) convertView.findViewById(R.id.gateItemName);
+            viewHolder.gateUserCount = (TextView) convertView.findViewById(R.id.usersCount);
+
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
 
         if (position % 2 == 1) {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
@@ -53,13 +71,10 @@ public class GatesListAdapter extends BaseAdapter {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
 
-        TextView gateItemName = (TextView) convertView.findViewById(R.id.gateItemName);
-        TextView gateUserCount = (TextView) convertView.findViewById(R.id.usersCount);
+        Gate gate = gates.get(position);
 
-        Gate gate = gateItems.get(position);
-
-        gateItemName.setText(gate.getName());
-        gateUserCount.setText(context.getResources()
+        viewHolder.gateItemName.setText(gate.getName());
+        viewHolder.gateUserCount.setText(context.getResources()
                 .getQuantityString(R.plurals.users_count,
                                    gate.getUsersCount(),
                                    gate.getUsersCount()));

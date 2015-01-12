@@ -100,16 +100,6 @@ public class Comment implements Parcelable {
         } else {
             timestamp = Years.yearsBetween(timeCreated, now).getYears() + "y";
         }
-
-//        DateTime tenSecondsAgo = DateTime.now().minusSeconds(10);
-//        if (DateTimeComparator.getInstance().compare(timeCreated, tenSecondsAgo) == 1)
-//            timestamp = "moments ago";
-//        else {
-//            timestamp = DateUtils.getRelativeTimeSpanString(timeCreated.getMillis(),
-//                    System.currentTimeMillis(),
-//                    DateUtils.SECOND_IN_MILLIS).toString();
-//
-//        }
     }
 
     //Parcelable implementation

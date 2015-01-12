@@ -1,10 +1,8 @@
 package com.unlock.gate;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -49,7 +47,6 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     private GatesListAdapter listAdapter;
     private ArrayList<Gate> gates;
     private ArrayList<Gate> adapterGates;
-    private SharedPreferences mSessionPreferences;
     private PullToRefreshLayout mPullToRefreshLayout;
     private Button viewAggregate;
 
@@ -109,9 +106,6 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        mSessionPreferences = this.getActivity().getSharedPreferences(
-                getString(R.string.session_shared_preferences_key), Context.MODE_PRIVATE);
 
         gatesList = getListView();
 
