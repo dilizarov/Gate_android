@@ -174,15 +174,14 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     public void getGateFeed(Gate gate, boolean refresh) {
         ((MainActivity) getActivity()).setTitle(gate);
 
-        if (!onAggregateAndGettingAggregate(gate) &&
-            !onGateAndGettingSameGate(gate) ||
+        if ((!onAggregateAndGettingAggregate(gate) &&
+            !onGateAndGettingSameGate(gate)) ||
             refresh) {
 
             mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
                     (gate != null) ? gate.serialize() : null).apply();
-
-            currentGate = gate;
             feed.setSelection(0);
+            currentGate = gate;
             progressBarHolder.setVisibility(View.VISIBLE);
             infiniteScrollListener.setAtEndOfList(false);
             requestPostsAndPopulateListView(true, true);
@@ -207,7 +206,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 if (page > 0) params.put("page", page);
 
                 if (infiniteScrollTimeBuffer != null)
-                    params.put("infinite-scroll-time-buffer", infiniteScrollTimeBuffer);
+                    params.put("infinite_scroll_time_buffer", infiniteScrollTimeBuffer);
             }
 
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
