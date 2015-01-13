@@ -94,8 +94,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		
 		mSessionPreferences  = getSharedPreferences(
 				getString(R.string.session_shared_preferences_key), MODE_PRIVATE); 
-		
-		viewState = State.LOGIN;
 
         if (mSessionPreferences.contains(getString(R.string.user_auth_token_key))) {
             Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
@@ -104,6 +102,23 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
         } else {
             instantiateViews();
 
+            if (savedInstanceState != null) {
+                viewState = State.valueOf(savedInstanceState.getString("viewState"));
+                if (viewState == State.REGISTRATION) {
+                    forgotPassword.setVisibility(View.INVISIBLE);
+                    userFullName.setVisibility(View.VISIBLE);
+                    commandButton.setText(R.string.register);
+                    toggleRegistrationLogin.setText(R.string.toggle_login);
+                } else if (viewState == State.FORGOT_PASSWORD) {
+                    forgotPassword.setVisibility(View.INVISIBLE);
+                    userPassword.setVisibility(View.INVISIBLE);
+                    commandButton.setText(R.string.send_email);
+                    toggleRegistrationLogin.setText(R.string.toggle_login);
+
+                }
+            } else {
+                viewState = State.LOGIN;
+            }
             // External services just make it easier to get and set at the same time.
             getAndSetEmail();
             getAndSetFullName();
@@ -679,6 +694,13 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
         }
 
         return gcmRequestSucceeded;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("viewState", viewState.name());
     }
 
 	@Override

@@ -199,7 +199,14 @@ public class MainActivity extends FragmentActivity {
             //grantedGateIdsString is "id, id2, id3, id4, id5" where idx is a UUID.
             ArrayList<String> grantedGateIds = new ArrayList<String>(Arrays.asList(grantedGateIdsString.split(", ")));
 
-            progressDialog = ProgressDialog.show(MainActivity.this, "", "Unlocking gates...", false, true);
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.unlocking_gates));
+            progressDialog.setIndeterminate(true);
+            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progress));
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
             grantAccessToGates(grantedGateIds, gatekeeperId, gatekeeperName);
         }
     }

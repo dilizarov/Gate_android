@@ -57,6 +57,7 @@
         <item>Gates</item>
     </string-array>
     <string name="unlock_gates">Unlock Gates</string>
+    <string name="unlocking_gates">Unlocking Gates...</string>
     <string name="logout">Log out</string>
     <string name="settings">Settings</string>
 
