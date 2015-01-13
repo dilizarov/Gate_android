@@ -2,7 +2,6 @@ package com.unlock.gate.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
@@ -22,7 +21,8 @@ public class APIRequestProxy {
 	
 	private final String BASE_URL = "https://infinite-river-7560.herokuapp.com/api/v1/";
 
-    private final String ANDROID_API_KEY = "placeholder";
+    // Not secure right now, but in time we'll deal with that
+    private final String API_KEY = "09b19f4a-6e4d-475a-b7c8-a369c60e9f83";
 
 	private final String SESSION_ENDPOINT = "sessions.json";
 	private final String REGISTRATION_ENDPOINT = "registrations.json";
@@ -64,8 +64,6 @@ public class APIRequestProxy {
                           .append(params.optString(keys.optString(i)));
         }
 
-
-        Log.v("converted Params", buildUrlParams.toString());
         return buildUrlParams.toString();
     }
 
@@ -82,14 +80,26 @@ public class APIRequestProxy {
         return params;
     }
 
+    public JSONObject addAPIKeyToParams(JSONObject params) {
+        try {
+            params.put("api_key", API_KEY);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+
+        return params;
+    }
+
     public void login(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-		JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(SESSION_ENDPOINT), params, listener, errorListener);
+		addAPIKeyToParams(params);
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(SESSION_ENDPOINT), params, listener, errorListener);
 		
 		mRequestQueue.add(request);
 	}
 	
 	public void register(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-		JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(REGISTRATION_ENDPOINT), params, listener, errorListener);
+        addAPIKeyToParams(params);
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(REGISTRATION_ENDPOINT), params, listener, errorListener);
 	
 		mRequestQueue.add(request);
 	}
@@ -107,6 +117,7 @@ public class APIRequestProxy {
     public void getGates(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = getAbsoluteUrl(GATES_ENDPOINT);
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         url += convertParamsToUrlParams(params);
@@ -119,6 +130,7 @@ public class APIRequestProxy {
     public void leaveGate(Gate gate, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "gates/" + gate.getId() + "/leave.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         url += convertParamsToUrlParams(params);
@@ -131,6 +143,7 @@ public class APIRequestProxy {
     public void getGatePosts(Gate gate, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "gates/" + gate.getId() + "/posts.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         url += convertParamsToUrlParams(params);
@@ -145,6 +158,7 @@ public class APIRequestProxy {
     public void getAggregate(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = getAbsoluteUrl(AGGREGATE_ENDPOINT);
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         url += convertParamsToUrlParams(params);
@@ -159,6 +173,7 @@ public class APIRequestProxy {
     public void getComments(Post post, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "posts/" + post.getId() + "/comments.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         url += convertParamsToUrlParams(params);
@@ -171,6 +186,7 @@ public class APIRequestProxy {
     public void createComment(Post post, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "posts/" + post.getId() + "/comments.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
@@ -181,6 +197,7 @@ public class APIRequestProxy {
     public void createPost(Gate gate, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "gates/" + gate.getId() + "/posts.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
@@ -189,6 +206,7 @@ public class APIRequestProxy {
     }
 
     public void createGate(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(GATES_ENDPOINT), params, listener, errorListener);
@@ -199,6 +217,7 @@ public class APIRequestProxy {
     public void grantAccessToGates(String gatekeeperId, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "gatekeepers/" + gatekeeperId + "/grant_access.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
@@ -209,6 +228,7 @@ public class APIRequestProxy {
     public void logout(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "sessions/logout.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
@@ -219,6 +239,7 @@ public class APIRequestProxy {
     public void upPost(Post post, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "posts/" + post.getId() + "/up.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         url += convertParamsToUrlParams(params);
@@ -232,6 +253,7 @@ public class APIRequestProxy {
     public void upComment(Comment comment, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "comments/" + comment.getId() + "/up.json";
 
+        addAPIKeyToParams(params);
         addAuthToParams(params);
 
         url += convertParamsToUrlParams(params);

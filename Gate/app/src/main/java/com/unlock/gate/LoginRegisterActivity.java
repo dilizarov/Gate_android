@@ -20,7 +20,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -554,7 +553,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 						new String[] { GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
 				startActivityForResult(intent, EMAIL_REQUEST_INTENT);
 			} catch (ActivityNotFoundException e) {
-				Log.v("EMAIL_REQUEST_INTENT", "Activity was not found");
+				e.printStackTrace();
 			}
 		} else {
             userEmail.setText(mEmail);
@@ -636,14 +635,12 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
         final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(PROPERTY_REG_ID, null);
         if (registrationId == null) {
-            Log.i("RegistrationId", "Registration not found");
             return null;
         }
 
         int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
-            Log.i("RegistrationId", "Registration not found");
             return null;
         }
 

@@ -1,6 +1,10 @@
 #built application files
 Gate/*.apk
+Gate/app/*.apk
 Gate/*.ap_
+
+# Key store for signing
+Gate.jks
 
 # files for the dex VM
 Gate/*.dex

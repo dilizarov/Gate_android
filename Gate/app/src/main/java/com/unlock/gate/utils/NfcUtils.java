@@ -5,7 +5,6 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Parcelable;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -72,8 +71,6 @@ public class NfcUtils {
                         message
                 };
             }
-        } else {
-            Log.d("Gate Ndef Message", "Unknown intent");
         }
 
         return messages;

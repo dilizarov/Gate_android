@@ -1,7 +1,5 @@
 package com.unlock.gate.utils;
 
-import android.util.Log;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
@@ -127,7 +125,7 @@ public class VolleyErrorHandler {
             mMessage = errorString.toString();
 
 		} catch (UnsupportedEncodingException uee) {
-			Log.v("String Encoding Error", "Problem converting error data from server to utf-8. Talk to Rails people.");
+			uee.printStackTrace();
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
