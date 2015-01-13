@@ -11,13 +11,16 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" >
+        android:gravity="center"
+        android:visibility="gone">
 
         <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-        />
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress"
+            />
 
     </LinearLayout>
 
@@ -51,6 +54,20 @@
                 android:overScrollMode="never"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"/>
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleSmall"
+                android:id="@+id/gateLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:visibility="gone"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/progress"
+                />
 
         </RelativeLayout>
 

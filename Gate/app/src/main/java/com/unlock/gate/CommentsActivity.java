@@ -479,7 +479,10 @@ public class CommentsActivity extends ListActivity {
                 return true;
             case R.id.action_refresh_comments:
                 if (refreshButton == null) refreshButton = item;
-                refreshButton.setActionView(new ProgressBar(this));
+                ProgressBar progressBar = new ProgressBar(this);
+                progressBar.setIndeterminate(true);
+                progressBar.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progress_action_bar));
+                refreshButton.setActionView(progressBar);
                 requestCommentsAndPopulateListView(true);
                 return true;
         }

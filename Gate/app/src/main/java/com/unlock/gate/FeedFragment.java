@@ -192,6 +192,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
             currentGate = gate;
             progressBarHolder.setVisibility(View.VISIBLE);
+
             infiniteScrollListener.setAtEndOfList(false);
             requestPostsAndPopulateListView(true, true);
         }
@@ -418,7 +419,13 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                     // We only need to show a post is loading if we're on the same gate
                     // or if we're in the Aggregate
                     if (onGateAndGettingSameGate(gate) || currentGate == null) {
-                        postLoading.setVisibility(View.VISIBLE);
+                        feed.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                feed.setSelection(0);
+                            }
+                        });
+
                         expandCreatedPostLoading();
                     }
 
@@ -454,18 +461,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                                     posts.add(0, post);
                                     adaptNewPostsToFeed();
-                                    feed.setSelection(0);
 
-
-                                    // If we don't postDelayed, this clashes with setSelection
-                                    // functionality.
-                                    feed.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            collapseCreatedPostLoading();
-                                        }
-                                    }, 200);
-
+                                    collapseCreatedPostLoading();
                                 } else {
                                     Butter.down(getActivity(), "Successfully posted to another Gate");
                                 }
@@ -553,6 +550,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     }
 
     public void expandCreatedPostLoading() {
+        postLoading.setVisibility(View.VISIBLE);
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         postLoading.measure(widthSpec, heightSpec);

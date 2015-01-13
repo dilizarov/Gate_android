@@ -42,7 +42,7 @@
     <string name="forgotton_password_email_sent">Email sent</string>
     <string name="progress_dialog_server_processing_request">Robots processing...</string>
     <string name="confirm_registration_dialog_title">One more step...</string>
-    <string name="confirm_registration">Tap YES to indicate you have read the Privacy Policy and that you agree to our Terms of Service</string>
+    <string name="confirm_registration">Honestly, the Privacy Policy and Terms of Service aren\'t written yet. We\'re hard at work trying to perfect this awesome product. When these documents are officially drafted, we\'ll send you an email. Is that alright?</string>
 
     <!-- VolleyErrorHandler specific -->
     <string name="volley_network_error">We couldn\'t connect to the internet</string>

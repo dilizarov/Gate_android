@@ -75,6 +75,8 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	
 	private State viewState;
 
+    private ProgressDialog progressDialog;
+
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private GoogleCloudMessaging gcm;
     private String regId;
@@ -115,6 +117,13 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
             handleTerms();
             handleToggleLoginRegistration();
             handleCommandButton();
+
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.progress_dialog_server_processing_request));
+            progressDialog.setIndeterminate(true);
+            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progress));
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
         }
 
 	}
@@ -171,8 +180,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		terms.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//TODO
-				Log.v("Click terms", "Look, you're clicking me!");
+				Butter.down(LoginRegisterActivity.this, "Robots are hard at work getting these documents in order. They should be finished by the Beta version of Gate!");
 			}
 		});
 	}
@@ -262,8 +270,10 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 
             if (mPassword.length() == 0) userPassword.setError(getString(R.string.no_password_inputted));
 		} else {
-			final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "",
-						getString(R.string.progress_dialog_server_processing_request), false, true);
+//			final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "",
+//						getString(R.string.progress_dialog_server_processing_request), false, true);
+
+            progressDialog.show();
 
             new Thread(new Runnable() {
                 @Override
@@ -359,7 +369,8 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();				
+							dialog.dismiss();
+                            Butter.between(LoginRegisterActivity.this, "A robot just discovered what it feels like to be sad :(");
 						}
 					})
 			
@@ -369,8 +380,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
 
-                            final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "",
-                                    getString(R.string.progress_dialog_server_processing_request), false, true);
+                            progressDialog.show();
 
                             new Thread(new Runnable() {
                                 @Override
@@ -460,10 +470,9 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 		else if(!CustomValidator.isValidEmail(mEmail)) userEmail.setError(getString(R.string.improper_email_format));
 		else {
 			try {
-				final ProgressDialog progressDialog = ProgressDialog.show(LoginRegisterActivity.this, "", 
-						getString(R.string.progress_dialog_server_processing_request), false, true);
-			
-				JSONObject params = new JSONObject();
+                progressDialog.show();
+
+                JSONObject params = new JSONObject();
 			
 				params.put("email", mEmail);
 

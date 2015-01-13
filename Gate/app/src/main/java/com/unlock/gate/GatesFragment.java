@@ -1,21 +1,19 @@
 package com.unlock.gate;
 
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -56,6 +54,8 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
 
     private TextView noGatesMessage;
     private LinearLayout progressBarHolder;
+
+    private ProgressBar gateLoading;
 
     private final int CREATE_GATE_INTENT = 1;
 
@@ -120,6 +120,8 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
 
         noGatesMessage = (TextView) this.getActivity().findViewById(R.id.noGatesMessage);
         progressBarHolder = (LinearLayout) this.getActivity().findViewById(R.id.gateProgressBarHolder);
+
+        gateLoading = (ProgressBar) this.getActivity().findViewById(R.id.gateLoading);
 
         createGate = (Button) this.getActivity().findViewById(R.id.createGate);
 
@@ -251,7 +253,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                             gates.add(gate);
                         }
 
-                        if (getActivity() == null) return;
+
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
                                 if (refreshing) {
@@ -344,6 +346,8 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                 if (resultCode == getActivity().RESULT_OK) {
                     final String gateName = data.getStringExtra("gateName");
 
+                    expandCreatedGateLoading();
+
                     try {
                         JSONObject params = new JSONObject();
 
@@ -366,16 +370,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
 
                                 addGatesToArrayList(newGates);
 
-                                Animation anim = AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left);
-                                anim.setDuration(1000);
-
                                 final int index = gates.indexOf(gate);
-
-                                float pixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, new DisplayMetrics());
-
-                                if (gatesList.getFirstVisiblePosition() <= index &&
-                                    index <= gatesList.getLastVisiblePosition())
-                                    gatesList.getChildAt(index - gatesList.getFirstVisiblePosition()).startAnimation(anim);
 
                                 gatesList.post(new Runnable() {
                                     @Override
@@ -383,9 +378,17 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                                         gatesList.setSelection(index);
                                     }
                                 });
-//                                gatesList.smoothScrollToPositionFromTop(index, gatesList.getHeight()/2 - gatesList.getChildAt(0).getHeight()/2, 500);
+
+
 
                                 adaptNewGatesToList();
+
+                                gatesList.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        collapseCreatedGateLoading();
+                                    }
+                                }, 200);
                             }
                         };
 
@@ -479,4 +482,39 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
         listAdapter.notifyDataSetChanged();
     }
 
+    public void expandCreatedGateLoading() {
+        gateLoading.setVisibility(View.VISIBLE);
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        gateLoading.measure(widthSpec, heightSpec);
+
+        ValueAnimator animator = slideAnimator(0, gateLoading.getMeasuredHeight(), gateLoading);
+        animator.start();
+    }
+
+    public void collapseCreatedGateLoading() {
+        int finalHeight = gateLoading.getHeight();
+
+        ValueAnimator animator = slideAnimator(finalHeight, 0, gateLoading);
+        animator.start();
+    }
+
+    public static ValueAnimator slideAnimator(int start, int end, final ProgressBar gateLoading) {
+
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+                int value = (Integer) animation.getAnimatedValue();
+
+                ViewGroup.LayoutParams layoutParams = gateLoading.getLayoutParams();
+                layoutParams.height = value;
+                gateLoading.setLayoutParams(layoutParams);
+            }
+        });
+
+        return animator;
+    }
 }
