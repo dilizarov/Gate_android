@@ -113,7 +113,7 @@ public class CreatePostActivity extends Activity {
 
         if (currentGate != null) gateSelection.setText(currentGate.getName());
 
-        if (intent.getStringExtra("postBody") != null) postBody.setText(intent.getStringExtra("postBody"));
+        if (intent.getStringExtra("postBody") != null) postBody.append(intent.getStringExtra("postBody"));
 
         if (intent.getStringExtra("errorMessage") != null) {
             Butter.between(this, intent.getStringExtra("errorMessage"));

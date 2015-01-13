@@ -5,9 +5,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -272,8 +276,12 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                 if (refreshing) mPullToRefreshLayout.setRefreshComplete();
                 progressBarHolder.setVisibility(View.GONE);
 
-                if (gates.size() == 0 && volleyError.isConnectionError()) {
-                    noGatesMessage.setText(R.string.gate_error_message);
+                if (gates.size() == 0) {
+                    if (volleyError.isConnectionError())
+                        noGatesMessage.setText(R.string.volley_no_connection_error);
+                    else
+                        noGatesMessage.setText(R.string.gate_error_message);
+
                     noGatesMessage.setVisibility(View.VISIBLE);
                 }
 
@@ -356,6 +364,26 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                                 newGates.add(gate);
 
                                 addGatesToArrayList(newGates);
+
+                                Animation anim = AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left);
+                                anim.setDuration(1000);
+
+                                final int index = gates.indexOf(gate);
+
+                                float pixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, new DisplayMetrics());
+
+                                if (gatesList.getFirstVisiblePosition() <= index &&
+                                    index <= gatesList.getLastVisiblePosition())
+                                    gatesList.getChildAt(index - gatesList.getFirstVisiblePosition()).startAnimation(anim);
+
+                                gatesList.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        gatesList.setSelection(index);
+                                    }
+                                });
+//                                gatesList.smoothScrollToPositionFromTop(index, gatesList.getHeight()/2 - gatesList.getChildAt(0).getHeight()/2, 500);
+
                                 adaptNewGatesToList();
                             }
                         };

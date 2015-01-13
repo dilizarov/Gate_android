@@ -72,17 +72,7 @@ public class MainActivity extends FragmentActivity {
             final String action = intent.getAction();
 
             if (action.equals(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)) {
-                final int state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE,
-                                                     NfcAdapter.STATE_OFF);
-
-                switch (state) {
-                    case NfcAdapter.STATE_OFF:
-                    case NfcAdapter.STATE_TURNING_OFF:
-                    case NfcAdapter.STATE_ON:
-                    case NfcAdapter.STATE_TURNING_ON:
-                        checkNFCEnabled();
-                        break;
-                }
+                checkNFCEnabled();
             }
         }
     };
@@ -117,20 +107,16 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
+        checkNFCEnabled();
 
         // This will keep tabs on NFC and fire off when it is turned on/off/etc.
         if (mNfcAdapter != null) {
             IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
             this.registerReceiver(mReceiver, filter);
         }
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        checkNFCEnabled();
 
         Intent callingIntent = getIntent();
         Bundle extras = callingIntent.getExtras();
@@ -144,15 +130,10 @@ public class MainActivity extends FragmentActivity {
     public void onPause() {
         super.onPause();
 
+        this.unregisterReceiver(mReceiver);
+
         if (mNfcAdapter != null && mNfcAdapter.isEnabled())
             mNfcAdapter.disableForegroundDispatch(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        this.unregisterReceiver(mReceiver);
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {

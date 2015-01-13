@@ -25,7 +25,7 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
 
     public InfiniteScrollListener(int currentPage, int itemCount) {
         this.currentPage = currentPage;
-        this.itemCount = itemCount;
+        this.itemCount = (itemCount < 15) ? Integer.MAX_VALUE : itemCount;
     }
 
     public InfiniteScrollListener() {}
@@ -70,8 +70,7 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-        if (atEndOfList) return;
+        if (atEndOfList || totalItemCount < 15) return;
 
         if (totalItemCount < itemCount) {
             this.itemCount = totalItemCount;

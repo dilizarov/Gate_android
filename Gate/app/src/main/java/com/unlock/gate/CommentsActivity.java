@@ -234,8 +234,12 @@ public class CommentsActivity extends ListActivity {
                 VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                 progressBarHolder.setVisibility(View.GONE);
 
-                if (comments.size() == 0 && volleyError.isConnectionError()) {
-                    noCommentsMessage.setText(R.string.gate_error_message);
+                if (comments.size() == 0) {
+                    if (volleyError.isConnectionError())
+                        noCommentsMessage.setText(R.string.volley_no_connection_error);
+                    else
+                        noCommentsMessage.setText(R.string.gate_error_message);
+
                     noCommentsMessage.setVisibility(View.VISIBLE);
                 }
 

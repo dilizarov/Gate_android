@@ -129,8 +129,6 @@ public class APIRequestProxy {
     }
 
     public void getGatePosts(Gate gate, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        cancelAllFeedRequests();
-
         String url = BASE_URL + "gates/" + gate.getId() + "/posts.json";
 
         addAuthToParams(params);
@@ -145,8 +143,6 @@ public class APIRequestProxy {
     }
 
     public void getAggregate(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        cancelAllFeedRequests();
-
         String url = getAbsoluteUrl(AGGREGATE_ENDPOINT);
 
         addAuthToParams(params);

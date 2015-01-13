@@ -13,7 +13,7 @@
     <string name="user_last_gate_viewed_key">UserLastGate</string>
     <string name="yes_caps">YES</string>
     <string name="no_caps">NO</string>
-    <string name="gate_error_message">Something went wrong.</string>
+    <string name="gate_error_message">Something went wrong</string>
 
     <!-- UnlockGatesActivity specific -->
     <string name="unlock">Unlock</string>

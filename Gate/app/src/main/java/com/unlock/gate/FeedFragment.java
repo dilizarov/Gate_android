@@ -1,5 +1,6 @@
 package com.unlock.gate;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -142,13 +143,12 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         if (savedInstanceState != null) {
             posts            = savedInstanceState.getParcelableArrayList("posts");
-            currentGate   = savedInstanceState.getParcelable("currentGate");
+            currentGate      = savedInstanceState.getParcelable("currentGate");
             infiniteScrollTimeBuffer =
                     (DateTime) savedInstanceState.getSerializable("infiniteScrollTimeBuffer");
             currentPage      = savedInstanceState.getInt("currentPage");
             int index        = savedInstanceState.getInt("feedsFirstVisiblePosition");
             int top          = savedInstanceState.getInt("topOfFeed");
-            currentPage      = savedInstanceState.getInt("currentPage");
 
             progressBarHolder.setVisibility(View.GONE);
             setPositionInList(index, top);
@@ -157,6 +157,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             setInfiniteScrollListener(savedInstanceState.getBoolean("atEndOfList"));
         } else {
             setInfiniteScrollListener(false);
+            requestPostsAndPopulateListView(true, true);
         }
 
         ((MainActivity) getActivity()).setTitle(currentGate);
@@ -178,14 +179,22 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
             !onGateAndGettingSameGate(gate)) ||
             refresh) {
 
+            APIRequestManager.getInstance().cancelAllFeedRequests();
+
             mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
                     (gate != null) ? gate.serialize() : null).apply();
-            feed.setSelection(0);
+
+            feed.post(new Runnable() {
+                @Override
+                public void run() {
+                    feed.setSelection(0);
+                }
+            });
+
             currentGate = gate;
             progressBarHolder.setVisibility(View.VISIBLE);
             infiniteScrollListener.setAtEndOfList(false);
             requestPostsAndPopulateListView(true, true);
-            setCurrentPage(1);
         }
     }
 
@@ -223,7 +232,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                             JSONArray jsonPosts = jsonResponse.optJSONArray("posts");
                             int len = jsonPosts.length();
 
-                            if (len == 0) infiniteScrollListener.reachedEndOfList();
+                            // Pages have 15 posts each. If the last page hands us 15,
+                            // the very next request for more posts will hand back 0.
+                            if (len < 15) infiniteScrollListener.reachedEndOfList();
 
                             for (int i = 0; i < len; i++) {
                                 JSONObject jsonPost = jsonPosts.optJSONObject(i);
@@ -237,17 +248,23 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                         jsonPost.optBoolean("uped"),
                                         jsonPost.optString("created_at"));
 
+                                // Server accounts for posts created before this time, so we need
+                                // to add a millisecond so this gets caught.
                                 if (i == 0 && (infiniteScrollTimeBuffer == null || refreshing))
-                                    infiniteScrollTimeBuffer = post.getTimeCreated();
+                                    infiniteScrollTimeBuffer = post.getTimeCreated().plusMillis(1);
 
                                 posts.add(post);
                             }
 
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
+                                    Log.v("changingGate", Boolean.toString(changingGates));
+                                    Log.v("currentGate", (currentGate == null) ? "Aggregate" : currentGate.getName());
+
                                     if (refreshing) {
                                         setCurrentPage(1);
                                         mPullToRefreshLayout.setRefreshComplete();
+
                                         if (changingGates)
                                             Butter.down(getActivity(),
                                                     currentGate == null
@@ -278,8 +295,12 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                     if (refreshing) mPullToRefreshLayout.setRefreshComplete();
                     progressBarHolder.setVisibility(View.GONE);
 
-                    if (posts.size() == 0 && volleyError.isConnectionError()) {
-                        noPostsMessage.setText(R.string.gate_error_message);
+                    if (posts.size() == 0) {
+                        if (volleyError.isConnectionError())
+                            noPostsMessage.setText(R.string.volley_no_connection_error);
+                        else
+                            noPostsMessage.setText(R.string.gate_error_message);
+
                         noPostsMessage.setVisibility(View.VISIBLE);
                     }
 
@@ -388,15 +409,15 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case CREATE_POST_INTENT:
-                Log.v("RESULT CODE", Integer.toString(resultCode));
-                Log.v("ACTUAL", Integer.toString(getActivity().RESULT_OK));
                 if (resultCode == getActivity().RESULT_OK) {
 
                     final Gate gate = data.getParcelableExtra("gate");
                     // We only need to show a post is loading if we're on the same gate
                     // or if we're in the Aggregate
-                    if (onGateAndGettingSameGate(gate) || currentGate == null)
+                    if (onGateAndGettingSameGate(gate) || currentGate == null) {
                         postLoading.setVisibility(View.VISIBLE);
+                        expandCreatedPostLoading();
+                    }
 
                     final String postBody = data.getStringExtra("postBody")
                                                 .replaceAll(RegexConstants.NEW_LINE, "\n")
@@ -432,12 +453,13 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                     adaptNewPostsToFeed();
                                     feed.setSelection(0);
 
+
                                     // If we don't postDelayed, this clashes with setSelection
                                     // functionality.
                                     feed.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            postLoading.setVisibility(View.GONE);
+                                            collapseCreatedPostLoading();
                                         }
                                     }, 200);
 
@@ -451,7 +473,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                         Response.ErrorListener errorListener = new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                postLoading.setVisibility(View.GONE);
+                                collapseCreatedPostLoading();
                                 VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
                                 Intent intent = new Intent(getActivity(), CreatePostActivity.class);
@@ -524,6 +546,41 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     private void setCurrentPage(int page) {
         currentPage = page;
         infiniteScrollListener.setCurrentPage(currentPage);
+    }
+
+    public void expandCreatedPostLoading() {
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        postLoading.measure(widthSpec, heightSpec);
+
+        ValueAnimator animator = slideAnimator(0, postLoading.getMeasuredHeight(), postLoading);
+        animator.start();
+    }
+
+    public void collapseCreatedPostLoading() {
+        int finalHeight = postLoading.getHeight();
+
+        ValueAnimator animator = slideAnimator(finalHeight, 0, postLoading);
+        animator.start();
+    }
+
+    public static ValueAnimator slideAnimator(int start, int end, final ProgressBar postLoading) {
+
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+                int value = (Integer) animation.getAnimatedValue();
+
+                ViewGroup.LayoutParams layoutParams = postLoading.getLayoutParams();
+                layoutParams.height = value;
+                postLoading.setLayoutParams(layoutParams);
+            }
+        });
+
+        return animator;
     }
 
     private ArrayList<Gate> getGates() {
