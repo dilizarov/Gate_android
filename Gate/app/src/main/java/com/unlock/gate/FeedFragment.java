@@ -257,6 +257,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                 posts.add(post);
                             }
 
+                            if (getActivity() == null) return;
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
 
@@ -513,6 +514,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                 }
                             }
 
+                            if (getActivity() == null) return;
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

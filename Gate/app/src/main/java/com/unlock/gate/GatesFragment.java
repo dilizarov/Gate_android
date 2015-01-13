@@ -251,6 +251,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                             gates.add(gate);
                         }
 
+                        if (getActivity() == null) return;
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
                                 if (refreshing) {

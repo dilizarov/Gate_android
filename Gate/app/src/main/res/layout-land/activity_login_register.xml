@@ -1,0 +1,99 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="#FFFFFFFF"
+    tools:context=".LoginRegisterActivity" >
+
+    <com.unlock.gate.utils.CustomEditText
+        android:id="@+id/userPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userEmail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:ems="10"
+        android:hint="@string/user_password_hint"
+        android:inputType="textPassword"/>
+
+    <TextView
+        android:id="@+id/forgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userPassword"
+        android:layout_centerHorizontal="true"
+        android:text="@string/forgot_password"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/commandButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/userPassword"
+        android:layout_alignRight="@+id/userPassword"
+        android:layout_below="@+id/forgotPassword"
+        android:layout_marginTop="22dp"
+        android:textColor="@color/white"
+        android:text="@string/log_in" />
+
+    <com.unlock.gate.utils.CustomEditText
+        android:id="@+id/userEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/userPassword"
+        android:layout_alignRight="@+id/userPassword"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="99dp"
+        android:ems="10"
+        android:hint="@string/user_email_hint"
+        android:inputType="textEmailAddress" />
+    
+    <com.unlock.gate.utils.CustomEditText
+        android:id="@+id/userFullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/userPassword"
+        android:layout_alignRight="@+id/userPassword"
+        android:layout_below="@+id/userPassword"
+        android:ems="10"
+        android:hint="@string/user_full_name_hint"
+        android:inputType="textPersonName|textCapWords"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/terms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/terms"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/toggleRegistrationLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/toggle_registration"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="33dp"
+        android:src="@drawable/login_logo"
+        tools:ignore="HardcodedText" />
+
+</RelativeLayout>

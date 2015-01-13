@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 
 public class CommentsActivity extends ListActivity {
 
+    private View postHolder;
     private TextView postName;
     private TextView postGateName;
     private TextView postTimestamp;
@@ -105,6 +107,7 @@ public class CommentsActivity extends ListActivity {
         } else {
             requestCommentsAndPopulateListView(false);
         }
+
     }
 
     @Override
@@ -115,9 +118,29 @@ public class CommentsActivity extends ListActivity {
             showKeyboard(addComment);
         }
 
+
+        /*
+        When in landscape mode on device, if there isn't enough space
+        to see a reasonable amount of comments, get rid of the post.
+        There are more definitive ways to get if the phone is in landscape mode
+        but it is buggy across different devices.
+         */
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        postHolder.post(new Runnable() {
+            @Override
+            public void run() {
+                if (displayMetrics.widthPixels > displayMetrics.heightPixels &&
+                    postHolder.getHeight() * 4 > displayMetrics.heightPixels) {
+                    postHolder.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     private void instantiateViews() {
+        postHolder        = findViewById(R.id.post);
         postName          = (TextView) findViewById(R.id.name);
         postGateName   = (TextView) findViewById(R.id.gateName);
         postTimestamp     = (TextView) findViewById(R.id.timestamp);
