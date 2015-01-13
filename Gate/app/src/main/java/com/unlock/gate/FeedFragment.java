@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -206,7 +205,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         requestPostsAndPopulateListView(refreshing, -1, changingGates);
     }
 
-    private void requestPostsAndPopulateListView(final boolean refreshing, int page, final boolean changingGates) {
+    private void requestPostsAndPopulateListView(final boolean refreshing, final int page, final boolean changingGates) {
         try {
 
             JSONObject params = new JSONObject();
@@ -234,7 +233,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                             // Pages have 15 posts each. If the last page hands us 15,
                             // the very next request for more posts will hand back 0.
-                            if (len < 15) infiniteScrollListener.reachedEndOfList();
+                            if (len < 15) {
+                                infiniteScrollListener.reachedEndOfList();
+                            }
 
                             for (int i = 0; i < len; i++) {
                                 JSONObject jsonPost = jsonPosts.optJSONObject(i);
@@ -258,8 +259,6 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Log.v("changingGate", Boolean.toString(changingGates));
-                                    Log.v("currentGate", (currentGate == null) ? "Aggregate" : currentGate.getName());
 
                                     if (refreshing) {
                                         setCurrentPage(1);
@@ -278,6 +277,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
                                     keepPositionInList();
                                     adaptNewPostsToFeed();
+
+                                    if (infiniteScrollListener.getAtEndOfList() && page > 1)
+                                        Butter.down(getActivity(), getString(R.string.all_posts_loaded));
 
                                     infiniteScrollListener.setHadProblemsLoading(false);
                                 }

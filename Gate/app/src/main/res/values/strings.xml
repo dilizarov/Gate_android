@@ -74,6 +74,7 @@
      <!--FeedFragment specific -->
     <string name="no_posts_default">No Posts Yet</string>
     <string name="create_post_button">Write a Post</string>
+    <string name="all_posts_loaded">End of feed</string>
 
     <!-- CommentsActivity specific -->
     <string name="title_activity_comments">Comments</string>
