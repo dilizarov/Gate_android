@@ -3,25 +3,29 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
-
     defaultConfig {
         applicationId "com.unlock.gate"
         minSdkVersion 14
         targetSdkVersion 19
     }
-
     buildTypes {
         release {
             runProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
 }
+
+if (project.hasProperty("Gate.signing")
+        && new File(project.property("Gate.signing") + ".gradle").exists()) {
+
+    apply from: project.property("Gate.signing") + ".gradle";
+}
+
 
 dependencies {
     compile files('libs/volley_20141013.jar')

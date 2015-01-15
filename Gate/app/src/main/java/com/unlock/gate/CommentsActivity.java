@@ -86,7 +86,7 @@ public class CommentsActivity extends ListActivity {
         Intent intent = getIntent();
 
         post = intent.getParcelableExtra("post");
-        notification = intent.getBooleanExtra("notification", false);
+        notification = intent.getBooleanExtra("commentsActivityNotification", false);
         creatingComment = intent.getBooleanExtra("creatingComment", false);
         setPostViews();
 

@@ -59,15 +59,15 @@ public class NfcUtils {
                 }
             } else {
                 // Unknown tag type
-                byte[] empty = new byte[] {};
+                byte[] empty = new byte[]{};
                 NdefRecord record = new NdefRecord(NdefRecord.TNF_UNKNOWN,
                         empty, empty, empty);
 
-                NdefMessage message = new NdefMessage(new NdefRecord[] {
+                NdefMessage message = new NdefMessage(new NdefRecord[]{
                         record
                 });
 
-                messages = new NdefMessage[] {
+                messages = new NdefMessage[]{
                         message
                 };
             }

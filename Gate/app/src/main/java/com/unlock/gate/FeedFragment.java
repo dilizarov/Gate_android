@@ -171,12 +171,12 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         requestPostsAndPopulateListView(true);
     }
 
-    public void getGateFeed(Gate gate, boolean refresh) {
+    public void getGateFeed(Gate gate, boolean refreshing) {
         ((MainActivity) getActivity()).setTitle(gate);
 
         if ((!onAggregateAndGettingAggregate(gate) &&
             !onGateAndGettingSameGate(gate)) ||
-            refresh) {
+            refreshing) {
 
             APIRequestManager.getInstance().cancelAllFeedRequests();
 

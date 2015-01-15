@@ -122,9 +122,6 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
             getAndSetEmail();
             getAndSetFullName();
 
-            if (userEmail.getText().length() == 0) userEmail.requestFocus();
-            else userPassword.requestFocus();
-
             // handling sets up event listeners and actions.
             // Only handleCommandButton actually communicates to the server
             handleForgotPassword();
@@ -538,7 +535,12 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == EMAIL_REQUEST_INTENT && resultCode == RESULT_OK) {
 			mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            if (!mEmail.isEmpty()) userEmail.setText(mEmail);
+            if (!mEmail.isEmpty()) {
+                userEmail.setText(mEmail);
+                userPassword.requestFocus();
+            } else {
+                userEmail.requestFocus();
+            }
 		}
 	}
 	
@@ -557,6 +559,8 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 			}
 		} else {
             userEmail.setText(mEmail);
+            userPassword.requestFocus();
+
         }
 	}
 	

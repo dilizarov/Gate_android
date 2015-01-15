@@ -116,14 +116,6 @@ public class MainActivity extends FragmentActivity {
             IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
             this.registerReceiver(mReceiver, filter);
         }
-
-
-        Intent callingIntent = getIntent();
-        Bundle extras = callingIntent.getExtras();
-
-        if (extras != null && extras.getBoolean("notification", false)) {
-            showFeed(null, true, false);
-        }
     }
 
     @Override
@@ -208,6 +200,8 @@ public class MainActivity extends FragmentActivity {
             progressDialog.show();
 
             grantAccessToGates(grantedGateIds, gatekeeperId, gatekeeperName);
+        } else if (intent.getBooleanExtra("mainActivityNotification", false)) {
+            showFeed(null, true, false);
         }
     }
 
@@ -319,7 +313,6 @@ public class MainActivity extends FragmentActivity {
 
             APIRequestManager.getInstance().doRequest().logout(params, listener, errorListener);
 
-            progressDialog.dismiss();
             SharedPreferences.Editor editor = mSessionPreferences.edit();
             editor.clear().apply();
 
@@ -411,10 +404,8 @@ public class MainActivity extends FragmentActivity {
                 // I use the handler postDelayed because when someone logs in,
                 // sometimes everything happens so fast the Keyboard doesn't have
                 // time to leave the view. So in the background, you still see the keyboard.
-                // By waiting 100 milliseconds, you basically guarantee that the keyboard is gone
-                // and the difference in time honestly isn't even noticeable.
-                if (!activateNfcDialog.isShowing() &&
-                        !airplaneModeIsOn())
+                // By waiting 100 milliseconds, you basically guarantee that the keyboard is gone.
+                if (!activateNfcDialog.isShowing())
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -425,16 +416,16 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    public boolean airplaneModeIsOn() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return Settings.System.getInt(this.getContentResolver(),
-                    Settings.System.AIRPLANE_MODE_ON, 0) != 0;
-        } else {
-            return Settings.Global.getInt(this.getContentResolver(),
-                    Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
-        }
-    }
+//    @SuppressWarnings("deprecation")
+//    public boolean airplaneModeIsOn() {
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+//            return Settings.System.getInt(this.getContentResolver(),
+//                    Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+//        } else {
+//            return Settings.Global.getInt(this.getContentResolver(),
+//                    Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -459,8 +450,6 @@ public class MainActivity extends FragmentActivity {
 
                 return true;
             case R.id.action_logout:
-                progressDialog = ProgressDialog.show(MainActivity.this, "",
-                        getString(R.string.progress_dialog_server_processing_request), false, true);
                 logout();
                 return true;
             default:

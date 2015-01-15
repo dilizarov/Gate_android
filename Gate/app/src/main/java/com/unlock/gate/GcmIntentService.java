@@ -86,15 +86,15 @@ public class GcmIntentService extends IntentService {
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("notification", true);
+        intent.putExtra("mainActivityNotification", true);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 10, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 424242, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mBuilder.setContentIntent(contentIntent);
 
         Notification notification = mBuilder.build();
-        notification.tickerText = extras.getString("gate") + "\n" +
+        notification.tickerText = extras.getString("title") + "\n" +
                                   extras.getString("summary") + "\n" +
                                   extras.getString("extended_text");
 
@@ -118,7 +118,7 @@ public class GcmIntentService extends IntentService {
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 
         Intent intent = new Intent(this, CommentsActivity.class);
-        intent.putExtra("notification", true);
+        intent.putExtra("commentsActivityNotification", true);
 
         Type listType = new TypeToken<List<String>>() {}.getType();
         List<String> postData = new Gson().fromJson(extras.getString("post"), listType);
