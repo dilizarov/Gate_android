@@ -88,7 +88,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login_register);
-		
+
 		mActivityPreferences = getSharedPreferences(
 				getString(R.string.login_register_shared_preferences_key), MODE_PRIVATE);
 		
@@ -252,6 +252,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 	}
 	
 	private void handleCommandButton() {
+
 		commandButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -259,11 +260,11 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 					case LOGIN:
 						processLogin();
 						break;
-					
+
 					case REGISTRATION:
 						processRegistration();
 						break;
-						
+
 					case FORGOT_PASSWORD:
 						processForgotPassword();
 						break;

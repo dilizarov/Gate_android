@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -50,6 +51,8 @@ public class GcmIntentService extends IntentService {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        mBuilder = new NotificationCompat.Builder(this);
+
         if (!extras.isEmpty()) {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType) &&
                 extras.containsKey("notification_type")) {
@@ -74,8 +77,7 @@ public class GcmIntentService extends IntentService {
 
     // Takes care of when a Post is created
     private void sendToMainActivityNotification(Bundle extras) {
-        mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.actionbar_logo)
+        mBuilder.setSmallIcon(R.drawable.actionbar_logo)
                 .setContentTitle(extras.getString("title"))
                 .setContentText(extras.getString("summary"))
                 .setAutoCancel(true)
@@ -93,21 +95,24 @@ public class GcmIntentService extends IntentService {
 
         mBuilder.setContentIntent(contentIntent);
 
-        Notification notification = mBuilder.build();
+        final Notification notification = mBuilder.build();
         notification.tickerText = extras.getString("title") + "\n" +
                                   extras.getString("summary") + "\n" +
                                   extras.getString("post_body");
 
-
         //We cancel first so that the tickerText redisplays itself, otherwise it won't if we're just updating.
         mNotificationManager.cancel(GATE_NOTIFICATION_ID);
-        mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
+            }
+        }, 100);
     }
 
     // Takes care of when a Comment is created, a comment liked or post liked
     private void sendToCommentsActivityNotification(Bundle extras) {
-        mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.actionbar_logo)
+        mBuilder.setSmallIcon(R.drawable.actionbar_logo)
                 .setContentTitle(extras.getString("title"))
                 .setContentText(extras.getString("summary"))
                 .setAutoCancel(true)
@@ -146,7 +151,7 @@ public class GcmIntentService extends IntentService {
 
         mBuilder.setContentIntent(contentIntent);
 
-        Notification notification = mBuilder.build();
+        final Notification notification = mBuilder.build();
 
         if (notification_type == COMMENT_CREATED_NOTIFICATION) {
             notification.tickerText = extras.getString("title") + "\n" +
@@ -159,6 +164,11 @@ public class GcmIntentService extends IntentService {
 
         //We cancel first so that the tickerText redisplays itself, otherwise it won't if we're just updating.
         mNotificationManager.cancel(GATE_NOTIFICATION_ID);
-        mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
+            }
+        }, 100);
     }
 }
