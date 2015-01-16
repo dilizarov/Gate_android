@@ -96,7 +96,7 @@ public class GcmIntentService extends IntentService {
         Notification notification = mBuilder.build();
         notification.tickerText = extras.getString("title") + "\n" +
                                   extras.getString("summary") + "\n" +
-                                  extras.getString("extended_text");
+                                  extras.getString("post_body");
 
 
         //We cancel first so that the tickerText redisplays itself, otherwise it won't if we're just updating.
@@ -151,7 +151,7 @@ public class GcmIntentService extends IntentService {
         if (notification_type == COMMENT_CREATED_NOTIFICATION) {
             notification.tickerText = extras.getString("title") + "\n" +
                                       extras.getString("summary") + "\n" +
-                                      extras.getString("extended_text");
+                                      extras.getString("comment_body");
         } else {
             notification.tickerText = extras.getString("title") + "\n" +
                                       extras.getString("summary");
