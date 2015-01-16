@@ -5,6 +5,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,8 @@ public class NfcUtils {
     }
 
     public static NdefMessage[] getNdefMessages(Intent intent) {
+
+        Log.v("Yo", "we're in");
 
         NdefMessage[] messages = null;
         String action = intent.getAction();

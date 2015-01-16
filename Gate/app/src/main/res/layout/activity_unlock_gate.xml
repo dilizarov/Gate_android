@@ -32,7 +32,8 @@
             android:overScrollMode="never"
             android:listSelector="@android:color/transparent"
             android:divider="@null"
-            android:layout_above="@+id/unlockButton"/>
+            android:layout_above="@+id/unlockButton"
+            android:layout_alignParentTop="true"/>
 
         <Button
             android:id="@+id/unlockButton"

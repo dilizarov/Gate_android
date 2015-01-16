@@ -150,7 +150,9 @@ public class UnlockGateActivity extends Activity {
                                 });
 
                                 mNfcAdapter = NfcAdapter.getDefaultAdapter(UnlockGateActivity.this);
+
                                 if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+
                                     String userId = mSessionPreferences.getString(getString(R.string.user_id_key), null);
                                     String userName = mSessionPreferences.getString(getString(R.string.user_name_key), null);
                                     String gateIds = selectedGateIds.toString();

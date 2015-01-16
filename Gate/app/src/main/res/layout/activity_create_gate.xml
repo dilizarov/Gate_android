@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/createGateName"
         android:hint="@string/create_gate_hint"
-        android:inputType="textShortMessage"
+        android:inputType="textShortMessage|textCapWords"
         android:layout_alignBottom="@+id/createGate"
         android:layout_toLeftOf="@+id/createGate"
         android:layout_toStartOf="@+id/createGate"

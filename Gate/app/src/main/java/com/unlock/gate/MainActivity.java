@@ -104,6 +104,7 @@ public class MainActivity extends FragmentActivity {
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        configureNFC();
     }
 
     @Override
@@ -181,6 +182,7 @@ public class MainActivity extends FragmentActivity {
         setIntent(intent);
 
         if (!mWriteMode && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+
             NdefMessage[] messages = NfcUtils.getNdefMessages(intent);
             ArrayList<String> payload = NfcUtils.getNdefMessagePayload(messages[0]);
 
@@ -347,7 +349,7 @@ public class MainActivity extends FragmentActivity {
 
     private void configureNFC() {
         mNfcPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 

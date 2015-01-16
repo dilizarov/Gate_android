@@ -61,7 +61,8 @@
         <activity
             android:name="com.unlock.gate.MainActivity"
             android:label="Gate"
-            android:theme="@style/Gate">
+            android:theme="@style/Gate"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name="com.unlock.gate.CommentsActivity"
