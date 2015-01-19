@@ -297,6 +297,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void processKey(String key) {
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.unlocking_gates));
         progressDialog.setIndeterminate(true);

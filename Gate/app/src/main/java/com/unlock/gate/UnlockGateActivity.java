@@ -8,10 +8,14 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.LabeledIntent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.nfc.NfcAdapter;
@@ -47,6 +51,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UnlockGateActivity extends Activity {
 
@@ -532,7 +537,7 @@ public class UnlockGateActivity extends Activity {
 
 
                     builder.setTitle("Key")
-                           .setMessage(Html.fromHtml("<b>" + key + "</b> unlocks " + gatesBuilder.toString() + "<br><br> The key expires in 3 days"))
+                           .setMessage(Html.fromHtml("<b>" + key + "</b> unlocks " + gatesBuilder.toString() + "<br><br> The key expires 3 days after inactivity"))
                            .setCancelable(false)
                            .setNegativeButton("FINISHED", new DialogInterface.OnClickListener() {
                                @Override
@@ -556,14 +561,60 @@ public class UnlockGateActivity extends Activity {
                     keyDialog.setCanceledOnTouchOutside(false);
                     keyDialog.show();
 
+                    //TODO
+
                     keyDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent shareIntent = new Intent();
-                            shareIntent.setAction(Intent.ACTION_SEND);
-                            shareIntent.putExtra(Intent.EXTRA_TEXT, "Use " + key + " to #unlock " + gatesBuilder.toString() + " on #Gate\n\nhttp://unlockgate.today");
-                            shareIntent.setType("text/plain");
-                            startActivityForResult(Intent.createChooser(shareIntent, "Share your key using..."), 10);
+                            // Create an Email Chooser and append other ACTION_SEND apps based on package name.
+                            // Note, FB is not included because they PURPOSELY bugged their product so that you can't
+                            // share through them. For shame.
+
+                            String extraText = "Use " + key + " to #unlock " + gatesBuilder.toString() + " on #Gate\n\nhttp://unlockgate.today";
+                            String extraSubject = "Unlock Gates with this Key";
+
+                            Intent emailIntent = new Intent();
+                            emailIntent.setAction(Intent.ACTION_SEND);
+                            emailIntent.putExtra(Intent.EXTRA_TEXT, extraText);
+                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
+                            emailIntent.setType("message/rfc822");
+
+                            PackageManager pm = getPackageManager();
+                            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                            sendIntent.setType("text/plain");
+
+                            Intent openInChooser = Intent.createChooser(emailIntent, "Share your key using...");
+
+                            List<ResolveInfo> resInfo = pm.queryIntentActivities(sendIntent, 0);
+                            List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
+
+                            for (int i = 0; i < resInfo.size(); i++) {
+                                ResolveInfo ri = resInfo.get(i);
+                                String packageName = ri.activityInfo.packageName;
+
+                                if (packageName.contains("android.email")) {
+                                    emailIntent.setPackage(packageName);
+                                } else if (packageName.contains("twitter")    ||
+                                           packageName.contains("mms")        ||
+                                           packageName.contains("sms")        ||
+                                           packageName.contains("android.gm") ||
+                                           packageName.contains("skype")      ||
+                                           packageName.contains("tumblr")) {
+
+                                    Intent intent = new Intent();
+                                    intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                                    intent.setAction(Intent.ACTION_SEND);
+                                    intent.setType("text/plain");
+                                    intent.putExtra(Intent.EXTRA_TEXT, extraText);
+                                    intent.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
+
+                                    intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+                                }
+                            }
+
+                            LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
+                            openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+                            startActivity(openInChooser);
                         }
                     });
                 }
