@@ -9,12 +9,20 @@
         android:icon="@drawable/ic_action_overflow"
         android:showAsAction="always">
         <menu>
+
             <item
                 android:id="@+id/action_logout"
                 android:title="@string/logout"
                 android:showAsAction="never"/>
         </menu>
     </item>
+
+    <item
+        android:id="@+id/enter_key"
+        android:title="Enter Key"
+        android:orderInCategory="50"
+        android:icon="@drawable/ic_open_lock"
+        android:showAsAction="always" />
 
     <item
         android:id="@+id/action_unlock_gates"

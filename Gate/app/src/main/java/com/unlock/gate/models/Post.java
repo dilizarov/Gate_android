@@ -154,8 +154,8 @@ public class Post implements Parcelable {
         this.id           = data[0];
         this.name         = data[1];
         this.body         = data[2];
-        this.gateId    = data[3];
-        this.gateName  = data[4];
+        this.gateId       = data[3];
+        this.gateName     = data[4];
         this.commentCount = data[5];
         this.upCount      = data[6];
         this.uped         = data[7];

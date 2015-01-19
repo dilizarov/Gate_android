@@ -28,6 +28,7 @@ public class APIRequestProxy {
 	private final String REGISTRATION_ENDPOINT = "registrations.json";
     private final String GATES_ENDPOINT = "gates.json";
     private final String AGGREGATE_ENDPOINT = "aggregate.json";
+    private final String KEY_ENDPOINT = "keys.json";
 
     private final String FEED_TAG = "feed_requests";
 	
@@ -259,6 +260,26 @@ public class APIRequestProxy {
         url += convertParamsToUrlParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void getKey(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        addAPIKeyToParams(params);
+        addAuthToParams(params);
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(KEY_ENDPOINT), params, listener, errorListener);
+
+        mRequestQueue.add(request);
+    }
+
+    public void processKey(String key, JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "keys/" + key + "/process.json";
+
+        addAPIKeyToParams(params);
+        addAuthToParams(params);
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }

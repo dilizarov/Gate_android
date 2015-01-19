@@ -20,7 +20,8 @@
     <RelativeLayout
         android:id="@+id/gateSelector"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/unlockButton">
 
         <ListView
             android:id="@+id/gatesList"
@@ -32,24 +33,24 @@
             android:overScrollMode="never"
             android:listSelector="@android:color/transparent"
             android:divider="@null"
-            android:layout_above="@+id/unlockButton"
             android:layout_alignParentTop="true"/>
 
-        <Button
-            android:id="@+id/unlockButton"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:layout_marginLeft="-5dip"
-            android:layout_marginRight="-5dip"
-            android:layout_marginTop="-5dip"
-            android:layout_marginBottom="-5dip"
-            android:layout_alignParentBottom="true"
-            android:textColor="@android:color/white"
-            android:text="@string/unlock"/>
-
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/unlockButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_marginLeft="-5dip"
+        android:layout_marginRight="-5dip"
+        android:layout_marginTop="-5dip"
+        android:layout_marginBottom="-5dip"
+        android:layout_alignParentBottom="true"
+        android:textColor="@android:color/white"
+        android:text="@string/unlock"/>
+
 
     <ImageView
         android:id="@+id/leftPhoneImage"

@@ -4,11 +4,19 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,11 +32,19 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.unlock.gate.models.Gate;
+import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.Fade;
 import com.unlock.gate.utils.NfcUtils;
 import com.unlock.gate.utils.Rotate3dAnimation;
+import com.unlock.gate.utils.VolleyErrorHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -58,6 +74,8 @@ public class UnlockGateActivity extends Activity {
     private float phoneCenterX;
     private float phoneCenterY;
     private boolean metricsCalculated;
+
+    private boolean animating;
 
     private final int STEP_DURATION = 1500;
     private final int FADE_DURATION = 500;
@@ -117,56 +135,59 @@ public class UnlockGateActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+                if (animating)
+                    generateShowKey();
+                else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
 
-                        int len = gatesList.getCount();
-                        for (int i = 0; i < len; i++) {
+                            int len = gatesList.getCount();
+                            for (int i = 0; i < len; i++) {
 
-                              if (gatesList.isItemChecked(i)) {
-                                  selectedGateIds.add(gates.get(i).getId());
-                              }
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                if (selectedGateIds.size() == 0) {
-                                    Butter.between(UnlockGateActivity.this,
-                                            "You must unlock at least one gate");
-
-                                    return;
+                                if (gatesList.isItemChecked(i)) {
+                                    selectedGateIds.add(gates.get(i).getId());
                                 }
-
-                                actionBar.setTitle("Tutorial");
-
-                                Fade.hide(gateSelector, new AnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        animateTutorial();
-                                    }
-                                });
-
-                                mNfcAdapter = NfcAdapter.getDefaultAdapter(UnlockGateActivity.this);
-
-                                if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
-
-                                    String userId = mSessionPreferences.getString(getString(R.string.user_id_key), null);
-                                    String userName = mSessionPreferences.getString(getString(R.string.user_name_key), null);
-                                    String gateIds = selectedGateIds.toString();
-                                    gateIds = gateIds.substring(1, gateIds.length() - 1);
-
-                                    mNfcAdapter.setNdefPushMessage(
-                                            NfcUtils.stringsToNdefMessage(userId, userName, gateIds), UnlockGateActivity.this);
-                                }
-
                             }
-                        });
-                    }
-                }).start();
 
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    if (selectedGateIds.size() == 0) {
+                                        Butter.between(UnlockGateActivity.this,
+                                                "You must unlock at least one gate");
+
+                                        return;
+                                    }
+
+                                    actionBar.setTitle("Tutorial");
+
+                                    Fade.hide(gateSelector, new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            animateTutorial();
+                                        }
+                                    });
+
+                                    mNfcAdapter = NfcAdapter.getDefaultAdapter(UnlockGateActivity.this);
+
+                                    if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+
+                                        String userId = mSessionPreferences.getString(getString(R.string.user_id_key), null);
+                                        String userName = mSessionPreferences.getString(getString(R.string.user_name_key), null);
+                                        String gateIds = selectedGateIds.toString();
+                                        gateIds = gateIds.substring(1, gateIds.length() - 1);
+
+                                        mNfcAdapter.setNdefPushMessage(
+                                                NfcUtils.stringsToNdefMessage(userId, userName, gateIds), UnlockGateActivity.this);
+                                    }
+
+                                }
+                            });
+                        }
+                    }).start();
+                }
             }
         });
     }
@@ -202,6 +223,9 @@ public class UnlockGateActivity extends Activity {
     }
 
     private void kickOffAnimation() {
+
+        unlock.setText("Tap for a key instead");
+        animating = true;
         // 0 denotes the left phone, 1 denotes the right phone.
         if (leftPhone.getVisibility() == View.VISIBLE && rightPhone.getVisibility() == View.VISIBLE) {
             rotatePhone(0);
@@ -461,6 +485,104 @@ public class UnlockGateActivity extends Activity {
 
     private ImageView phoneSide(int phone) {
         return phone == 0 ? leftPhoneSide : rightPhoneSide;
+    }
+
+    private void generateShowKey() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.progress_dialog_server_processing_request));
+        progressDialog.setIndeterminate(true);
+        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progress));
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+
+        progressDialog.show();
+
+        try {
+            JSONObject params = new JSONObject();
+            JSONObject key = new JSONObject();
+
+            key.put("gates", new JSONArray(selectedGateIds));
+
+            params.put("key", key);
+
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progressDialog.dismiss();
+                    final String key = response.optJSONObject("key").optString("key");
+                    JSONArray gates = response.optJSONObject("key").optJSONArray("gates");
+
+                    final StringBuilder gatesBuilder = new StringBuilder();
+                    int len = gates.length();
+                    if (len == 1) {
+                        gatesBuilder.append(gates.optJSONObject(0).optString("name"));
+                    } else if (len == 2) {
+                        gatesBuilder.append(gates.optJSONObject(0).optString("name"))
+                                    .append(" and ")
+                                    .append(gates.optJSONObject(1).optString("name"));
+                    } else if (len > 2) {
+                        for (int i = 0; i < len; i++) {
+                            if (i != 0) gatesBuilder.append(", ");
+                            if (i == len - 1) gatesBuilder.append("and ");
+                            gatesBuilder.append(gates.optJSONObject(i).optString("name"));
+                        }
+                    }
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(UnlockGateActivity.this);
+
+
+                    builder.setTitle("Key")
+                           .setMessage(Html.fromHtml("<b>" + key + "</b> unlocks " + gatesBuilder.toString() + "<br><br> The key expires in 3 days"))
+                           .setCancelable(false)
+                           .setNegativeButton("FINISHED", new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog, int which) {
+                                   dialog.cancel();
+
+                                   ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                   ClipData clip = ClipData.newPlainText("key", key);
+                                   clipboard.setPrimaryClip(clip);
+                                   Butter.down(UnlockGateActivity.this, "Key saved to clipboard");
+                               }
+                           })
+                           .setPositiveButton("SHARE", new DialogInterface.OnClickListener() {
+
+                               @Override
+                               public void onClick(DialogInterface dialog, int which) {
+                               }
+                           });
+
+                    AlertDialog keyDialog = builder.create();
+                    keyDialog.setCanceledOnTouchOutside(false);
+                    keyDialog.show();
+
+                    keyDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent shareIntent = new Intent();
+                            shareIntent.setAction(Intent.ACTION_SEND);
+                            shareIntent.putExtra(Intent.EXTRA_TEXT, "Use " + key + " to #unlock " + gatesBuilder.toString() + " on #Gate\n\nhttp://unlockgate.today");
+                            shareIntent.setType("text/plain");
+                            startActivityForResult(Intent.createChooser(shareIntent, "Share your key using..."), 10);
+                        }
+                    });
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progressDialog.dismiss();
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                    Butter.down(UnlockGateActivity.this, volleyError.getMessage());
+                }
+            };
+
+            APIRequestManager.getInstance().doRequest().getKey(params, listener, errorListener);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override

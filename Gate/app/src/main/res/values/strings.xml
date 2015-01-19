@@ -56,6 +56,7 @@
         <item>Feed</item>
         <item>Gates</item>
     </string-array>
+
     <string name="unlock_gates">Unlock Gates</string>
     <string name="unlocking_gates">Unlocking Gates...</string>
     <string name="logout">Log out</string>
@@ -67,12 +68,13 @@
     <string name="create_gate">Create a Gate</string>
     <string name="create_gate_hint">Gate name</string>
     <string name="no_gates_default">No Gates Yet</string>
+
     <plurals name="users_count">
         <item quantity="one">%d Gatekeeper</item>
         <item quantity="other">%d Gatekeepers</item>
     </plurals>
 
-     <!--FeedFragment specific -->
+    <!-- FeedFragment specific -->
     <string name="no_posts_default">No Posts Yet</string>
     <string name="create_post_button">Write a Post</string>
     <string name="all_posts_loaded">End of feed</string>
@@ -88,9 +90,10 @@
     <!-- CreatePost Dialog -->
     <string name="gate_selection_default">Select a Gate</string>
     <string name="write_post_hint">Write a post</string>
-
     <string name="title_activity_create_post">Create Post</string>
     <string name="title_activity_create_gate">Create Gate</string>
     <string name="title_activity_unlock_gate">Select Gates to unlock...</string>
+    <string name="title_activity_enter_key">EnterKeyActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

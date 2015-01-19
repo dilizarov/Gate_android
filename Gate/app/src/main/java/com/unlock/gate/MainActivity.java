@@ -37,6 +37,8 @@ import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.NfcUtils;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +54,10 @@ import java.util.Comparator;
 public class MainActivity extends FragmentActivity {
 
     private final int UPDATE_POST_INTENT = 2;
+    private final int ENTER_KEY_INTENT = 5;
+
+    private int key_attempts;
+    private DateTime last_attempt;
 
     private PagerSlidingTabStrip tabs;
     private ViewPager pager;
@@ -290,6 +296,112 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    public void processKey(String key) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.unlocking_gates));
+        progressDialog.setIndeterminate(true);
+        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progress));
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        JSONObject params = new JSONObject();
+
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(final JSONObject response) {
+                    progressDialog.dismiss();
+
+                    if (response.optJSONArray("gates").length() == 0) {
+                        Butter.down(MainActivity.this, "All gates already unlocked");
+
+                        return;
+                    }
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            JSONArray jsonGates = response.optJSONArray("gates");
+                            int len = jsonGates.length();
+
+                            final ArrayList<Gate> newGates = new ArrayList<Gate>();
+
+                            for (int i = 0; i < len; i++) {
+                                JSONObject jsonGate = jsonGates.optJSONObject(i);
+                                Gate gate = new Gate(jsonGate.optString("external_id"),
+                                        jsonGate.optString("name"),
+                                        jsonGate.optInt("users_count"),
+                                        jsonGate.optJSONObject("creator").optString("name"));
+
+                                newGates.add(gate);
+                            }
+
+                            Collections.sort(newGates, new Comparator<Gate>() {
+                                public int compare(Gate n1, Gate n2) {
+                                    return n1.getName().compareToIgnoreCase(n2.getName());
+                                }
+                            });
+
+
+                            // Required for use as CharSequence[] items later for list of Strings.
+                            final ArrayList<String> gateNames = new ArrayList<String>();
+                            for (Gate gate : newGates) gateNames.add(gate.getName());
+
+                            final GatesFragment gatesFragment = (GatesFragment) adapter.getRegisteredFragment(1);
+                            gatesFragment.addGatesToArrayList(newGates);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    gatesFragment.adaptNewGatesToList();
+
+                                    CharSequence[] items = gateNames.toArray(new CharSequence[gateNames.size()]);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                    builder.setTitle(response.optJSONObject("meta").optJSONObject("data").optString("gatekeeper") + " granted you access to these Gates...")
+                                            .setItems(items, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                    showFeed(newGates.get(which), false, true);
+                                                }
+                                            }).create().show();
+                                }
+                            });
+                        }
+                    }).start();
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progressDialog.dismiss();
+
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                    if (volleyError.getStatusCode() == 423) {
+                        key_attempts++;
+
+                        if (key_attempts < 5) {
+                            Intent intent = new Intent(MainActivity.this, EnterKeyActivity.class);
+                            intent.putExtra("errorMessage", volleyError.getMessage());
+
+                            startActivityForResult(intent, ENTER_KEY_INTENT);
+                        } else {
+                            Butter.down(MainActivity.this, volleyError.getMessage());
+
+                        }
+                    } else {
+                        Butter.down(MainActivity.this, volleyError.getMessage());
+                    }
+                }
+            };
+
+            APIRequestManager.getInstance().doRequest().processKey(key, params, listener, errorListener);
+    }
+
     public void logout() {
         try {
 
@@ -370,6 +482,14 @@ public class MainActivity extends FragmentActivity {
             case UPDATE_POST_INTENT:
                 FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
                 feedFragment.onActivityResult(requestCode, resultCode, data);
+                break;
+            case ENTER_KEY_INTENT:
+                if (resultCode == RESULT_OK) {
+                    final String key = data.getStringExtra("key");
+
+                    processKey(key);
+                }
+
                 break;
         }
     }
@@ -454,6 +574,16 @@ public class MainActivity extends FragmentActivity {
             case R.id.action_logout:
                 logout();
                 return true;
+            case R.id.enter_key:
+                DateTimeComparator comparator = DateTimeComparator.getInstance();
+                if (key_attempts < 5 || comparator.compare(last_attempt, DateTime.now().minusMinutes(15)) == -1) {
+                    if (key_attempts >= 5) key_attempts = 0;
+                    Intent intent = new Intent(this, EnterKeyActivity.class);
+                    startActivityForResult(intent, ENTER_KEY_INTENT);
+                } else {
+                    last_attempt = DateTime.now();
+                    Butter.down(this, "Wait 15 minutes for another five attempts");
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
