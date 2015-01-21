@@ -3,6 +3,7 @@ package com.unlock.gate.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -94,15 +95,19 @@ public class APIRequestProxy {
     public void login(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 		addAPIKeyToParams(params);
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(SESSION_ENDPOINT), params, listener, errorListener);
-		
+
+        request.setRetryPolicy(new DefaultRetryPolicy(5000, 1, 1));
+
 		mRequestQueue.add(request);
 	}
 	
 	public void register(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         addAPIKeyToParams(params);
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(REGISTRATION_ENDPOINT), params, listener, errorListener);
-	
-		mRequestQueue.add(request);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(5000, 1, 1));
+
+        mRequestQueue.add(request);
 	}
 
     public void sendForgottonPasswordEmail(JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {

@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -44,6 +43,7 @@ public class GcmIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
         Bundle extras = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
@@ -77,6 +77,7 @@ public class GcmIntentService extends IntentService {
 
     // Takes care of when a Post is created
     private void sendToMainActivityNotification(Bundle extras) {
+
         mBuilder.setSmallIcon(R.drawable.actionbar_logo)
                 .setContentTitle(extras.getString("title"))
                 .setContentText(extras.getString("summary"))
@@ -100,14 +101,7 @@ public class GcmIntentService extends IntentService {
                                   extras.getString("summary") + "\n" +
                                   extras.getString("post_body");
 
-        //We cancel first so that the tickerText redisplays itself, otherwise it won't if we're just updating.
-        mNotificationManager.cancel(GATE_NOTIFICATION_ID);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
-            }
-        }, 100);
+        mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
     }
 
     // Takes care of when a Comment is created, a comment liked or post liked
@@ -162,13 +156,6 @@ public class GcmIntentService extends IntentService {
                                       extras.getString("summary");
         }
 
-        //We cancel first so that the tickerText redisplays itself, otherwise it won't if we're just updating.
-        mNotificationManager.cancel(GATE_NOTIFICATION_ID);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
-            }
-        }, 100);
+        mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
     }
 }
