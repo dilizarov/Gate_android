@@ -6,12 +6,14 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
@@ -85,6 +87,20 @@ public class UnlockGateActivity extends Activity {
     private final int STEP_DURATION = 1500;
     private final int FADE_DURATION = 500;
 
+    // Like in MainActivity, if using status bar to change NFC status, we appropriate what happens here.
+    // Otherwise, fall back to usual onResume()/onPause() lifecycle
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)) {
+                setButtonTextBasedOnNFCState();
+            }
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,11 +115,49 @@ public class UnlockGateActivity extends Activity {
 
         selectedGateIds = new ArrayList<String>();
 
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(UnlockGateActivity.this);
+
+        // Phone doesn't support NFC
+        if (mNfcAdapter == null || !mNfcAdapter.isEnabled()) {
+            unlock.setText("Tap for a key");
+        }
+
         instantiateViews();
 
         bindGatesToListView();
 
         setUnlockClickListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        setButtonTextBasedOnNFCState();
+
+        if (mNfcAdapter != null) {
+            IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+            this.registerReceiver(mReceiver, filter);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mNfcAdapter != null) {
+            this.unregisterReceiver(mReceiver);
+        }
+    }
+
+    private void setButtonTextBasedOnNFCState() {
+        if (mNfcAdapter != null) {
+            if (mNfcAdapter.isEnabled()) {
+                unlock.setText("Unlock");
+            } else {
+                unlock.setText("Tap for a key");
+            }
+        }
     }
 
     private void instantiateViews() {
@@ -140,7 +194,8 @@ public class UnlockGateActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if (animating)
+                // During the animation or if NFC not supported, opt for key
+                if (animating || mNfcAdapter == null || !mNfcAdapter.isEnabled())
                     generateShowKey();
                 else {
                     new Thread(new Runnable() {
@@ -174,8 +229,6 @@ public class UnlockGateActivity extends Activity {
                                             animateTutorial();
                                         }
                                     });
-
-                                    mNfcAdapter = NfcAdapter.getDefaultAdapter(UnlockGateActivity.this);
 
                                     if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
 
@@ -297,7 +350,6 @@ public class UnlockGateActivity extends Activity {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        tutorialText.setText("Gates unlocked");
                         Rotate3dAnimation rotateBack = new Rotate3dAnimation(phone == 0 ? -90 : 90, 0, phoneCenterX, phoneCenterY, 0, true);
 
                         Fade.hide(phoneSide(phone));
@@ -354,8 +406,6 @@ public class UnlockGateActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                tutorialText.setText("Tap your phone");
-
                 AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
                 fadeIn.setDuration(FADE_DURATION);
 
@@ -417,7 +467,7 @@ public class UnlockGateActivity extends Activity {
                             @Override
                             public void onAnimationEnd(Animation animation) {
                                 tutorialText.setVisibility(View.INVISIBLE);
-                                tutorialText.setText("Bump phones");
+                                tutorialText.setText(R.string.tutorial_text);
                                 tutorialText.setOnClickListener(null);
                                 AlphaAnimation fadeInText = new AlphaAnimation(0, 1);
                                 fadeInText.setDuration(FADE_DURATION);

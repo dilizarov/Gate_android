@@ -17,7 +17,7 @@
 
     <!-- UnlockGatesActivity specific -->
     <string name="unlock">Unlock</string>
-    <string name="tutorial_text">Bump phones</string>
+    <string name="tutorial_text">Make sure you both have NFC enabled</string>
 
     <!-- LoginRegisterActivity specific -->
     <string name="user_email_hint">Email</string>
