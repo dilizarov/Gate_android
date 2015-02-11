@@ -210,6 +210,12 @@ public class MainActivity extends FragmentActivity {
             grantAccessToGates(grantedGateIds, gatekeeperId, gatekeeperName);
         } else if (intent.getBooleanExtra("mainActivityNotification", false)) {
             showFeed(null, true, false);
+        } else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
+            String post = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (post != null) {
+                FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
+                feedFragment.openSharePost(post);
+            }
         }
     }
 
@@ -406,6 +412,14 @@ public class MainActivity extends FragmentActivity {
     public void logout() {
         try {
 
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.progress_dialog_server_processing_request));
+            progressDialog.setIndeterminate(true);
+            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progress));
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
             JSONObject params = new JSONObject();
 
             JSONObject device = new JSONObject();
@@ -417,23 +431,30 @@ public class MainActivity extends FragmentActivity {
             Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(final JSONObject response) {
+                    progressDialog.dismiss();
+
+                    SharedPreferences.Editor editor = mSessionPreferences.edit();
+                    editor.clear().apply();
+
+                    Intent intent = new Intent(MainActivity.this, LoginRegisterActivity.class);
+                    startActivity(intent);
+                    finish();
+
+
                 }
             };
 
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                    progressDialog.dismiss();
+
+                    Butter.down(MainActivity.this, volleyError.getMessage());
                 }
             };
 
             APIRequestManager.getInstance().doRequest().logout(params, listener, errorListener);
-
-            SharedPreferences.Editor editor = mSessionPreferences.edit();
-            editor.clear().apply();
-
-            Intent intent = new Intent(MainActivity.this, LoginRegisterActivity.class);
-            startActivity(intent);
-            finish();
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
@@ -539,17 +560,6 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-//    @SuppressWarnings("deprecation")
-//    public boolean airplaneModeIsOn() {
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-//            return Settings.System.getInt(this.getContentResolver(),
-//                    Settings.System.AIRPLANE_MODE_ON, 0) != 0;
-//        } else {
-//            return Settings.Global.getInt(this.getContentResolver(),
-//                    Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
-//        }
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -577,13 +587,13 @@ public class MainActivity extends FragmentActivity {
                 return true;
             case R.id.enter_key:
                 DateTimeComparator comparator = DateTimeComparator.getInstance();
-                if (key_attempts < 5 || comparator.compare(last_attempt, DateTime.now().minusMinutes(15)) == -1) {
+                if (key_attempts < 5 || comparator.compare(last_attempt, DateTime.now().minusMinutes(5)) == -1) {
                     if (key_attempts >= 5) key_attempts = 0;
                     Intent intent = new Intent(this, EnterKeyActivity.class);
                     startActivityForResult(intent, ENTER_KEY_INTENT);
                 } else {
                     last_attempt = DateTime.now();
-                    Butter.down(this, "Wait 15 minutes for another five attempts");
+                    Butter.down(this, "Wait 5 minutes for another five attempts");
                 }
             default:
                 return super.onOptionsItemSelected(item);

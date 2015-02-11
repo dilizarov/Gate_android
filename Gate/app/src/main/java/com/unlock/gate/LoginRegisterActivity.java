@@ -575,7 +575,11 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
                 mFullName = mActivityPreferences.getString(getString(R.string.name_on_phone), null);
                 userFullName.setText(mFullName);
             } else {
-                getLoaderManager().initLoader(0, null, this);
+                try {
+                    getLoaderManager().initLoader(0, null, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 	}

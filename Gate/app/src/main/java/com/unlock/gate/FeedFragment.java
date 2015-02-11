@@ -409,6 +409,14 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         });
     }
 
+    public void openSharePost(String post) {
+        Intent intent = new Intent(getActivity(), CreatePostActivity.class);
+        intent.putExtra("currentGate", currentGate);
+        intent.putExtra("gates", getGates());
+        intent.putExtra("postBody", post);
+        startActivityForResult(intent, CREATE_POST_INTENT);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
