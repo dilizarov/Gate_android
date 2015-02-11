@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -433,9 +434,9 @@ public class MainActivity extends FragmentActivity {
 
             params.put("device", device);
 
-            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            Response.Listener<Integer> listener = new Response.Listener<Integer>() {
                 @Override
-                public void onResponse(final JSONObject response) {
+                public void onResponse(final Integer statusCode) {
                     progressDialog.dismiss();
 
                     SharedPreferences.Editor editor = mSessionPreferences.edit();
@@ -452,6 +453,8 @@ public class MainActivity extends FragmentActivity {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    Log.e("WHAT IS GOING ON", error.toString());
+
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                     progressDialog.dismiss();
 

@@ -151,7 +151,7 @@ public class UnlockGateActivity extends Activity {
     }
 
     private void setButtonTextBasedOnNFCState() {
-        if (mNfcAdapter != null) {
+        if (mNfcAdapter != null && !animating) {
             if (mNfcAdapter.isEnabled()) {
                 unlock.setText("Unlock");
             } else {

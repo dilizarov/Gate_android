@@ -231,13 +231,13 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
-    public void logout(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public void logout(JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "sessions/logout.json";
 
         addAPIKeyToParams(params);
         addAuthToParams(params);
 
-        JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.POST, url, params, listener, errorListener);
 
         mRequestQueue.add(request);
     }
