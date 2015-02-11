@@ -13,10 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -70,15 +67,23 @@ public class MainActivity extends FragmentActivity {
     private boolean mWriteMode = false;
     private ProgressDialog progressDialog;
 
-    private AlertDialog activateNfcDialog;
-
+    // This will keep tabs on NFC and fire off when it is turned on/off/etc.
+    // Made for the case when one turns NFC on/off through status bar.
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
 
             if (action.equals(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)) {
-                checkNFCEnabled();
+                if (mNfcAdapter != null) {
+                    if (mNfcAdapter.isEnabled()) {
+                        configureNFC();
+                        mNfcAdapter.enableForegroundDispatch(MainActivity.this, mNfcPendingIntent,
+                                mNdefExchangeFilters, null);
+                    } else {
+                        mNfcAdapter.disableForegroundDispatch(MainActivity.this);
+                    }
+                }
             }
         }
     };
@@ -116,9 +121,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onResume() {
         super.onResume();
-        checkNFCEnabled();
+        configureNFCDispatch();
 
-        // This will keep tabs on NFC and fire off when it is turned on/off/etc.
         if (mNfcAdapter != null) {
             IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
             this.registerReceiver(mReceiver, filter);
@@ -129,10 +133,11 @@ public class MainActivity extends FragmentActivity {
     public void onPause() {
         super.onPause();
 
-        this.unregisterReceiver(mReceiver);
+        if (mNfcAdapter != null) {
+            this.unregisterReceiver(mReceiver);
 
-        if (mNfcAdapter != null && mNfcAdapter.isEnabled())
-            mNfcAdapter.disableForegroundDispatch(this);
+            if (mNfcAdapter.isEnabled()) mNfcAdapter.disableForegroundDispatch(this);
+        }
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -194,7 +199,7 @@ public class MainActivity extends FragmentActivity {
 
             final String gatekeeperId      = payload.get(0);
             final String gatekeeperName    = payload.get(1);
-            String grantedGateIdsString = payload.get(2);
+            String grantedGateIdsString    = payload.get(2);
 
             //grantedGateIdsString is "id, id2, id3, id4, id5" where idx is a UUID.
             ArrayList<String> grantedGateIds = new ArrayList<String>(Arrays.asList(grantedGateIdsString.split(", ")));
@@ -482,18 +487,20 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void configureNFC() {
-        mNfcPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        if (mNfcAdapter != null) {
+            mNfcPendingIntent = PendingIntent.getActivity(this, 0,
+                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
-        IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+            IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 
-        try {
-            ndefDetected.addDataType("text/plain");
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            e.printStackTrace();
+            try {
+                ndefDetected.addDataType("text/plain");
+            } catch (IntentFilter.MalformedMimeTypeException e) {
+                e.printStackTrace();
+            }
+
+            mNdefExchangeFilters = new IntentFilter[] { ndefDetected };
         }
-
-        mNdefExchangeFilters = new IntentFilter[] { ndefDetected };
     }
 
     @Override
@@ -516,47 +523,11 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private void checkNFCEnabled() {
-        if (mNfcAdapter != null) {
-            if (mNfcAdapter.isEnabled()) {
-                if (activateNfcDialog != null && activateNfcDialog.isShowing())
-                    activateNfcDialog.cancel();
-
+    private void configureNFCDispatch() {
+        if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
                 configureNFC();
                 mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
                         mNdefExchangeFilters, null);
-            } else {
-                if (activateNfcDialog == null) {
-                    activateNfcDialog = new AlertDialog.Builder(this)
-                            .setTitle("Activate NFC")
-                            .setMessage("NFC (near field communication) is required to use Gate. NFC does not drain any battery.")
-                            .setCancelable(false)
-                            .setPositiveButton("Activate", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
-                                        startActivity(intent);
-                                    } else {
-                                        Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                                        startActivity(intent);
-                                    }
-                                }
-                            }).create();
-                }
-
-                // I use the handler postDelayed because when someone logs in,
-                // sometimes everything happens so fast the Keyboard doesn't have
-                // time to leave the view. So in the background, you still see the keyboard.
-                // By waiting 100 milliseconds, you basically guarantee that the keyboard is gone.
-                if (!activateNfcDialog.isShowing())
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            activateNfcDialog.show();
-                        }
-                    }, 100);
-            }
         }
     }
 
