@@ -38,6 +38,9 @@ public class APIRequestProxy {
     private Context context;
     private SharedPreferences mSessionPreferences;
 
+    // No retries!
+    final private DefaultRetryPolicy retryPolicy = new DefaultRetryPolicy(0, 0, 0);
+
 	APIRequestProxy(Context context) {
         this.context = context;
 		mRequestQueue = Volley.newRequestQueue(context.getApplicationContext());
@@ -96,7 +99,7 @@ public class APIRequestProxy {
 		addAPIKeyToParams(params);
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(SESSION_ENDPOINT), params, listener, errorListener);
 
-        request.setRetryPolicy(new DefaultRetryPolicy(5000, 1, 1));
+        request.setRetryPolicy(retryPolicy);
 
 		mRequestQueue.add(request);
 	}
@@ -105,7 +108,7 @@ public class APIRequestProxy {
         addAPIKeyToParams(params);
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(REGISTRATION_ENDPOINT), params, listener, errorListener);
 
-        request.setRetryPolicy(new DefaultRetryPolicy(5000, 1, 1));
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
 	}
@@ -116,6 +119,8 @@ public class APIRequestProxy {
         url += convertParamsToUrlParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
     }
@@ -130,6 +135,8 @@ public class APIRequestProxy {
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
+        request.setRetryPolicy(retryPolicy);
+
         mRequestQueue.add(request);
     }
 
@@ -142,6 +149,8 @@ public class APIRequestProxy {
         url += convertParamsToUrlParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.DELETE, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
     }
@@ -158,6 +167,8 @@ public class APIRequestProxy {
 
         request.setTag(FEED_TAG);
 
+        request.setRetryPolicy(retryPolicy);
+
         mRequestQueue.add(request);
     }
 
@@ -173,6 +184,8 @@ public class APIRequestProxy {
 
         request.setTag(FEED_TAG);
 
+        request.setRetryPolicy(retryPolicy);
+
         mRequestQueue.add(request);
     }
 
@@ -186,6 +199,8 @@ public class APIRequestProxy {
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, null, listener, errorListener);
 
+        request.setRetryPolicy(retryPolicy);
+
         mRequestQueue.add(request);
     }
 
@@ -196,6 +211,8 @@ public class APIRequestProxy {
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
     }
@@ -208,6 +225,8 @@ public class APIRequestProxy {
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
 
+        request.setRetryPolicy(retryPolicy);
+
         mRequestQueue.add(request);
     }
 
@@ -216,6 +235,8 @@ public class APIRequestProxy {
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(GATES_ENDPOINT), params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
     }
@@ -228,6 +249,8 @@ public class APIRequestProxy {
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
 
+        request.setRetryPolicy(retryPolicy);
+
         mRequestQueue.add(request);
     }
 
@@ -238,6 +261,8 @@ public class APIRequestProxy {
         addAuthToParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.POST, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
     }
@@ -251,6 +276,8 @@ public class APIRequestProxy {
         url += convertParamsToUrlParams(params);
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
     }
@@ -266,6 +293,8 @@ public class APIRequestProxy {
 
         HeaderResponseRequest request = new HeaderResponseRequest(Method.GET, url, params, listener, errorListener);
 
+        request.setRetryPolicy(retryPolicy);
+
         mRequestQueue.add(request);
     }
 
@@ -274,6 +303,8 @@ public class APIRequestProxy {
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(KEY_ENDPOINT), params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
     }
@@ -285,6 +316,8 @@ public class APIRequestProxy {
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
 
         mRequestQueue.add(request);
     }
