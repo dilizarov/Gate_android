@@ -115,6 +115,12 @@ public class UnlockGateActivity extends Activity {
 
         selectedGateIds = new ArrayList<String>();
 
+        instantiateViews();
+
+        bindGatesToListView();
+
+        setUnlockClickListener();
+
         mNfcAdapter = NfcAdapter.getDefaultAdapter(UnlockGateActivity.this);
 
         // Phone doesn't support NFC
@@ -122,11 +128,6 @@ public class UnlockGateActivity extends Activity {
             unlock.setText("Tap for a key");
         }
 
-        instantiateViews();
-
-        bindGatesToListView();
-
-        setUnlockClickListener();
     }
 
     @Override
@@ -194,57 +195,45 @@ public class UnlockGateActivity extends Activity {
             @Override
             public void onClick(View v) {
 
+                int len = gatesList.getCount();
+                for (int i = 0; i < len; i++) {
+
+                    if (gatesList.isItemChecked(i)) {
+                        selectedGateIds.add(gates.get(i).getId());
+                    }
+                }
+
+                if (selectedGateIds.size() == 0) {
+                    Butter.between(UnlockGateActivity.this,
+                            "You must unlock at least one gate");
+
+                    return;
+                }
+
                 // During the animation or if NFC not supported, opt for key
                 if (animating || mNfcAdapter == null || !mNfcAdapter.isEnabled())
                     generateShowKey();
                 else {
-                    new Thread(new Runnable() {
+                    actionBar.setTitle("Tutorial");
+
+                    Fade.hide(gateSelector, new AnimatorListenerAdapter() {
                         @Override
-                        public void run() {
-
-                            int len = gatesList.getCount();
-                            for (int i = 0; i < len; i++) {
-
-                                if (gatesList.isItemChecked(i)) {
-                                    selectedGateIds.add(gates.get(i).getId());
-                                }
-                            }
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    if (selectedGateIds.size() == 0) {
-                                        Butter.between(UnlockGateActivity.this,
-                                                "You must unlock at least one gate");
-
-                                        return;
-                                    }
-
-                                    actionBar.setTitle("Tutorial");
-
-                                    Fade.hide(gateSelector, new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            animateTutorial();
-                                        }
-                                    });
-
-                                    if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
-
-                                        String userId = mSessionPreferences.getString(getString(R.string.user_id_key), null);
-                                        String userName = mSessionPreferences.getString(getString(R.string.user_name_key), null);
-                                        String gateIds = selectedGateIds.toString();
-                                        gateIds = gateIds.substring(1, gateIds.length() - 1);
-
-                                        mNfcAdapter.setNdefPushMessage(
-                                                NfcUtils.stringsToNdefMessage(userId, userName, gateIds), UnlockGateActivity.this);
-                                    }
-
-                                }
-                            });
+                        public void onAnimationEnd(Animator animation) {
+                            animateTutorial();
                         }
-                    }).start();
+                    });
+
+                    if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+
+                        String userId = mSessionPreferences.getString(getString(R.string.user_id_key), null);
+                        String userName = mSessionPreferences.getString(getString(R.string.user_name_key), null);
+                        String gateIds = selectedGateIds.toString();
+                        gateIds = gateIds.substring(1, gateIds.length() - 1);
+
+                        mNfcAdapter.setNdefPushMessage(
+                            NfcUtils.stringsToNdefMessage(userId, userName, gateIds), UnlockGateActivity.this);
+                    }
+
                 }
             }
         });
