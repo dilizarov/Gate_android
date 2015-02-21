@@ -600,8 +600,6 @@ public class UnlockGateActivity extends Activity {
                     keyDialog.setCanceledOnTouchOutside(false);
                     keyDialog.show();
 
-                    //TODO
-
                     keyDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -644,8 +642,11 @@ public class UnlockGateActivity extends Activity {
                                     intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
                                     intent.setAction(Intent.ACTION_SEND);
                                     intent.setType("text/plain");
-                                    intent.putExtra(Intent.EXTRA_TEXT, extraText);
                                     intent.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
+
+                                    if (packageName.contains("mms") || packageName.contains("sms"))
+                                        intent.putExtra(Intent.EXTRA_TEXT, key);
+                                    else intent.putExtra(Intent.EXTRA_TEXT, extraText);
 
                                     intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
                                 }
