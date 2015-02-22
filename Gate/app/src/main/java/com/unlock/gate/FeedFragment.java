@@ -171,31 +171,26 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         requestPostsAndPopulateListView(true);
     }
 
-    public void getGateFeed(Gate gate, boolean refreshing) {
+    public void getGateFeed(Gate gate) {
         ((MainActivity) getActivity()).setTitle(gate);
 
-        if ((!onAggregateAndGettingAggregate(gate) &&
-            !onGateAndGettingSameGate(gate)) ||
-            refreshing) {
+        APIRequestManager.getInstance().cancelAllFeedRequests();
 
-            APIRequestManager.getInstance().cancelAllFeedRequests();
-
-            mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
+        mSessionPreferences.edit().putString(getString(R.string.user_last_gate_viewed_key),
                     (gate != null) ? gate.serialize() : null).apply();
 
-            feed.post(new Runnable() {
+        feed.post(new Runnable() {
                 @Override
                 public void run() {
                     feed.setSelection(0);
                 }
             });
 
-            currentGate = gate;
-            progressBarHolder.setVisibility(View.VISIBLE);
+        currentGate = gate;
+        progressBarHolder.setVisibility(View.VISIBLE);
 
-            infiniteScrollListener.setAtEndOfList(false);
-            requestPostsAndPopulateListView(true, true);
-        }
+        infiniteScrollListener.setAtEndOfList(false);
+        requestPostsAndPopulateListView(true, true);
     }
 
     private void requestPostsAndPopulateListView(final boolean refreshing) {

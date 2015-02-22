@@ -215,7 +215,7 @@ public class MainActivity extends FragmentActivity {
 
             grantAccessToGates(grantedGateIds, gatekeeperId, gatekeeperName);
         } else if (intent.getBooleanExtra("mainActivityNotification", false)) {
-            showFeed(null, true, false);
+            showFeed(null, false);
         } else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
             String post = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (post != null) {
@@ -281,7 +281,7 @@ public class MainActivity extends FragmentActivity {
                                                @Override
                                                public void onClick(DialogInterface dialog, int which) {
                                                    dialog.dismiss();
-                                                   showFeed(newGates.get(which), false, true);
+                                                   showFeed(newGates.get(which), true);
                                                }
                                            }).create().show();
                                 }
@@ -377,7 +377,7 @@ public class MainActivity extends FragmentActivity {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     dialog.dismiss();
-                                                    showFeed(newGates.get(which), false, true);
+                                                    showFeed(newGates.get(which), true);
                                                 }
                                             }).create().show();
                                 }
@@ -469,11 +469,11 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-    public void showFeed(Gate gate, boolean refresh, boolean smoothScroll) {
+    public void showFeed(Gate gate, boolean smoothScroll) {
         pager.setCurrentItem(0, smoothScroll);
 
         FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
-        feedFragment.getGateFeed(gate, refresh);
+        feedFragment.getGateFeed(gate);
     }
 
     public ArrayList<Gate> getGates() {

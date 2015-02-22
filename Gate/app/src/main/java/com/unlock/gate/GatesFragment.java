@@ -422,7 +422,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     }
 
     public void viewFeedForGate(Gate gate) {
-        ((MainActivity) getActivity()).showFeed(gate, false, true);
+        ((MainActivity) getActivity()).showFeed(gate, true);
     }
 
     public ArrayList<Gate> getGates() {
