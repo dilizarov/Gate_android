@@ -1,7 +1,6 @@
 package com.unlock.gate;
 
 import android.animation.ValueAnimator;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -197,46 +196,36 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                         "Leave"
                 };
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(gates.get(gateIndex).getName())
-                        .setItems(items, new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialog, int item) {
-                               switch (item) {
-                                   case 0:
-                                       dialog.dismiss();
-                                       AlertDialog.Builder buildConfirmation = new AlertDialog.Builder(getActivity());
-                                       buildConfirmation.setTitle(gates.get(gateIndex).getName())
-                                               .setMessage(getString(R.string.confirm_delete_gate_message))
-                                               .setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
+                new MaterialDialog.Builder(getActivity())
+                        .title(gates.get(gateIndex).getName())
+                        .items(items)
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                switch (which) {
+                                    case 0:
+                                        new MaterialDialog.Builder(getActivity())
+                                                .title(gates.get(gateIndex).getName())
+                                                .content(R.string.confirm_delete_gate_message)
+                                                .positiveText(R.string.yes_caps)
+                                                .negativeText(R.string.no_caps)
+                                                .callback(new MaterialDialog.ButtonCallback() {
+                                                    @Override
+                                                    public void onPositive(MaterialDialog dialog) {
+                                                        dialog.dismiss();
 
-                                                   @Override
-                                                   public void onClick(DialogInterface dialogConfirm, int item) {
-                                                       dialogConfirm.dismiss();
-                                                       //TODO: Once HQ is complete, make sure to also refresh that so keys are properly updated.
+                                                        leaveGate(gates.get(gateIndex));
+                                                    }
 
-                                                       leaveGate(gates.get(gateIndex));
-                                                   }
-                                               })
-                                               .setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
-
-                                                   @Override
-                                                   public void onClick(DialogInterface dialogConfirm, int item) {
-                                                       dialogConfirm.dismiss();
-                                                   }
-                                               });
-
-                                       AlertDialog confirmation = buildConfirmation.create();
-                                       confirmation.show();
-
-                                       break;
-                               }
-                           }
-                       });
-
-                AlertDialog alert = builder.create();
-                alert.setCanceledOnTouchOutside(true);
-                alert.show();
+                                                    @Override
+                                                    public void onNegative(MaterialDialog dialog) {
+                                                        dialog.dismiss();
+                                                    }
+                                                }).show();
+                                        break;
+                                }
+                            }
+                        }).show();
 
                 return true;
             }
