@@ -1,6 +1,5 @@
 package com.unlock.gate;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,6 +26,7 @@ import com.unlock.gate.adapters.CommentsListAdapter;
 import com.unlock.gate.models.Comment;
 import com.unlock.gate.models.Post;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.ActionBarListActivity;
 import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.CustomEditText;
 import com.unlock.gate.utils.PostViewHelper;
@@ -39,7 +39,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class CommentsActivity extends ListActivity {
+public class CommentsActivity extends ActionBarListActivity {
 
     private View postHolder;
     private TextView postName;
@@ -79,7 +79,7 @@ public class CommentsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
-        getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
 
         instantiateViews();
 
@@ -117,7 +117,6 @@ public class CommentsActivity extends ListActivity {
         if (creatingComment) {
             showKeyboard(addComment);
         }
-
 
         /*
         When in landscape mode on device, if there isn't enough space

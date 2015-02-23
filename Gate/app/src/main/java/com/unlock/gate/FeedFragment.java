@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.gc.materialdesign.views.ButtonFloat;
 import com.unlock.gate.adapters.FeedListAdapter;
 import com.unlock.gate.models.Gate;
 import com.unlock.gate.models.Post;
@@ -35,9 +35,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 
@@ -52,7 +52,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     private ListView feed;
-    private Button createPost;
+    private ButtonFloat createPost;
     private FeedListAdapter listAdapter;
     private ArrayList<Post> posts;
     private ArrayList<Post> adapterPosts;
@@ -99,7 +99,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         super.onViewCreated(view, savedInstanceState);
 
         ViewGroup viewGroup = (ViewGroup) view;
-        mPullToRefreshLayout = new PullToRefreshLayout(viewGroup.getContext());
+        mPullToRefreshLayout = new PullToRefreshLayout(view.getContext());
 
         ActionBarPullToRefresh.from(getActivity())
                 .insertLayoutInto(viewGroup)
@@ -111,7 +111,8 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 .getHeaderTransformer();
         transformer.getHeaderView().findViewById(R.id.ptr_text)
                 .setBackgroundColor(getResources().getColor(R.color.black));
-        transformer.setProgressBarColor(getResources().getColor(R.color.gate_blue));
+        transformer.setProgressBarColor(getResources().getColor(R.color.white));
+        transformer.setProgressBarHeight(2);
         transformer.setPullText("Pull down the internet...");
         transformer.setRefreshingText("Finding posts...");
 
@@ -138,7 +139,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         postLoading = (ProgressBar) this.getActivity().findViewById(R.id.postLoading);
 
-        createPost = (Button) this.getActivity().findViewById(R.id.createPost);
+        createPost = (ButtonFloat) this.getActivity().findViewById(R.id.createPost);
 
         if (savedInstanceState != null) {
             posts            = savedInstanceState.getParcelableArrayList("posts");

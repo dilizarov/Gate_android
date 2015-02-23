@@ -90,8 +90,10 @@
         android:background="@drawable/gate_edit_text_background_invisible_underline"
         android:paddingTop="11dp"
         android:paddingBottom="11dp"
+        android:textColor="@color/abc_secondary_text_material_light"
         android:layout_toLeftOf="@id/sendComment"
-        android:inputType="textCapSentences"
+        android:inputType="textMultiLine|textCapSentences"
+        android:maxLines="5"
         android:hint="@string/add_comment_hint" />
 
     <ProgressBar

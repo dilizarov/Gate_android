@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,7 +32,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/createGate">
+            android:layout_above="@+id/viewAggregate">
 
             <TextView
                 android:id="@+id/noGatesMessage"
@@ -82,33 +83,37 @@
                 android:layout_marginRight="-5dip"
                 android:layout_marginTop="-5dip"
                 android:layout_marginBottom="-5dip"
-                android:layout_toLeftOf="@+id/buttonSplitter"
                 android:textColor="@android:color/white"
                 android:text="@string/aggregate"/>
 
-            <View
-                android:id="@+id/buttonSplitter"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                android:visibility="invisible" />
-
-            <Button
+            <com.unlock.gate.utils.MyButtonFloat
                 android:id="@+id/createGate"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:paddingBottom="16dp"
-                android:paddingTop="16dp"
-                android:layout_marginLeft="-5dip"
-                android:layout_marginRight="-5dip"
-                android:layout_marginTop="-5dip"
-                android:layout_marginBottom="-5dip"
-                android:layout_toRightOf="@+id/buttonSplitter"
-                android:textColor="@android:color/white"
-                android:text="@string/create_gate"
-                />
+                android:layout_marginRight="18dp"
+                android:layout_marginBottom="18dp"
+                android:background="@color/black"
+                materialdesign:animate="false"
+                materialdesign:rippleColor="@color/gate_blue"
+                materialdesign:iconDrawable="@drawable/ic_action_new" />
+
+            <!--<Button-->
+                <!--android:id="@+id/createGate"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:paddingBottom="16dp"-->
+                <!--android:paddingTop="16dp"-->
+                <!--android:layout_marginLeft="-5dip"-->
+                <!--android:layout_marginRight="-5dip"-->
+                <!--android:layout_marginTop="-5dip"-->
+                <!--android:layout_marginBottom="-5dip"-->
+                <!--android:layout_toRightOf="@+id/buttonSplitter"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:text="@string/create_gate"-->
+                <!--/>-->
 
     </RelativeLayout>
 

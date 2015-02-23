@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.gc.materialdesign.views.ButtonFloat;
 import com.unlock.gate.adapters.GatesListAdapter;
 import com.unlock.gate.models.Gate;
 import com.unlock.gate.utils.APIRequestManager;
@@ -31,9 +32,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 /**
@@ -45,7 +46,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_POSITION = "position";
     private ListView gatesList;
-    private Button createGate;
+    private ButtonFloat createGate;
     private GatesListAdapter listAdapter;
     private ArrayList<Gate> gates;
     private ArrayList<Gate> adapterGates;
@@ -90,7 +91,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
         super.onViewCreated(view, savedInstanceState);
 
         ViewGroup viewGroup = (ViewGroup) view;
-        mPullToRefreshLayout = new PullToRefreshLayout(viewGroup.getContext());
+        mPullToRefreshLayout = new PullToRefreshLayout(view.getContext());
 
         ActionBarPullToRefresh.from(getActivity())
                 .insertLayoutInto(viewGroup)
@@ -102,7 +103,8 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                 .getHeaderTransformer();
         transformer.getHeaderView().findViewById(R.id.ptr_text)
                 .setBackgroundColor(getResources().getColor(R.color.black));
-        transformer.setProgressBarColor(getResources().getColor(R.color.gate_blue));
+        transformer.setProgressBarColor(getResources().getColor(R.color.white));
+        transformer.setProgressBarHeight(2);
         transformer.setPullText("Pull down the internet...");
         transformer.setRefreshingText("Finding Gates...");
     }
@@ -123,7 +125,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
 
         gateLoading = (ProgressBar) this.getActivity().findViewById(R.id.gateLoading);
 
-        createGate = (Button) this.getActivity().findViewById(R.id.createGate);
+        createGate = (ButtonFloat) this.getActivity().findViewById(R.id.createGate);
 
         viewAggregate = (Button) this.getActivity().findViewById(R.id.viewAggregate);
         viewAggregate.setOnClickListener(new View.OnClickListener() {
@@ -253,7 +255,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                             gates.add(gate);
                         }
 
-
+                        if (getActivity() == null) return;
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
                                 if (refreshing) {

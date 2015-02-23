@@ -3,7 +3,6 @@ package com.unlock.gate;
 import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
@@ -20,6 +19,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -48,7 +48,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class LoginRegisterActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LoginRegisterActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private enum State {
 		LOGIN, REGISTRATION, FORGOT_PASSWORD
@@ -119,6 +119,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
             } else {
                 viewState = State.LOGIN;
             }
+
             // External services just make it easier to get and set at the same time.
             getAndSetEmail();
             getAndSetFullName();
@@ -552,7 +553,7 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 				getString(R.string.last_used_email), null);
 		
 		if (mEmail == null) {
-			// Try AccountPicker
+            // Try AccountPicker
 			try {
 				Intent intent = AccountPicker.newChooseAccountIntent(null, null, 
 						new String[] { GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
@@ -600,14 +601,18 @@ public class LoginRegisterActivity extends Activity implements LoaderManager.Loa
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-		cursor.moveToFirst();
-        if (!cursor.isNull(0)) {
-            mFullName = cursor.getString(0);
-            if (!mFullName.isEmpty()) {
-                userFullName.setText(mFullName);
-                mActivityPreferences.edit()
-                                    .putString(getString(R.string.name_on_phone), mFullName)
-                                    .apply();
+        if (cursor == null) {
+            return;
+        } else if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            if (!cursor.isNull(0)) {
+                mFullName = cursor.getString(0);
+                if (!mFullName.isEmpty()) {
+                    userFullName.setText(mFullName);
+                    mActivityPreferences.edit()
+                            .putString(getString(R.string.name_on_phone), mFullName)
+                            .apply();
+                }
             }
         }
 	}

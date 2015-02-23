@@ -106,7 +106,7 @@
 
         <activity
             android:name="com.unlock.gate.EnterKeyActivity"
-            android:label="Enter Key"
+            android:label="@string/title_activity_enter_key"
             android:theme="@style/Gate.Dialog"
             android:windowSoftInputMode="stateVisible" >
         </activity>

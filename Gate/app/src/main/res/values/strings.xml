@@ -90,10 +90,9 @@
     <!-- CreatePost Dialog -->
     <string name="gate_selection_default">Select a Gate</string>
     <string name="write_post_hint">Write a post</string>
-    <string name="title_activity_create_post">Create Post</string>
-    <string name="title_activity_create_gate">Create Gate</string>
+    <string name="title_activity_create_post">Write a post</string>
+    <string name="title_activity_create_gate">Create a Gate</string>
     <string name="title_activity_unlock_gate">Select Gates to unlock...</string>
-    <string name="title_activity_enter_key">EnterKeyActivity</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_enter_key">Enter a key</string>
 
 </resources>

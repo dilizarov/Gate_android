@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,8 +31,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/createPost">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/noPostsMessage"
@@ -69,19 +69,19 @@
             android:indeterminateDrawable="@drawable/progress"
             />
 
-        <Button
+        <com.unlock.gate.utils.MyButtonFloat
             android:id="@+id/createPost"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"
-            android:layout_marginLeft="-5dip"
-            android:layout_marginRight="-5dip"
-            android:layout_marginTop="-5dip"
-            android:layout_marginBottom="-5dip"
-            android:textColor="@android:color/white"
-            android:text="@string/create_post_button"/>
+            android:layout_marginRight="18dp"
+            android:layout_marginBottom="18dp"
+            android:background="@color/black"
+            materialdesign:animate="false"
+            materialdesign:rippleColor="@color/gate_blue"
+            materialdesign:iconDrawable="@drawable/ic_action_new"
+            />
 
     </RelativeLayout>
 

@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -49,7 +50,7 @@ import java.util.Comparator;
 /**
  * Created by davidilizarov on 10/20/14.
  */
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends ActionBarActivity {
 
     private final int UPDATE_POST_INTENT = 2;
     private final int ENTER_KEY_INTENT = 5;
@@ -94,8 +95,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Setting background of actionbar to black.
-        getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.pager);
@@ -104,10 +104,10 @@ public class MainActivity extends FragmentActivity {
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(1);
 
-        tabs.setBackgroundColor(getResources().getColor(R.color.white));
-        tabs.setIndicatorColor(Color.BLACK);
-        tabs.setTextColor(Color.BLACK);
-        tabs.setBackgroundColor(Color.WHITE);
+        tabs.setBackgroundColor(Color.BLACK);
+        tabs.setUnderlineColor(Color.BLACK);
+        tabs.setIndicatorHeight(8);
+        tabs.setUnderlineHeight(6);
 
         tabs.setShouldExpand(true);
         tabs.setViewPager(pager);
@@ -482,7 +482,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setTitle(Gate gate) {
-        getActionBar().setTitle(
+        getSupportActionBar().setTitle(
                 gate == null
                 ? "Aggregate"
                 : gate.getName()

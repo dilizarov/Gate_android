@@ -2,8 +2,6 @@ package com.unlock.gate;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -22,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
@@ -55,7 +54,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UnlockGateActivity extends Activity {
+public class UnlockGateActivity extends ActionBarActivity {
 
     private RelativeLayout gateSelector;
     private ListView gatesList;
@@ -64,7 +63,7 @@ public class UnlockGateActivity extends Activity {
     private ArrayList<String> selectedGateIds;
     private NfcAdapter mNfcAdapter;
     private SharedPreferences mSessionPreferences;
-    private ActionBar actionBar;
+    private android.support.v7.app.ActionBar actionBar;
 
     private ImageView leftPhone;
     private ImageView leftPhoneSide;
@@ -106,7 +105,7 @@ public class UnlockGateActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unlock_gate);
 
-        actionBar = getActionBar();
+        actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
 
         gates = getIntent().getParcelableArrayListExtra("gates");

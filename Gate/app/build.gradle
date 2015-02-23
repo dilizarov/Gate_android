@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "20.0.0"
     defaultConfig {
         applicationId "com.unlock.gate"
         minSdkVersion 14
-        targetSdkVersion 19
+        targetSdkVersion 21
     }
     buildTypes {
         release {
@@ -29,11 +29,13 @@ if (project.hasProperty("Gate.signing")
 
 dependencies {
     compile files('libs/volley_20141013.jar')
+    compile 'com.android.support:appcompat-v7:21.0.+'
     compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.google.code.gson:gson:2.3'
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.jpardogo.materialtabstrip:library:1.0.9'
+    compile 'com.nineoldandroids:library:2.4.+'
+    compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
     compile 'joda-time:joda-time:2.5'
-    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.9'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:+'
     compile files('libs/joda-convert-1.7.jar')
 }
