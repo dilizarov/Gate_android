@@ -7,7 +7,6 @@
   <style name="Gate.NoActionBar" parent="@style/_Gate.NoActionBar"/>
   <style name="Gate.Dialog" parent="@style/_Gate.Dialog" />
 
-    <!--android:Theme.Holo.Light.DarkActionBar-->
   <style name="_Gate" parent="Theme.AppCompat.Light.DarkActionBar">
 
       <item name="android:buttonStyle">@style/Button.Gate</item>
@@ -16,6 +15,7 @@
 
       <item name="android:textColorPrimary">@color/white</item>
       <item name="colorAccent">@color/gate_blue</item>
+      <item name="colorControlNormal">@color/black</item>
 
       <item name="android:popupMenuStyle">@style/ListPopup.Gate</item>
       <item name="android:dropDownListViewStyle">@style/ListSelector.Gate</item>
@@ -23,7 +23,6 @@
 
   </style>
 
-    <!--android:Theme.Holo.Light.NoActionBar-->
   <style name="_Gate.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
 
       <item name="colorAccent">@color/gate_blue</item>
@@ -33,7 +32,6 @@
 
   </style>
 
-    <!--android:Theme.Holo.Light.Dialog-->
   <style name="_Gate.Dialog" parent="Theme.AppCompat.Light.Dialog" >
 
       <item name="android:buttonStyle">@style/Button.Gate</item>

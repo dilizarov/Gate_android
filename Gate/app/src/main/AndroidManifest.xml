@@ -49,6 +49,7 @@
         <activity
             android:name="com.unlock.gate.LoginRegisterActivity"
             android:label="@string/app_name"
+            android:screenOrientation="nosensor"
             android:theme="@style/Gate.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,6 +61,7 @@
             android:name="com.unlock.gate.MainActivity"
             android:label="Gate"
             android:launchMode="singleTop"
+            android:screenOrientation="nosensor"
             android:theme="@style/Gate" >
 
             <intent-filter>
@@ -74,24 +76,18 @@
             android:label="@string/title_activity_comments"
             android:parentActivityName="com.unlock.gate.MainActivity"
             android:theme="@style/Gate"
+            android:screenOrientation="nosensor"
             android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.unlock.gate.MainActivity" />
         </activity>
         <activity
-            android:name="com.unlock.gate.CreatePostActivity"
-            android:label="@string/title_activity_create_post"
-            android:theme="@style/Gate.Dialog"
-            android:windowSoftInputMode="stateVisible" >
-
-        </activity>
-        <activity
             android:name="com.unlock.gate.UnlockGateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_unlock_gate"
             android:parentActivityName="com.unlock.gate.MainActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="nosensor"
             android:theme="@style/Gate" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

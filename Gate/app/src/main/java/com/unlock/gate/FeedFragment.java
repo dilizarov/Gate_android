@@ -7,15 +7,20 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.gc.materialdesign.views.ButtonFloat;
@@ -70,8 +75,9 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     private ProgressBar postLoading;
 
-    private final int CREATE_POST_INTENT = 1;
     private final int UPDATE_POST_INTENT = 2;
+
+    private Gate selectedGate;
 
     public static FeedFragment newInstance() {
         FeedFragment fragment = new FeedFragment();
@@ -409,108 +415,18 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         createPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreatePostActivity.class);
-                intent.putExtra("currentGate", currentGate);
-                intent.putExtra("gates", getGates());
-                startActivityForResult(intent, CREATE_POST_INTENT);
+                showCreatePostDialog(currentGate, getGates(), null);
             }
         });
     }
 
     public void openSharePost(String post) {
-        Intent intent = new Intent(getActivity(), CreatePostActivity.class);
-        intent.putExtra("currentGate", currentGate);
-        intent.putExtra("gates", getGates());
-        intent.putExtra("postBody", post);
-        startActivityForResult(intent, CREATE_POST_INTENT);
+        showCreatePostDialog(currentGate, getGates(), post);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case CREATE_POST_INTENT:
-                if (resultCode == getActivity().RESULT_OK) {
-
-                    final Gate gate = data.getParcelableExtra("gate");
-                    // We only need to show a post is loading if we're on the same gate
-                    // or if we're in the Aggregate
-                    if (onGateAndGettingSameGate(gate) || currentGate == null) {
-                        feed.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                feed.setSelection(0);
-                            }
-                        });
-
-                        expandCreatedPostLoading();
-                    }
-
-                    final String postBody = data.getStringExtra("postBody")
-                                                .replaceAll(RegexConstants.NEW_LINE, "\n")
-                                                .replaceAll(RegexConstants.DOUBLE_SPACE, " ");
-
-                    try {
-                        JSONObject params = new JSONObject();
-
-                        JSONObject post = new JSONObject();
-                        post.put("body", postBody);
-
-                        params.put("post", post);
-
-                        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-
-                                if (currentGate == null ||
-                                    onGateAndGettingSameGate(gate)) {
-
-                                    JSONObject jsonPost = response.optJSONObject("post");
-                                    Post post = new Post(jsonPost.optString("external_id"),
-                                            jsonPost.optJSONObject("user").optString("name"),
-                                            jsonPost.optString("body"),
-                                            jsonPost.optJSONObject("gate").optString("external_id"),
-                                            jsonPost.optJSONObject("gate").optString("name"),
-                                            jsonPost.optInt("comments_count"),
-                                            jsonPost.optInt("up_count"),
-                                            jsonPost.optBoolean("uped"),
-                                            jsonPost.optString("created_at"));
-
-                                    posts.add(0, post);
-                                    adaptNewPostsToFeed();
-
-                                    collapseCreatedPostLoading();
-                                } else {
-                                    Butter.down(getActivity(), "Successfully posted to another Gate");
-                                }
-
-                            }
-                        };
-
-                        Response.ErrorListener errorListener = new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                collapseCreatedPostLoading();
-                                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-
-                                Intent intent = new Intent(getActivity(), CreatePostActivity.class);
-                                intent.putExtra("currentGate", gate);
-                                intent.putExtra("gates", getGates());
-                                intent.putExtra("postBody", postBody);
-
-                                intent.putExtra("errorMessage", volleyError.getMessage());
-
-                                startActivityForResult(intent, CREATE_POST_INTENT);
-                            }
-                        };
-
-                        APIRequestManager.getInstance().doRequest().createPost(gate, params, listener, errorListener);
-                    } catch (JSONException ex) {
-                        ex.printStackTrace();
-                    }
-
-                }
-                break;
-
             case UPDATE_POST_INTENT:
                 if (resultCode == getActivity().RESULT_OK) {
 
@@ -580,6 +496,284 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
         ValueAnimator animator = slideAnimator(finalHeight, 0, postLoading);
         animator.start();
+    }
+
+    private void showCreatePostDialog(Gate current, final ArrayList<Gate> gates, String postBody) {
+        selectedGate = current;
+
+        final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .title(R.string.title_dialog_create_post)
+                .customView(R.layout.dialog_create_post, true)
+                .positiveText("POST")
+                .negativeText("CANCEL")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        dialog.dismiss();
+
+                        EditText postInput = (EditText) dialog.getCustomView().findViewById(R.id.postInput);
+                        createPost(selectedGate, postInput.getText().toString().trim());
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).build();
+
+        final View positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
+        final TextView gateSelection = (TextView) dialog.getCustomView().findViewById(R.id.gateSelection);
+        final EditText postInput = (EditText) dialog.getCustomView().findViewById(R.id.postInput);
+
+        if (!(postInput.getText().toString().trim().length() > 0)) positiveAction.setEnabled(false);
+
+        postInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() > 0 && selectedGate != null) positiveAction.setEnabled(true);
+                else positiveAction.setEnabled(false);
+            }
+        });
+
+        if (postBody != null) postInput.append(postBody);
+
+        gateSelection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (gates.isEmpty()) {
+                    gateSelection.setText("Loading Gates...");
+                    gateSelection.setEnabled(false);
+
+                    Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(final JSONObject response) {
+
+                            new Thread(new Runnable() {
+
+                              public void run() {
+                                  gates.clear();
+
+                                  JSONArray jsonGates = response.optJSONArray("gates");
+                                  int len = jsonGates.length();
+                                  for (int i = 0; i < len; i++) {
+                                      JSONObject jsonGate = jsonGates.optJSONObject(i);
+                                      Gate gate = new Gate(jsonGate.optString("external_id"),
+                                              jsonGate.optString("name"),
+                                              jsonGate.optInt("users_count"),
+                                              jsonGate.optJSONObject("creator").optString("name"));
+
+                                      gates.add(gate);
+                                  }
+
+                                  getActivity().runOnUiThread(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          if (gates.isEmpty()) {
+                                              Butter.between(getActivity(), "No Gates Unlocked\nUnlock a Gate so you can post");
+
+                                            dialog.dismiss();
+                                          } else {
+                                              gateSelection.setText("Select a Gate");
+                                              gateSelection.setEnabled(true);
+
+                                              gateSelection.performClick();
+                                          }
+                                      }
+                                  });
+                              }
+
+                            }).start();
+
+                        }
+                    };
+
+                    Response.ErrorListener errorListener = new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Butter.between(getActivity(), "We couldn't load your Gates");
+
+                            gateSelection.setText("Reload Gates");
+                            gateSelection.setEnabled(true);
+                        }
+                    };
+
+                    loadGates(listener, errorListener);
+                } else {
+                    final CharSequence[] items = new CharSequence[gates.size()];
+                    for (int i = 0; i < items.length; i++) {
+                        items[i] = gates.get(i).getName();
+                    }
+
+                     new MaterialDialog.Builder(getActivity())
+                            .title("Select a Gate to post in")
+                            .items(items)
+                            .itemsCallback(new MaterialDialog.ListCallback() {
+                                @Override
+                                public void onSelection(MaterialDialog materialDialog, View view, int which, CharSequence charSequence) {
+                                    materialDialog.dismiss();
+
+                                    if (which >= 0 && which < items.length) {
+                                        selectedGate = gates.get(which);
+                                        gateSelection.setText(selectedGate.getName());
+
+                                        if (selectedGate != null && postInput.getText().toString().trim().length() > 0) positiveAction.setEnabled(true);
+                                        else positiveAction.setEnabled(false);
+                                    }
+                                }
+                            }).show();
+                }
+            }
+        });
+
+        dialog.show();
+
+        if (gates.isEmpty()) {
+            gateSelection.setText("Loading Gates...");
+            gateSelection.setEnabled(false);
+
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(final JSONObject response) {
+
+                    new Thread(new Runnable() {
+
+                        public void run() {
+                            gates.clear();
+
+                            JSONArray jsonGates = response.optJSONArray("gates");
+                            int len = jsonGates.length();
+                            for (int i = 0; i < len; i++) {
+                                JSONObject jsonGate = jsonGates.optJSONObject(i);
+                                Gate gate = new Gate(jsonGate.optString("external_id"),
+                                        jsonGate.optString("name"),
+                                        jsonGate.optInt("users_count"),
+                                        jsonGate.optJSONObject("creator").optString("name"));
+
+                                gates.add(gate);
+                            }
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (gates.isEmpty()) {
+                                        Butter.between(getActivity(), "No Gates Unlocked\nUnlock a Gate so you can post");
+
+                                        dialog.dismiss();
+                                    } else {
+                                        gateSelection.setText("Select a Gate");
+                                        gateSelection.setEnabled(true);
+                                    }
+                                }
+                            });
+                        }
+
+                    }).start();
+
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Butter.between(getActivity(), "We couldn't load your Gates");
+
+                    gateSelection.setText("Reload Gates");
+                    gateSelection.setEnabled(true);
+                }
+            };
+
+            loadGates(listener, errorListener);
+        } else {
+            if (selectedGate != null) gateSelection.setText(selectedGate.getName());
+            else gateSelection.performClick();
+        }
+    }
+
+    private void createPost(final Gate gate, String postContents) {
+        // We only need to show a post is loading if we're on the same gate
+        // or if we're in the Aggregate
+        if (onGateAndGettingSameGate(gate) || currentGate == null) {
+            feed.post(new Runnable() {
+                @Override
+                public void run() {
+                    feed.setSelection(0);
+                }
+            });
+
+            expandCreatedPostLoading();
+        }
+
+        final String postBody = postContents
+                .replaceAll(RegexConstants.NEW_LINE, "\n")
+                .replaceAll(RegexConstants.DOUBLE_SPACE, " ");
+
+        try {
+            JSONObject params = new JSONObject();
+
+            JSONObject post = new JSONObject();
+            post.put("body", postBody);
+
+            params.put("post", post);
+
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    if (currentGate == null ||
+                            onGateAndGettingSameGate(gate)) {
+
+                        JSONObject jsonPost = response.optJSONObject("post");
+                        Post post = new Post(jsonPost.optString("external_id"),
+                                jsonPost.optJSONObject("user").optString("name"),
+                                jsonPost.optString("body"),
+                                jsonPost.optJSONObject("gate").optString("external_id"),
+                                jsonPost.optJSONObject("gate").optString("name"),
+                                jsonPost.optInt("comments_count"),
+                                jsonPost.optInt("up_count"),
+                                jsonPost.optBoolean("uped"),
+                                jsonPost.optString("created_at"));
+
+                        posts.add(0, post);
+                        adaptNewPostsToFeed();
+
+                        collapseCreatedPostLoading();
+                    } else {
+                        Butter.down(getActivity(), "Successfully posted to another Gate");
+                    }
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    collapseCreatedPostLoading();
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                    Butter.down(getActivity(), volleyError.getMessage());
+                    showCreatePostDialog(gate, getGates(), postBody);
+                }
+            };
+
+            APIRequestManager.getInstance().doRequest().createPost(gate, params, listener, errorListener);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void loadGates(Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        JSONObject params = new JSONObject();
+
+        APIRequestManager.getInstance().doRequest().getGates(params, listener, errorListener);
     }
 
     public static ValueAnimator slideAnimator(int start, int end, final ProgressBar postLoading) {

@@ -1,7 +1,6 @@
 package com.unlock.gate;
 
 import android.animation.ValueAnimator;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
@@ -355,12 +354,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                         dialog.dismiss();
                     }
                 })
-                .showListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-
-                    }
-                }).build();
+                .build();
 
         final View positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
         EditText gateNameInput = (EditText) dialog.getCustomView().findViewById(R.id.createGateName);

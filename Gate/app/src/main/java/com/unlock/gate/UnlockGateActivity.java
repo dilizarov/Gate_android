@@ -2,14 +2,12 @@ package com.unlock.gate;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -37,6 +35,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.unlock.gate.models.Gate;
@@ -571,91 +570,81 @@ public class UnlockGateActivity extends ActionBarActivity {
                         }
                     }
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(UnlockGateActivity.this);
+                    MaterialDialog dialog = new MaterialDialog.Builder(UnlockGateActivity.this)
+                            .title("Key")
+                            .content(Html.fromHtml("<b>" + key + "</b> unlocks " + gatesBuilder.toString() + "<br><br> The key expires 3 days after inactivity"))
+                            .cancelable(false)
+                            .autoDismiss(false)
+                            .positiveText("SHARE")
+                            .neutralText("COPY")
+                            .negativeText("FINISHED")
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    String extraText = "Use " + key + " to #unlock " + gatesBuilder.toString() + " on #Gate\n\nhttp://unlockgate.today";
+                                    String extraSubject = "Unlock Gates with this Key";
 
+                                    Intent emailIntent = new Intent();
+                                    emailIntent.setAction(Intent.ACTION_SEND);
+                                    emailIntent.putExtra(Intent.EXTRA_TEXT, extraText);
+                                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
+                                    emailIntent.setType("message/rfc822");
 
-                    builder.setTitle("Key")
-                           .setMessage(Html.fromHtml("<b>" + key + "</b> unlocks " + gatesBuilder.toString() + "<br><br> The key expires 3 days after inactivity"))
-                           .setCancelable(false)
-                           .setNegativeButton("FINISHED", new DialogInterface.OnClickListener() {
-                               @Override
-                               public void onClick(DialogInterface dialog, int which) {
-                                   dialog.cancel();
+                                    PackageManager pm = getPackageManager();
+                                    Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                                    sendIntent.setType("text/plain");
 
-                                   ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                                   ClipData clip = ClipData.newPlainText("key", key);
-                                   clipboard.setPrimaryClip(clip);
-                                   Butter.down(UnlockGateActivity.this, "Key saved to clipboard");
-                               }
-                           })
-                           .setPositiveButton("SHARE", new DialogInterface.OnClickListener() {
+                                    Intent openInChooser = Intent.createChooser(emailIntent, "Share your key using...");
 
-                               @Override
-                               public void onClick(DialogInterface dialog, int which) {
-                               }
-                           });
+                                    List<ResolveInfo> resInfo = pm.queryIntentActivities(sendIntent, 0);
+                                    List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
 
-                    AlertDialog keyDialog = builder.create();
-                    keyDialog.setCanceledOnTouchOutside(false);
-                    keyDialog.show();
+                                    for (int i = 0; i < resInfo.size(); i++) {
+                                        ResolveInfo ri = resInfo.get(i);
+                                        String packageName = ri.activityInfo.packageName;
 
-                    keyDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // Create an Email Chooser and append other ACTION_SEND apps based on package name.
-                            // Note, FB is not included because they PURPOSELY bugged their product so that you can't
-                            // share through them. For shame.
+                                        if (packageName.contains("android.email")) {
+                                            emailIntent.setPackage(packageName);
+                                        } else if (packageName.contains("twitter")    ||
+                                                packageName.contains("mms")        ||
+                                                packageName.contains("sms")        ||
+                                                packageName.contains("android.gm") ||
+                                                packageName.contains("skype")      ||
+                                                packageName.contains("tumblr")) {
 
-                            String extraText = "Use " + key + " to #unlock " + gatesBuilder.toString() + " on #Gate\n\nhttp://unlockgate.today";
-                            String extraSubject = "Unlock Gates with this Key";
+                                            Intent intent = new Intent();
+                                            intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                                            intent.setAction(Intent.ACTION_SEND);
+                                            intent.setType("text/plain");
+                                            intent.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
 
-                            Intent emailIntent = new Intent();
-                            emailIntent.setAction(Intent.ACTION_SEND);
-                            emailIntent.putExtra(Intent.EXTRA_TEXT, extraText);
-                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
-                            emailIntent.setType("message/rfc822");
+                                            if (packageName.contains("mms") || packageName.contains("sms"))
+                                                intent.putExtra(Intent.EXTRA_TEXT, key);
+                                            else intent.putExtra(Intent.EXTRA_TEXT, extraText);
 
-                            PackageManager pm = getPackageManager();
-                            Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                            sendIntent.setType("text/plain");
+                                            intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+                                        }
+                                    }
 
-                            Intent openInChooser = Intent.createChooser(emailIntent, "Share your key using...");
-
-                            List<ResolveInfo> resInfo = pm.queryIntentActivities(sendIntent, 0);
-                            List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
-
-                            for (int i = 0; i < resInfo.size(); i++) {
-                                ResolveInfo ri = resInfo.get(i);
-                                String packageName = ri.activityInfo.packageName;
-
-                                if (packageName.contains("android.email")) {
-                                    emailIntent.setPackage(packageName);
-                                } else if (packageName.contains("twitter")    ||
-                                           packageName.contains("mms")        ||
-                                           packageName.contains("sms")        ||
-                                           packageName.contains("android.gm") ||
-                                           packageName.contains("skype")      ||
-                                           packageName.contains("tumblr")) {
-
-                                    Intent intent = new Intent();
-                                    intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
-                                    intent.setAction(Intent.ACTION_SEND);
-                                    intent.setType("text/plain");
-                                    intent.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
-
-                                    if (packageName.contains("mms") || packageName.contains("sms"))
-                                        intent.putExtra(Intent.EXTRA_TEXT, key);
-                                    else intent.putExtra(Intent.EXTRA_TEXT, extraText);
-
-                                    intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+                                    LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
+                                    openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+                                    startActivity(openInChooser);
                                 }
-                            }
 
-                            LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
-                            openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
-                            startActivity(openInChooser);
-                        }
-                    });
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    dialog.dismiss();
+                                }
+
+                                @Override
+                                public void onNeutral(MaterialDialog dialog) {
+                                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData clip = ClipData.newPlainText("key", key);
+                                    clipboard.setPrimaryClip(clip);
+                                    Butter.down(UnlockGateActivity.this, "Key saved to clipboard");
+                                }
+                            }).show();
+
                 }
             };
 
