@@ -88,6 +88,18 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // For some reason, on very rare occasions when you navigate to FeedFragment, this doesn't stay
+        // The way it was initially initialized, so on resume, we just do it each time. Quick fix for now.
+        DefaultHeaderTransformer transformer = (DefaultHeaderTransformer) mPullToRefreshLayout
+                .getHeaderTransformer();
+        transformer.getHeaderView().findViewById(R.id.ptr_text)
+                .setBackgroundColor(getResources().getColor(R.color.black));
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 

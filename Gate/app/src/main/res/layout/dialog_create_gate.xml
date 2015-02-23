@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <com.unlock.gate.utils.CustomEditText
+        android:id="@+id/createGateName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/create_gate_hint"
+        android:textColor="@color/abc_secondary_text_material_light"
+        android:inputType="textShortMessage|textCapWords" />
+
+</LinearLayout>

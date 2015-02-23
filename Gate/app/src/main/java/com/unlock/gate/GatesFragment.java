@@ -3,19 +3,23 @@ package com.unlock.gate;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.gc.materialdesign.views.ButtonFloat;
@@ -58,8 +62,6 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
 
     private ProgressBar gateLoading;
 
-    private final int CREATE_GATE_INTENT = 1;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -77,6 +79,17 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        DefaultHeaderTransformer transformer = (DefaultHeaderTransformer) mPullToRefreshLayout
+                .getHeaderTransformer();
+        transformer.getHeaderView().findViewById(R.id.ptr_text)
+                .setBackgroundColor(getResources().getColor(R.color.black));
+
     }
 
     @Override
@@ -331,88 +344,135 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
 
     }
 
+    private void showCreateGateDialog(String attemptedGateName) {
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .title(R.string.title_dialog_create_gate)
+                .customView(R.layout.dialog_create_gate, true)
+                .positiveText("CREATE")
+                .negativeText("CANCEL")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        dialog.dismiss();
+
+                        EditText input = (EditText) dialog.getCustomView().findViewById(R.id.createGateName);
+                        String gateName = input.getText().toString().trim();
+
+                        createGate(gateName);
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .showListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+
+                    }
+                }).build();
+
+        final View positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
+        EditText gateNameInput = (EditText) dialog.getCustomView().findViewById(R.id.createGateName);
+
+        gateNameInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                positiveAction.setEnabled(s.toString().trim().length() > 0);
+            }
+        });
+
+        if (attemptedGateName != null && attemptedGateName.length() > 0) {
+            gateNameInput.append(attemptedGateName);
+            positiveAction.setEnabled(true);
+        } else {
+            positiveAction.setEnabled(false);
+        }
+
+        dialog.show();
+    }
+
     private void setCreateGateClickListener() {
         createGate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreateGateActivity.class);
-                startActivityForResult(intent, CREATE_GATE_INTENT);
+                showCreateGateDialog(null);
             }
         });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case CREATE_GATE_INTENT:
-                if (resultCode == getActivity().RESULT_OK) {
-                    final String gateName = data.getStringExtra("gateName");
+    public void createGate(final String gateName) {
+        expandCreatedGateLoading();
 
-                    expandCreatedGateLoading();
+        try {
+            JSONObject params = new JSONObject();
 
-                    try {
-                        JSONObject params = new JSONObject();
+            JSONObject gate = new JSONObject();
+            gate.put("name", gateName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));
 
-                        JSONObject gate = new JSONObject();
-                        gate.put("name", gateName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));
+            params.put("gate", gate);
 
-                        params.put("gate", gate);
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    JSONObject jsonGate = response.optJSONObject("gate");
+                    final Gate gate = new Gate(jsonGate.optString("external_id"),
+                            jsonGate.optString("name"),
+                            1,
+                            jsonGate.optJSONObject("creator").optString("name"));
 
-                        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                JSONObject jsonGate = response.optJSONObject("gate");
-                                final Gate gate = new Gate(jsonGate.optString("external_id"),
-                                        jsonGate.optString("name"),
-                                        1,
-                                        jsonGate.optJSONObject("creator").optString("name"));
+                    ArrayList<Gate> newGates = new ArrayList<Gate>();
+                    newGates.add(gate);
 
-                                ArrayList<Gate> newGates = new ArrayList<Gate>();
-                                newGates.add(gate);
+                    addGatesToArrayList(newGates);
 
-                                addGatesToArrayList(newGates);
+                    final int index = gates.indexOf(gate);
 
-                                final int index = gates.indexOf(gate);
+                    gatesList.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            gatesList.setSelection(index);
+                        }
+                    });
 
-                                gatesList.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        gatesList.setSelection(index);
-                                    }
-                                });
+                    adaptNewGatesToList();
 
-
-
-                                adaptNewGatesToList();
-
-                                gatesList.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        collapseCreatedGateLoading();
-                                    }
-                                }, 200);
-                            }
-                        };
-
-                        Response.ErrorListener errorListener = new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
-
-                                Intent intent = new Intent(getActivity(), CreateGateActivity.class);
-                                intent.putExtra("gateName", gateName);
-
-                                intent.putExtra("errorMessage", volleyError.getMessage());
-
-                                startActivityForResult(intent, CREATE_GATE_INTENT);
-                            }
-                        };
-
-                        APIRequestManager.getInstance().doRequest().createGate(params, listener, errorListener);
-                    } catch (JSONException ex) {
-                        ex.printStackTrace();
-                    }
+                    gatesList.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            collapseCreatedGateLoading();
+                        }
+                    }, 200);
                 }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                    Butter.down(getActivity(), volleyError.getMessage());
+
+                    collapseCreatedGateLoading();
+
+                    showCreateGateDialog(gateName);
+                }
+            };
+
+            APIRequestManager.getInstance().doRequest().createGate(params, listener, errorListener);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
         }
     }
 
