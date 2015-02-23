@@ -15,18 +15,22 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.astuetz.PagerSlidingTabStrip;
@@ -36,8 +40,6 @@ import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.NfcUtils;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeComparator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,10 +55,9 @@ import java.util.Comparator;
 public class MainActivity extends ActionBarActivity {
 
     private final int UPDATE_POST_INTENT = 2;
-    private final int ENTER_KEY_INTENT = 5;
 
-    private int key_attempts;
-    private DateTime last_attempt;
+    private int beforeLength;
+    private TextWatcher keyTextWatcher;
 
     private PagerSlidingTabStrip tabs;
     private ViewPager pager;
@@ -371,15 +372,17 @@ public class MainActivity extends ActionBarActivity {
                                     gatesFragment.adaptNewGatesToList();
 
                                     CharSequence[] items = gateNames.toArray(new CharSequence[gateNames.size()]);
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                    builder.setTitle(response.optJSONObject("meta").optJSONObject("data").optString("gatekeeper") + " granted you access to these Gates...")
-                                            .setItems(items, new DialogInterface.OnClickListener() {
+
+                                    new MaterialDialog.Builder(MainActivity.this)
+                                            .title(response.optJSONObject("meta").optJSONObject("data").optString("gatekeeper") + " granted you access to these Gates...")
+                                            .items(items)
+                                            .itemsCallback(new MaterialDialog.ListCallback() {
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
+                                                public void onSelection(MaterialDialog materialDialog, View view, int which, CharSequence charSequence) {
+                                                    materialDialog.dismiss();
                                                     showFeed(newGates.get(which), true);
                                                 }
-                                            }).create().show();
+                                            }).show();
                                 }
                             });
                         }
@@ -394,21 +397,7 @@ public class MainActivity extends ActionBarActivity {
 
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
 
-                    if (volleyError.getStatusCode() == 423) {
-                        key_attempts++;
-
-                        if (key_attempts < 5) {
-                            Intent intent = new Intent(MainActivity.this, EnterKeyActivity.class);
-                            intent.putExtra("errorMessage", volleyError.getMessage());
-
-                            startActivityForResult(intent, ENTER_KEY_INTENT);
-                        } else {
-                            Butter.down(MainActivity.this, volleyError.getMessage());
-
-                        }
-                    } else {
-                        Butter.down(MainActivity.this, volleyError.getMessage());
-                    }
+                    Butter.down(MainActivity.this, volleyError.getMessage());
                 }
             };
 
@@ -515,14 +504,6 @@ public class MainActivity extends ActionBarActivity {
                 FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
                 feedFragment.onActivityResult(requestCode, resultCode, data);
                 break;
-            case ENTER_KEY_INTENT:
-                if (resultCode == RESULT_OK) {
-                    final String key = data.getStringExtra("key");
-
-                    processKey(key);
-                }
-
-                break;
         }
     }
 
@@ -532,6 +513,64 @@ public class MainActivity extends ActionBarActivity {
                 mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
                         mNdefExchangeFilters, null);
         }
+    }
+
+    private void showEnterKeyDialog() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(R.string.title_dialog_enter_key)
+                .customView(R.layout.dialog_enter_key, true).build();
+
+        final EditText keyInput = (EditText) dialog.getCustomView().findViewById(R.id.keyInput);
+
+        beforeLength = 0;
+
+        keyTextWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                beforeLength = s.length();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                String plausableKey = s.toString().replaceAll("-", "");
+
+                if (plausableKey.length() == 16) {
+                    dialog.dismiss();
+                    processKey(plausableKey);
+                } else if ((s.length() >= beforeLength) && (s.length() == 4 || s.length() == 9 || s.length() == 14)) {
+                    keyInput.removeTextChangedListener(keyTextWatcher);
+                    keyInput.setText(s.toString() + "-");
+                    keyInput.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            keyInput.setSelection(s.length() + 1);
+                        }
+                    });
+
+                    keyInput.addTextChangedListener(keyTextWatcher);
+                } else if ( s.length() < beforeLength && (s.length() == 4 || s.length() == 9 || s.length() == 14)) {
+                    keyInput.removeTextChangedListener(keyTextWatcher);
+                    keyInput.setText(s.subSequence(0, s.length() - 1));
+                    keyInput.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            keyInput.setSelection(s.length() - 1);
+                        }
+                    });
+
+                    keyInput.addTextChangedListener(keyTextWatcher);
+                }
+            }
+        };
+
+        keyInput.addTextChangedListener(keyTextWatcher);
+
+        dialog.show();
     }
 
     @Override
@@ -560,15 +599,7 @@ public class MainActivity extends ActionBarActivity {
                 logout();
                 return true;
             case R.id.enter_key:
-                DateTimeComparator comparator = DateTimeComparator.getInstance();
-                if (key_attempts < 5 || comparator.compare(last_attempt, DateTime.now().minusMinutes(5)) == -1) {
-                    if (key_attempts >= 5) key_attempts = 0;
-                    Intent intent = new Intent(this, EnterKeyActivity.class);
-                    startActivityForResult(intent, ENTER_KEY_INTENT);
-                } else {
-                    last_attempt = DateTime.now();
-                    Butter.down(this, "Wait 5 minutes for another five attempts");
-                }
+                showEnterKeyDialog();
             default:
                 return super.onOptionsItemSelected(item);
         }

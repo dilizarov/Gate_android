@@ -98,13 +98,6 @@
                 android:value="com.unlock.gate.MainActivity" />
         </activity>
 
-        <activity
-            android:name="com.unlock.gate.EnterKeyActivity"
-            android:label="@string/title_activity_enter_key"
-            android:theme="@style/Gate.Dialog"
-            android:windowSoftInputMode="stateVisible" >
-        </activity>
-
         <receiver
             android:name="com.unlock.gate.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
