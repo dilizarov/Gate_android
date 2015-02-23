@@ -276,15 +276,17 @@ public class MainActivity extends ActionBarActivity {
                                     gatesFragment.adaptNewGatesToList();
 
                                     CharSequence[] items = gateNames.toArray(new CharSequence[gateNames.size()]);
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                    builder.setTitle(gatekeeperName + " granted you access to these Gates...")
-                                           .setItems(items, new DialogInterface.OnClickListener() {
-                                               @Override
-                                               public void onClick(DialogInterface dialog, int which) {
-                                                   dialog.dismiss();
-                                                   showFeed(newGates.get(which), true);
-                                               }
-                                           }).create().show();
+
+                                    new MaterialDialog.Builder(MainActivity.this)
+                                            .title(gatekeeperName + " granted you access to these Gates...")
+                                            .items(items)
+                                            .itemsCallback(new MaterialDialog.ListCallback() {
+                                                @Override
+                                                public void onSelection(MaterialDialog materialDialog, View view, int which, CharSequence charSequence) {
+                                                    materialDialog.dismiss();
+                                                    showFeed(newGates.get(which), true);
+                                                }
+                                            }).show();
                                 }
                             });
                         }
