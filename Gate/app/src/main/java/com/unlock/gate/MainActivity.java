@@ -573,6 +573,32 @@ public class MainActivity extends ActionBarActivity {
         dialog.show();
     }
 
+    private void showLogoutDialog() {
+        SharedPreferences sessionPreferences = getSharedPreferences(getString(R.string.session_shared_preferences_key),
+                Context.MODE_PRIVATE);
+
+        String userName = sessionPreferences.getString(getString(R.string.user_name_key), "");
+
+        new MaterialDialog.Builder(this)
+                .title(userName)
+                .content("Are you sure you want to log out of Gate?")
+                .positiveText(R.string.yes_caps)
+                .negativeText(R.string.no_caps)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        dialog.dismiss();
+
+                        logout();
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -596,7 +622,7 @@ public class MainActivity extends ActionBarActivity {
 
                 return true;
             case R.id.action_logout:
-                logout();
+                showLogoutDialog();
                 return true;
             case R.id.enter_key:
                 showEnterKeyDialog();

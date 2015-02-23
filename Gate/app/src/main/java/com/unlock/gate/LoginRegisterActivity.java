@@ -3,7 +3,6 @@ package com.unlock.gate;
 import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -27,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -376,23 +376,15 @@ public class LoginRegisterActivity extends ActionBarActivity implements LoaderMa
             if (mFullName.length() == 0)
                 userFullName.setError(getString(R.string.no_name_inputted));
         } else {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(getString(R.string.confirm_registration_dialog_title))
-					.setMessage(getString(R.string.confirm_registration))
-					.setNegativeButton(getString(R.string.no_caps), new DialogInterface.OnClickListener() {
-				
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
-                            Butter.between(LoginRegisterActivity.this, "A robot just discovered what it feels like to be sad :(");
-						}
-					})
-			
-					.setPositiveButton(getString(R.string.yes_caps), new DialogInterface.OnClickListener() {
-				
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
+            new MaterialDialog.Builder(this)
+                    .title(R.string.confirm_registration_dialog_title)
+                    .content(R.string.confirm_registration)
+                    .positiveText(R.string.yes_caps)
+                    .negativeText(R.string.no_caps)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            dialog.dismiss();
 
                             progressDialog.show();
 
@@ -415,17 +407,17 @@ public class LoginRegisterActivity extends ActionBarActivity implements LoaderMa
 
                                                 JSONObject user = new JSONObject();
                                                 user.put("email", mEmail)
-                                                    .put("password", mPassword)
-                                                    .put("name", mFullName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));
+                                                        .put("password", mPassword)
+                                                        .put("name", mFullName.replaceAll(RegexConstants.SPACE_NEW_LINE, " "));
 
                                                 JSONObject device = new JSONObject();
                                                 device.put("token", regId)
-                                                      .put("platform", "android");
+                                                        .put("platform", "android");
 
                                                 JSONObject params = new JSONObject();
 
                                                 params.put("user", user)
-                                                      .put("device", device);
+                                                        .put("device", device);
 
                                                 Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
                                                     @Override
@@ -469,11 +461,15 @@ public class LoginRegisterActivity extends ActionBarActivity implements LoaderMa
                                     });
                                 }
                             }).start();
-						}
-					});
-			
-			AlertDialog confirmation = builder.create();
-			confirmation.show();
+                        }
+
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
+                            dialog.dismiss();
+
+                            Butter.between(LoginRegisterActivity.this, "A robot just discovered what it feels like to be sad :(");
+                        }
+                    }).show();
 		}
 	}	
 	
