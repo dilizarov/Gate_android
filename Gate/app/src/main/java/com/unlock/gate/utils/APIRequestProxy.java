@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley;
 import com.unlock.gate.R;
 import com.unlock.gate.models.Comment;
 import com.unlock.gate.models.Gate;
+import com.unlock.gate.models.Key;
 import com.unlock.gate.models.Post;
 
 import org.json.JSONArray;
@@ -331,6 +332,21 @@ public class APIRequestProxy {
         url += convertParamsToUrlParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
+
+        mRequestQueue.add(request);
+    }
+
+    public void deleteKey(Key key, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "keys/" + key.getKey().replaceAll("-", "") + ".json";
+
+        addAPIKeyToParams(params);
+        addAuthToParams(params);
+
+        url += convertParamsToUrlParams(params);
+
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.DELETE, url, params, listener, errorListener);
 
         request.setRetryPolicy(retryPolicy);
 

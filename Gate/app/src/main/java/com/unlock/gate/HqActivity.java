@@ -70,7 +70,7 @@ public class HqActivity extends ActionBarListActivity {
         adapterKeys = new ArrayList<Key>();
 
         setCreateKeyClickListener();
-        setListItemClickListener();
+        setListItemClickListeners();
 
         if (savedInstanceState != null) {
             keys = savedInstanceState.getParcelableArrayList("keys");
@@ -156,7 +156,7 @@ public class HqActivity extends ActionBarListActivity {
         }
     }
 
-    private void setListItemClickListener() {
+    private void setListItemClickListeners() {
 
         keysList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -237,6 +237,52 @@ public class HqActivity extends ActionBarListActivity {
 
         });
 
+        keysList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
+                                           long id) {
+
+                final int keyIndex = position;
+
+                // As Gate grows, we'll add more to this that could be done.
+                final CharSequence[] items = {
+                        "Delete"
+                };
+
+                new MaterialDialog.Builder(HqActivity.this)
+                        .title(keys.get(keyIndex).getKey() + " for " + keys.get(keyIndex).gatesList())
+                        .items(items)
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                switch (which) {
+                                    case 0:
+                                        new MaterialDialog.Builder(HqActivity.this)
+                                                .title(keys.get(keyIndex).getKey())
+                                                .content(R.string.confirm_delete_key_message)
+                                                .positiveText(R.string.yes_caps)
+                                                .negativeText(R.string.no_caps)
+                                                .callback(new MaterialDialog.ButtonCallback() {
+                                                    @Override
+                                                    public void onPositive(MaterialDialog dialog) {
+                                                        dialog.dismiss();
+
+                                                        deleteKey(keys.get(keyIndex), keyIndex);
+                                                    }
+
+                                                    @Override
+                                                    public void onNegative(MaterialDialog dialog) {
+                                                        dialog.dismiss();
+                                                    }
+                                                }).show();
+                                        break;
+                                }
+                            }
+                        }).show();
+
+                return true;
+            }
+        });
     }
 
     private void requestKeysAndPopulateListView(final boolean refreshing) {
@@ -321,6 +367,36 @@ public class HqActivity extends ActionBarListActivity {
         super.onSaveInstanceState(outState);
 
         outState.putParcelableArrayList("keys", keys);
+    }
+
+    private void deleteKey(final Key key, final int index) {
+        keys.remove(key);
+        adaptNewKeysToList();
+        Butter.down(this, "Deleted " + key.getKey());
+
+        JSONObject params = new JSONObject();
+
+        Response.Listener<Integer> listener = new Response.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+                //Don't do anything. Eagerly did actions assuming the request succeeds.
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+
+                keys.add(index, key);
+                adaptNewKeysToList();
+
+                Butter.down(HqActivity.this, volleyError.getMessage());
+            }
+        };
+
+        APIRequestManager.getInstance().doRequest().deleteKey(key, params, listener, errorListener);
+
     }
 
     @Override
