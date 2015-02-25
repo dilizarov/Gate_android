@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
-import org.joda.time.Days;
 import org.joda.time.Hours;
 
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class Key implements Parcelable {
 
     public Boolean expiresSoon() {
         DateTime threeDaysAgo = DateTime.now().minusDays(3);
-        return Days.daysBetween(threeDaysAgo, timeUpdated).getDays() == 0;
+        return Hours.hoursBetween(threeDaysAgo, timeUpdated).getHours() <= 24;
     }
 
     public Boolean expired() {
