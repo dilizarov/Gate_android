@@ -23,16 +23,7 @@
             android:paddingRight="8dp"
             android:textStyle="bold"
             android:textColor="@color/gate_blue"
-            android:layout_toStartOf="@+id/feedItemClock"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/timestamp"
-            android:paddingTop="4dp"
-            android:paddingRight="4dp"
-            android:src="@drawable/ic_device_access_time"
-            android:id="@+id/feedItemClock"/>
+            android:layout_toStartOf="@+id/timestamp"/>
 
         <TextView
             android:id="@+id/timestamp"
@@ -58,6 +49,7 @@
         android:id="@+id/body"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:autoLink="web"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"/>
 

@@ -38,7 +38,6 @@ public class CommentsListAdapter extends BaseAdapter {
         TextView commentTimestamp;
         TextView upCountComment;
         ImageView upComment;
-        ImageView smileyCountComment;
         LinearLayout commentStats;
     }
 
@@ -77,7 +76,6 @@ public class CommentsListAdapter extends BaseAdapter {
             viewHolder.commentTimestamp   = (TextView) convertView.findViewById(R.id.commentTimestamp);
             viewHolder.upCountComment     = (TextView) convertView.findViewById(R.id.upCountComment);
             viewHolder.upComment          = (ImageView) convertView.findViewById(R.id.upComment);
-            viewHolder.smileyCountComment = (ImageView) convertView.findViewById(R.id.smileyCountComment);
             viewHolder.commentStats       = (LinearLayout) convertView.findViewById(R.id.commentStats);
 
             convertView.setTag(viewHolder);
@@ -102,13 +100,15 @@ public class CommentsListAdapter extends BaseAdapter {
                                               ? R.drawable.ic_small_thumb_up
                                               : R.drawable.ic_small_greyed_out_thumb_up);
 
-        viewHolder.upCountComment.setText(Integer.toString(comment.getUpCount()));
+        viewHolder.upCountComment.setText(context.getResources()
+                .getQuantityString(R.plurals.comment_likes_count,
+                                    comment.getUpCount(),
+                                    comment.getUpCount()));
+
         if (comment.getUpCount() > 0) {
             viewHolder.upCountComment.setVisibility(View.VISIBLE);
-            viewHolder.smileyCountComment.setVisibility(View.VISIBLE);
         } else {
             viewHolder.upCountComment.setVisibility(View.INVISIBLE);
-            viewHolder.smileyCountComment.setVisibility(View.INVISIBLE);
         }
 
         viewHolder.upComment.setOnClickListener(new View.OnClickListener() {
@@ -161,13 +161,15 @@ public class CommentsListAdapter extends BaseAdapter {
             viewHolder.upComment.setImageResource(R.drawable.ic_small_thumb_up);
         }
 
-        viewHolder.upCountComment.setText(Integer.toString(comment.getUpCount()));
+        viewHolder.upCountComment.setText(context.getResources()
+                .getQuantityString(R.plurals.comment_likes_count,
+                        comment.getUpCount(),
+                        comment.getUpCount()));
+
         if (comment.getUpCount() > 0) {
             viewHolder.upCountComment.setVisibility(View.VISIBLE);
-            viewHolder.smileyCountComment.setVisibility(View.VISIBLE);
         } else {
             viewHolder.upCountComment.setVisibility(View.INVISIBLE);
-            viewHolder.smileyCountComment.setVisibility(View.INVISIBLE);
         }
     }
 }

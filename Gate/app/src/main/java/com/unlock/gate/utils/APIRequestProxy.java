@@ -29,7 +29,7 @@ public class APIRequestProxy {
 	private final String REGISTRATION_ENDPOINT = "registrations.json";
     private final String GATES_ENDPOINT = "gates.json";
     private final String AGGREGATE_ENDPOINT = "aggregate.json";
-    private final String KEY_ENDPOINT = "keys.json";
+    private final String KEYS_ENDPOINT = "keys.json";
 
     private final String FEED_TAG = "feed_requests";
 	
@@ -302,7 +302,7 @@ public class APIRequestProxy {
         addAPIKeyToParams(params);
         addAuthToParams(params);
 
-        JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(KEY_ENDPOINT), params, listener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, getAbsoluteUrl(KEYS_ENDPOINT), params, listener, errorListener);
 
         request.setRetryPolicy(retryPolicy);
 
@@ -316,6 +316,21 @@ public class APIRequestProxy {
         addAuthToParams(params);
 
         JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
+
+        mRequestQueue.add(request);
+    }
+
+    public void getKeys(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = getAbsoluteUrl(KEYS_ENDPOINT);
+
+        addAPIKeyToParams(params);
+        addAuthToParams(params);
+
+        url += convertParamsToUrlParams(params);
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.GET, url, params, listener, errorListener);
 
         request.setRetryPolicy(retryPolicy);
 

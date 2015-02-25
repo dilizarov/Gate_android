@@ -610,15 +610,9 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_unlock_gates:
-                if (getGates().size() == 0) {
-                    pager.setCurrentItem(1, true);
-
-                    Butter.between(this, "You have no Gates to unlock");
-                } else {
-                    Intent intent = new Intent(this, UnlockGateActivity.class);
-                    intent.putParcelableArrayListExtra("gates", getGates());
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(this, HqActivity.class);
+                intent.putParcelableArrayListExtra("gates", getGates());
+                startActivity(intent);
 
                 return true;
             case R.id.action_logout:

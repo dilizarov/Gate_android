@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +37,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.unlock.gate.models.Gate;
+import com.unlock.gate.models.Key;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.Butter;
 import com.unlock.gate.utils.Fade;
@@ -85,6 +84,8 @@ public class UnlockGateActivity extends ActionBarActivity {
     private final int STEP_DURATION = 1500;
     private final int FADE_DURATION = 500;
 
+    private ArrayList<Key> keysToAdd;
+
     // Like in MainActivity, if using status bar to change NFC status, we appropriate what happens here.
     // Otherwise, fall back to usual onResume()/onPause() lifecycle
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -112,6 +113,8 @@ public class UnlockGateActivity extends ActionBarActivity {
                 getString(R.string.session_shared_preferences_key), MODE_PRIVATE);
 
         selectedGateIds = new ArrayList<String>();
+
+        keysToAdd = new ArrayList<Key>();
 
         instantiateViews();
 
@@ -554,6 +557,8 @@ public class UnlockGateActivity extends ActionBarActivity {
                     final String key = response.optJSONObject("key").optString("key");
                     JSONArray gates = response.optJSONObject("key").optJSONArray("gates");
 
+                    addToKeysToAdd(response.optJSONObject("key"));
+
                     final StringBuilder gatesBuilder = new StringBuilder();
                     int len = gates.length();
                     if (len == 1) {
@@ -572,12 +577,11 @@ public class UnlockGateActivity extends ActionBarActivity {
 
                     MaterialDialog dialog = new MaterialDialog.Builder(UnlockGateActivity.this)
                             .title("Key")
-                            .content(Html.fromHtml("<b>" + key + "</b> unlocks " + gatesBuilder.toString() + "<br><br> The key expires 3 days after inactivity"))
+                            .content(Html.fromHtml("<b>" + key + "</b> unlocks " + gatesBuilder.toString() + "<br><br> Keys expire 3 days after not being used"))
                             .cancelable(false)
                             .autoDismiss(false)
                             .positiveText("SHARE")
-                            .neutralText("COPY")
-                            .negativeText("FINISHED")
+                            .negativeText("CANCEL")
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
@@ -635,14 +639,6 @@ public class UnlockGateActivity extends ActionBarActivity {
                                 public void onNegative(MaterialDialog dialog) {
                                     dialog.dismiss();
                                 }
-
-                                @Override
-                                public void onNeutral(MaterialDialog dialog) {
-                                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                                    ClipData clip = ClipData.newPlainText("key", key);
-                                    clipboard.setPrimaryClip(clip);
-                                    Butter.down(UnlockGateActivity.this, "Key saved to clipboard");
-                                }
                             }).show();
 
                 }
@@ -662,6 +658,33 @@ public class UnlockGateActivity extends ActionBarActivity {
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void addToKeysToAdd(JSONObject jsonKey) {
+        ArrayList<String> gateNames = new ArrayList<String>();
+        JSONArray jsonGates = jsonKey.optJSONArray("gates");
+        for (int j = 0; j < jsonGates.length(); j++) {
+            gateNames.add(jsonGates.optJSONObject(j).optString("name"));
+        }
+
+        Key key = new Key(jsonKey.optString("key"),
+                jsonKey.optString("updated_at"),
+                gateNames);
+
+        keysToAdd.add(key);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = getIntent();
+        if (keysToAdd.size() > 0) {
+            intent.putParcelableArrayListExtra("keys", keysToAdd);
+            setResult(RESULT_OK, intent);
+        } else {
+            setResult(RESULT_CANCELED, intent);
+        }
+
+        super.onBackPressed();
     }
 
     @Override

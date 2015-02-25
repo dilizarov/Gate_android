@@ -87,6 +87,15 @@
     <string name="no_comments_default">No Comments Yet</string>
     <string name="refresh">Refresh</string>
 
+    <plurals name="comment_likes_count">
+        <item quantity="one">%d like</item>
+        <item quantity="other">%d likes</item>
+    </plurals>
+
+    <!-- HqActivity specific -->
+    <string name="no_keys_default">No Keys Yet</string>
+    <string name="expires_soon">Expires soon</string>
+
     <!-- CreatePost Dialog -->
     <string name="gate_selection_default">Select a Gate</string>
     <string name="write_post_hint">Write a post</string>
@@ -94,5 +103,7 @@
     <string name="title_dialog_create_gate">Create a Gate</string>
     <string name="title_activity_unlock_gate">Select Gates to unlock...</string>
     <string name="title_dialog_enter_key">Enter a key</string>
+    <string name="title_activity_hq">HqActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

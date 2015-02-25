@@ -68,6 +68,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
 
     private InfiniteScrollListener infiniteScrollListener;
 
+    private Gate previousGate;
     private Gate currentGate;
 
     private TextView noPostsMessage;
@@ -205,7 +206,10 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                 }
             });
 
+        previousGate = currentGate;
+
         currentGate = gate;
+
         progressBarHolder.setVisibility(View.VISIBLE);
 
         infiniteScrollListener.setAtEndOfList(false);
@@ -323,6 +327,11 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                     }
 
                     infiniteScrollListener.setHadProblemsLoading(true);
+
+                    if (changingGates) {
+                        ((MainActivity) getActivity()).setTitle(previousGate);
+                        currentGate = previousGate;
+                    }
 
                     Butter.downUnlessButtered(getActivity(), volleyError.getMessage());
 

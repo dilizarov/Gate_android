@@ -11,64 +11,36 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/commenterName"
+            android:id="@+id/key"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
             android:textStyle="bold"
             android:textColor="@color/gate_blue"
-            android:layout_toStartOf="@+id/commentTimestamp"/>
+            android:layout_toStartOf="@+id/keyExpiresSoon"/>
 
         <TextView
-            android:id="@+id/commentTimestamp"
+            android:id="@+id/keyExpiresSoon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="8dp"
+            android:text="@string/expires_soon"
             android:layout_alignParentRight="true"
             android:textColor="@android:color/darker_gray" />
 
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/commentBody"
+        android:id="@+id/keyGates"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:autoLink="web"
         android:paddingLeft="8dp"
         android:paddingTop="4dp"
-        android:paddingRight="8dp"/>
-
-    <LinearLayout
-        android:id="@+id/commentStats"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4dp">
-
-        <ImageView
-            android:id="@+id/upComment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dp"
-            android:paddingRight="5dp"
-            android:paddingTop="4dp"
-            android:src="@drawable/ic_small_greyed_out_thumb_up" />
-
-        <TextView
-            android:id="@+id/upCountComment"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gate_blue"
-            android:visibility="invisible" />
-
-    </LinearLayout>
-
+        android:paddingRight="8dp"
+        android:textColor="@color/abc_secondary_text_material_light" />
 
 </LinearLayout>

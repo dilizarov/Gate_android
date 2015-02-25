@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.unlock.gate"
-    android:versionCode="6"
+    android:versionCode="7"
     android:versionName="1.1" >
 
     <uses-sdk
@@ -63,21 +63,31 @@
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"
             android:theme="@style/Gate" >
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
-
         </activity>
         <activity
             android:name="com.unlock.gate.CommentsActivity"
             android:label="@string/title_activity_comments"
             android:parentActivityName="com.unlock.gate.MainActivity"
-            android:theme="@style/Gate"
             android:screenOrientation="nosensor"
+            android:theme="@style/Gate"
             android:windowSoftInputMode="adjustResize" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unlock.gate.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.unlock.gate.HqActivity"
+            android:label="Keys"
+            android:screenOrientation="nosensor"
+            android:parentActivityName="com.unlock.gate.MainActivity"
+            android:theme="@style/Gate" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.unlock.gate.MainActivity" />
@@ -86,12 +96,12 @@
             android:name="com.unlock.gate.UnlockGateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_unlock_gate"
-            android:parentActivityName="com.unlock.gate.MainActivity"
+            android:parentActivityName="com.unlock.gate.HqActivity"
             android:screenOrientation="nosensor"
             android:theme="@style/Gate" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.unlock.gate.MainActivity" />
+                android:value="com.unlock.gate.HqActivity" />
         </activity>
 
         <receiver
