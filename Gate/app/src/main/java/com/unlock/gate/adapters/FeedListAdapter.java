@@ -126,6 +126,7 @@ public class FeedListAdapter extends BaseAdapter {
             viewHolder.gateName.setVisibility(View.GONE);
         }
 
+
         return convertView;
     }
 

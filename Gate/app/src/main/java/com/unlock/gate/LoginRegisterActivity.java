@@ -3,21 +3,15 @@ package com.unlock.gate;
 import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -48,7 +42,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class LoginRegisterActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LoginRegisterActivity extends ActionBarActivity {
 	
 	private enum State {
 		LOGIN, REGISTRATION, FORGOT_PASSWORD
@@ -122,7 +116,6 @@ public class LoginRegisterActivity extends ActionBarActivity implements LoaderMa
 
             // External services just make it easier to get and set at the same time.
             getAndSetEmail();
-            getAndSetFullName();
 
             // handling sets up event listeners and actions.
             // Only handleCommandButton actually communicates to the server
@@ -537,21 +530,18 @@ public class LoginRegisterActivity extends ActionBarActivity implements LoaderMa
 			mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             if (!mEmail.isEmpty()) {
                 userEmail.setText(mEmail);
-                userPassword.requestFocus();
-            } else {
-                userEmail.requestFocus();
             }
 		}
 	}
-	
+
 	private void getAndSetEmail() {
 		mEmail = mActivityPreferences.getString(
 				getString(R.string.last_used_email), null);
-		
+
 		if (mEmail == null) {
             // Try AccountPicker
 			try {
-				Intent intent = AccountPicker.newChooseAccountIntent(null, null, 
+				Intent intent = AccountPicker.newChooseAccountIntent(null, null,
 						new String[] { GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
 				startActivityForResult(intent, EMAIL_REQUEST_INTENT);
 			} catch (ActivityNotFoundException e) {
@@ -559,62 +549,7 @@ public class LoginRegisterActivity extends ActionBarActivity implements LoaderMa
 			}
 		} else {
             userEmail.setText(mEmail);
-            userPassword.requestFocus();
-
         }
-	}
-	
-	private void getAndSetFullName() {
-
-		// Use ContactContracts.Profile to try to get full name if we haven't already got it
-        if (!mActivityPreferences.getBoolean(getString(R.string.used_name_on_phone), false)) {
-            if (mActivityPreferences.contains(getString(R.string.name_on_phone))) {
-                mFullName = mActivityPreferences.getString(getString(R.string.name_on_phone), null);
-                userFullName.setText(mFullName);
-            } else {
-                try {
-                    getLoaderManager().initLoader(0, null, this);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-	}
-	
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle arguments) {
-		return new CursorLoader(
-						this, 
-						Uri.withAppendedPath(
-								ContactsContract.Profile.CONTENT_URI, 
-								ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
-						new String[]{ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME},
-						ContactsContract.Contacts.Data.MIMETYPE + " = ?",
-						new String[]{ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE},
-						null
-								);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if (cursor == null) {
-            return;
-        } else if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            if (!cursor.isNull(0)) {
-                mFullName = cursor.getString(0);
-                if (!mFullName.isEmpty()) {
-                    userFullName.setText(mFullName);
-                    mActivityPreferences.edit()
-                            .putString(getString(R.string.name_on_phone), mFullName)
-                            .apply();
-                }
-            }
-        }
-	}
-	
-	@Override
-	public void onLoaderReset(Loader<Cursor> cursorLoader) {
 	}
 
     private boolean checkPlayServices() {
