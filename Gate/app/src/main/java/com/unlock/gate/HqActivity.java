@@ -1,6 +1,9 @@
 package com.unlock.gate;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
@@ -113,13 +116,9 @@ public class HqActivity extends ActionBarListActivity {
         createKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gates.size() == 0) {
-                    Butter.between(HqActivity.this, "You have no Gates to unlock");
-                } else {
-                    Intent intent = new Intent(HqActivity.this, UnlockGateActivity.class);
-                    intent.putParcelableArrayListExtra("gates", gates);
-                    startActivityForResult(intent, UPDATE_GATES_INTENT);
-                }
+                Intent intent = new Intent(HqActivity.this, UnlockGateActivity.class);
+                intent.putParcelableArrayListExtra("gates", gates);
+                startActivityForResult(intent, UPDATE_GATES_INTENT);
             }
         });
     }
@@ -174,6 +173,7 @@ public class HqActivity extends ActionBarListActivity {
                         .content(Html.fromHtml("<b>" + key.getKey() + "</b> unlocks " + key.gatesList()))
                         .autoDismiss(false)
                         .positiveText("SHARE")
+                        .neutralText("COPY")
                         .negativeText("CANCEL")
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override
@@ -231,6 +231,14 @@ public class HqActivity extends ActionBarListActivity {
                             @Override
                             public void onNegative(MaterialDialog dialog) {
                                 dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onNeutral(MaterialDialog dialog) {
+                                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = ClipData.newPlainText("key", key.getKey());
+                                clipboard.setPrimaryClip(clip);
+                                Butter.down(HqActivity.this, key.getKey() + " saved to clipboard");
                             }
                         }).show();
             }

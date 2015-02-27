@@ -90,6 +90,10 @@ public class GcmIntentService extends IntentService {
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("mainActivityNotification", true);
+
+        intent.putExtra("gate_id", extras.getString("gate_id", ""));
+        intent.putExtra("gate_name", extras.getString("gate_name", ""));
+
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 424242, intent, PendingIntent.FLAG_UPDATE_CURRENT);

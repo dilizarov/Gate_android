@@ -214,7 +214,13 @@ public class MainActivity extends ActionBarActivity {
 
             grantAccessToGates(grantedGateIds, gatekeeperId, gatekeeperName);
         } else if (intent.getBooleanExtra("mainActivityNotification", false)) {
-            showFeed(null, false);
+            if (intent.getStringExtra("gate_id") == "") showFeed(null, false);
+            else {
+                String name = intent.getStringExtra("gate_name");
+                if (name == "") name = "Feed";
+                Gate gate = new Gate(intent.getStringExtra("gate_id"), name);
+                showFeed(gate, false);
+            }
         } else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
             String post = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (post != null) {
@@ -370,6 +376,11 @@ public class MainActivity extends ActionBarActivity {
                                 public void run() {
 
                                     gatesFragment.adaptNewGatesToList();
+
+                                    FeedFragment feedFragment = (FeedFragment) adapter.getRegisteredFragment(0);
+                                    if (feedFragment.getCurrentGate() == null) {
+                                        feedFragment.getGateFeed(null);
+                                    }
 
                                     CharSequence[] items = gateNames.toArray(new CharSequence[gateNames.size()]);
 

@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.DisplayMetrics;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -29,7 +32,9 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -62,6 +67,11 @@ public class UnlockGateActivity extends ActionBarActivity {
     private NfcAdapter mNfcAdapter;
     private SharedPreferences mSessionPreferences;
     private android.support.v7.app.ActionBar actionBar;
+    private TextView noGatesText;
+
+    private LinearLayout progressBarHolder;
+
+    private MenuItem refreshButton;
 
     private ImageView leftPhone;
     private ImageView leftPhoneSide;
@@ -118,8 +128,6 @@ public class UnlockGateActivity extends ActionBarActivity {
 
         instantiateViews();
 
-        bindGatesToListView();
-
         setUnlockClickListener();
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(UnlockGateActivity.this);
@@ -127,6 +135,13 @@ public class UnlockGateActivity extends ActionBarActivity {
         // Phone doesn't support NFC
         if (mNfcAdapter == null || !mNfcAdapter.isEnabled()) {
             unlock.setText("Tap for a key");
+        }
+
+        if (gates.size() > 0) {
+            progressBarHolder.setVisibility(View.GONE);
+            adaptNewGatesToList();
+        } else {
+            requestGatesAndPopulateListView(false);
         }
 
     }
@@ -165,7 +180,10 @@ public class UnlockGateActivity extends ActionBarActivity {
     private void instantiateViews() {
         gateSelector = (RelativeLayout) findViewById(R.id.gateSelector);
         gatesList    = (ListView) findViewById(R.id.gatesList);
-        unlock          = (Button) findViewById(R.id.unlockButton);
+        unlock       = (Button) findViewById(R.id.unlockButton);
+        noGatesText  = (TextView) findViewById(R.id.noUnlockGatesMessage);
+
+        progressBarHolder = (LinearLayout) findViewById(R.id.unlockGatesProgressBarHolder);
 
         leftPhone      = (ImageView) findViewById(R.id.leftPhoneImage);
         rightPhone     = (ImageView) findViewById(R.id.rightPhoneImage);
@@ -175,7 +193,14 @@ public class UnlockGateActivity extends ActionBarActivity {
         tutorialText   = (TextView) findViewById(R.id.tutorialText);
     }
 
-    private void bindGatesToListView() {
+    private void adaptNewGatesToList() {
+        noGatesText.setText(R.string.no_gates_default);
+        noGatesText.setVisibility(
+                gates.size() == 0
+                        ? View.VISIBLE
+                        : View.INVISIBLE
+        );
+
         String[] gateNames = new String[gates.size()];
 
         int len = gates.size();
@@ -216,7 +241,6 @@ public class UnlockGateActivity extends ActionBarActivity {
                     generateShowKey();
                 else {
                     actionBar.setTitle("Tutorial");
-
                     Fade.hide(gateSelector, new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -238,6 +262,76 @@ public class UnlockGateActivity extends ActionBarActivity {
                 }
             }
         });
+    }
+
+    private void requestGatesAndPopulateListView(final boolean refreshing) {
+
+        JSONObject params = new JSONObject();
+
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(final JSONObject response) {
+
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        gates.clear();
+                        selectedGateIds.clear();
+
+                        JSONArray jsonGates = response.optJSONArray("gates");
+                        int len = jsonGates.length();
+                        for (int i = 0; i < len; i++) {
+                            JSONObject jsonGate = jsonGates.optJSONObject(i);
+                            Gate gate = new Gate(jsonGate.optString("external_id"),
+                                    jsonGate.optString("name"),
+                                    jsonGate.optInt("users_count"),
+                                    jsonGate.optJSONObject("creator").optString("name"));
+
+                            gates.add(gate);
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                adaptNewGatesToList();
+                                progressBarHolder.setVisibility(View.GONE);
+
+                                if (refreshing && refreshButton != null) {
+                                    gatesList.setSelection(0);
+                                    refreshButton.setActionView(null);
+                                }
+                            }
+                        });
+                    }
+
+                }).start();
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                progressBarHolder.setVisibility(View.GONE);
+
+                if (gates.size() == 0) {
+                    if (volleyError.isConnectionError())
+                        noGatesText.setText(R.string.volley_no_connection_error);
+                    else
+                        noGatesText.setText(R.string.gate_error_message);
+
+                    noGatesText.setVisibility(View.VISIBLE);
+                }
+
+                Butter.down(UnlockGateActivity.this, volleyError.getMessage());
+
+                if (refreshing && refreshButton != null) {
+                    refreshButton.setActionView(null);
+                }
+            }
+        };
+
+        APIRequestManager.getInstance().doRequest().getGates(params, listener, errorListener);
+
     }
 
     private void calculateMetrics() {
@@ -581,6 +675,7 @@ public class UnlockGateActivity extends ActionBarActivity {
                             .cancelable(false)
                             .autoDismiss(false)
                             .positiveText("SHARE")
+                            .neutralText("COPY")
                             .negativeText("CANCEL")
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override
@@ -639,6 +734,14 @@ public class UnlockGateActivity extends ActionBarActivity {
                                 public void onNegative(MaterialDialog dialog) {
                                     dialog.dismiss();
                                 }
+
+                                @Override
+                                public void onNeutral(MaterialDialog dialog) {
+                                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData clip = ClipData.newPlainText("key", key);
+                                    clipboard.setPrimaryClip(clip);
+                                    Butter.down(UnlockGateActivity.this, key + " saved to clipboard");
+                                }
                             }).show();
 
                 }
@@ -688,10 +791,24 @@ public class UnlockGateActivity extends ActionBarActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_unlock_gates, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.action_refresh_gates:
+                if (refreshButton == null) refreshButton = item;
+                ProgressBar progressBar = new ProgressBar(this);
+                progressBar.setIndeterminate(true);
+                progressBar.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progress_action_bar));
+                refreshButton.setActionView(progressBar);
+                requestGatesAndPopulateListView(true);
                 return true;
         }
 

@@ -191,6 +191,11 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
         requestPostsAndPopulateListView(true);
     }
 
+    public Gate getCurrentGate() {
+        return currentGate;
+    }
+
+
     public void getGateFeed(Gate gate) {
         ((MainActivity) getActivity()).setTitle(gate);
 
@@ -284,13 +289,7 @@ public class FeedFragment extends ListFragment implements OnRefreshListener {
                                         setCurrentPage(1);
                                         mPullToRefreshLayout.setRefreshComplete();
 
-                                        if (changingGates)
-                                            Butter.down(getActivity(),
-                                                    currentGate == null
-                                                    ? "Aggregate"
-                                                    : currentGate.getName());
-                                        else
-                                            Butter.down(getActivity(), "Refreshed");
+                                        if (!changingGates) Butter.down(getActivity(), "Refreshed");
                                     }
 
                                     progressBarHolder.setVisibility(View.GONE);

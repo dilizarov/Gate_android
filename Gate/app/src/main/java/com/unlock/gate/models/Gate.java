@@ -13,6 +13,17 @@ public class Gate implements Parcelable {
 
     public Gate(){}
 
+    // NOTE:
+    // This is used when showing appropriate feed based on Gate from notification.
+    // I don't pass in the usersCount nor the creator. usersCount isn't used in FeedFragment
+    // and creator isn't used at all right now.
+    public Gate(String id, String name) {
+        this.id = id;
+        this.name = name;
+        this.usersCount = "";
+        this.creator = "";
+    }
+
     public Gate(String id, String name, int usersCount, String creator) {
         this.id = id;
         this.name = name;
