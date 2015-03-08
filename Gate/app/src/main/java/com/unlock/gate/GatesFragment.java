@@ -188,40 +188,59 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
                                            long id) {
 
-                final int gateIndex = position;
+                final Gate gate = gates.get(position);
+
+                ArrayList<String> itemsHolder = new ArrayList<String>();
+
+                if (gate.getGenerated() && !gate.getUnlockedPerm()) {
+                    itemsHolder.add("Unlock Permanently");
+                }
+
+                itemsHolder.add("Leave");
 
                 // As Gate grows, we'll add more to this that could be done.
-                final CharSequence[] items = {
-                        "Leave"
-                };
+                final CharSequence[] items = itemsHolder.toArray(new CharSequence[itemsHolder.size()]);
+
+                final MaterialDialog leaveDialog = new MaterialDialog.Builder(getActivity())
+                        .title(gate.getName())
+                        .content(R.string.confirm_delete_gate_message)
+                        .positiveText(R.string.yes_caps)
+                        .negativeText(R.string.no_caps)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                dialog.dismiss();
+
+                                leaveGate(gate);
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }).build();
 
                 new MaterialDialog.Builder(getActivity())
-                        .title(gates.get(gateIndex).getName())
+                        .title(gate.getName())
                         .items(items)
                         .itemsCallback(new MaterialDialog.ListCallback() {
                             @Override
                             public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                switch (which) {
-                                    case 0:
-                                        new MaterialDialog.Builder(getActivity())
-                                                .title(gates.get(gateIndex).getName())
-                                                .content(R.string.confirm_delete_gate_message)
-                                                .positiveText(R.string.yes_caps)
-                                                .negativeText(R.string.no_caps)
-                                                .callback(new MaterialDialog.ButtonCallback() {
-                                                    @Override
-                                                    public void onPositive(MaterialDialog dialog) {
-                                                        dialog.dismiss();
-
-                                                        leaveGate(gates.get(gateIndex));
-                                                    }
-
-                                                    @Override
-                                                    public void onNegative(MaterialDialog dialog) {
-                                                        dialog.dismiss();
-                                                    }
-                                                }).show();
-                                        break;
+                                if (gate.getGenerated() && !gate.getUnlockedPerm()) {
+                                    switch (which) {
+                                        case 0:
+                                            unlockPermanently(gate);
+                                            break;
+                                        case 1:
+                                            leaveDialog.show();
+                                            break;
+                                    }
+                                } else {
+                                    switch (which) {
+                                        case 0:
+                                            leaveDialog.show();
+                                            break;
+                                    }
                                 }
                             }
                         }).show();
@@ -308,6 +327,31 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
         };
 
         APIRequestManager.getInstance().doRequest().getGates(params, listener, errorListener);
+    }
+
+    private void unlockPermanently(final Gate gate) {
+        gate.setUnlockedPerm(true);
+
+        JSONObject params = new JSONObject();
+
+        Response.Listener<Integer> listener = new Response.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer integer) {
+                //Don't do anything, preprocessed.
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                gate.setUnlockedPerm(false);
+
+                VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
+                Butter.down(getActivity(), volleyError.getMessage());
+            }
+        };
+
+        APIRequestManager.getInstance().doRequest().unlockPermanently(gate, params, listener, errorListener);
     }
 
     private void leaveGate(final Gate gate) {

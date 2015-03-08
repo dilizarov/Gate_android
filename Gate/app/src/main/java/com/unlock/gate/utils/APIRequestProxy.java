@@ -141,6 +141,19 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
+    public void unlockPermanently(Gate gate, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "generated_gates/" + gate.getId() + "/unlock.json";
+
+        addAPIKeyToParams(params);
+        addAuthToParams(params);
+
+        HeaderResponseRequest request = new HeaderResponseRequest(Method.PUT, url, params, listener, errorListener);
+
+        request.setRetryPolicy(retryPolicy);
+
+        mRequestQueue.add(request);
+    }
+
     public void leaveGate(Gate gate, JSONObject params, Response.Listener<Integer> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "gates/" + gate.getId() + "/leave.json";
 
