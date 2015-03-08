@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.unlock.gate"
-    android:versionCode="11"
+    android:versionCode="12"
     android:versionName="1.2" >
 
     <uses-sdk
@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -85,8 +86,8 @@
         <activity
             android:name="com.unlock.gate.HqActivity"
             android:label="Keys"
-            android:screenOrientation="nosensor"
             android:parentActivityName="com.unlock.gate.MainActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/Gate" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -105,7 +106,7 @@
         </activity>
 
         <receiver
-            android:name="com.unlock.gate.GcmBroadcastReceiver"
+            android:name="com.unlock.gate.receivers.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -113,8 +114,16 @@
                 <category android:name="com.unlock.gate" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".receivers.GpsLocationReceiver" >
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
 
-        <service android:name="com.unlock.gate.GcmIntentService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.unlock.gate.services.GcmIntentService" />
+        <service android:name="com.unlock.gate.services.FusedLocationService" />
     </application>
 
 </manifest>

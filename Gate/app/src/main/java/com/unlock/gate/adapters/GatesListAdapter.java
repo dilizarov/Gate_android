@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.unlock.gate.R;
@@ -25,6 +26,7 @@ public class GatesListAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView gateItemName;
         TextView gateUserCount;
+        ImageView generatedGate;
     }
 
     public GatesListAdapter(Context context, List<Gate> gates) {
@@ -59,6 +61,7 @@ public class GatesListAdapter extends BaseAdapter {
 
             viewHolder.gateItemName  = (TextView) convertView.findViewById(R.id.gateItemName);
             viewHolder.gateUserCount = (TextView) convertView.findViewById(R.id.usersCount);
+            viewHolder.generatedGate = (ImageView) convertView.findViewById(R.id.generatedGate);
 
             convertView.setTag(viewHolder);
         } else {
@@ -78,6 +81,8 @@ public class GatesListAdapter extends BaseAdapter {
                 .getQuantityString(R.plurals.users_count,
                                    gate.getUsersCount(),
                                    gate.getUsersCount()));
+
+        viewHolder.generatedGate.setVisibility(gate.getGenerated() ? View.VISIBLE : View.INVISIBLE);
 
         return convertView;
     }

@@ -116,6 +116,8 @@ public class MainActivity extends ActionBarActivity {
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         configureNFC();
+
+
     }
 
     @Override
@@ -251,10 +253,22 @@ public class MainActivity extends ActionBarActivity {
 
                             for (int i = 0; i < len; i++) {
                                 JSONObject jsonGate = jsonGates.optJSONObject(i);
+
+                                String creator;
+
+                                if (jsonGate.optJSONObject("creator") != null) {
+                                    creator = jsonGate.optJSONObject("creator").optString("name");
+                                } else {
+                                    creator = "";
+                                }
+
                                 Gate gate = new Gate(jsonGate.optString("external_id"),
                                         jsonGate.optString("name"),
                                         jsonGate.optInt("users_count"),
-                                        jsonGate.optJSONObject("creator").optString("name"));
+                                        creator,
+                                        jsonGate.optBoolean("generated"),
+                                        jsonGate.optBoolean("session"),
+                                        jsonGate.optBoolean("unlocked_perm"));
 
                                 newGates.add(gate);
                             }
@@ -349,10 +363,22 @@ public class MainActivity extends ActionBarActivity {
 
                             for (int i = 0; i < len; i++) {
                                 JSONObject jsonGate = jsonGates.optJSONObject(i);
+
+                                String creator;
+
+                                if (jsonGate.optJSONObject("creator") != null) {
+                                    creator = jsonGate.optJSONObject("creator").optString("name");
+                                } else {
+                                    creator = "";
+                                }
+
                                 Gate gate = new Gate(jsonGate.optString("external_id"),
                                         jsonGate.optString("name"),
                                         jsonGate.optInt("users_count"),
-                                        jsonGate.optJSONObject("creator").optString("name"));
+                                        creator,
+                                        jsonGate.optBoolean("generated"),
+                                        jsonGate.optBoolean("session"),
+                                        jsonGate.optBoolean("unlocked_perm"));
 
                                 newGates.add(gate);
                             }

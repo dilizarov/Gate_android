@@ -10,6 +10,7 @@ import com.google.gson.Gson;
  */
 public class Gate implements Parcelable {
     private String id, name, usersCount, creator;
+    private boolean generated, attachedToSession, unlockedPerm;
 
     public Gate(){}
 
@@ -22,13 +23,19 @@ public class Gate implements Parcelable {
         this.name = name;
         this.usersCount = "";
         this.creator = "";
+        this.generated = false;
+        this.attachedToSession = false;
+        this.unlockedPerm = true;
     }
 
-    public Gate(String id, String name, int usersCount, String creator) {
+    public Gate(String id, String name, int usersCount, String creator, Boolean generated, Boolean attachedToSession, Boolean unlockedPerm) {
         this.id = id;
         this.name = name;
         this.usersCount = Integer.toString(usersCount);
         this.creator = creator;
+        this.generated = generated;
+        this.attachedToSession = attachedToSession;
+        this.unlockedPerm = unlockedPerm;
     }
 
     public String getId() {
@@ -63,6 +70,30 @@ public class Gate implements Parcelable {
         this.creator = creator;
     }
 
+    public boolean getGenerated() {
+        return generated;
+    }
+
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
+    }
+
+    public boolean getAttachedToSession() {
+        return attachedToSession;
+    }
+
+    public void setAttachedToSession(boolean attachedToSession) {
+        this.attachedToSession = attachedToSession;
+    }
+
+    public boolean getUnlockedPerm() {
+        return unlockedPerm;
+    }
+
+    public void setUnlockedPerm(boolean unlockedPerm) {
+        this.unlockedPerm = unlockedPerm;
+    }
+
     public String serialize() {
         Gson gson = new Gson();
         return gson.toJson(this);
@@ -85,6 +116,9 @@ public class Gate implements Parcelable {
         this.name       = data[1];
         this.usersCount = data[2];
         this.creator    = data[3];
+        this.generated  = Boolean.parseBoolean(data[4]);
+        this.attachedToSession = Boolean.parseBoolean(data[5]);
+        this.unlockedPerm = Boolean.parseBoolean(data[6]);
     }
 
     @Override
@@ -98,7 +132,10 @@ public class Gate implements Parcelable {
                 this.id,
                 this.name,
                 this.usersCount,
-                this.creator
+                this.creator,
+                Boolean.toString(this.generated),
+                Boolean.toString(this.attachedToSession),
+                Boolean.toString(this.unlockedPerm)
         });
     }
 

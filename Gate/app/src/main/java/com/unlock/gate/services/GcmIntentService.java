@@ -1,4 +1,4 @@
-package com.unlock.gate;
+package com.unlock.gate.services;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -14,6 +14,10 @@ import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.unlock.gate.CommentsActivity;
+import com.unlock.gate.receivers.GcmBroadcastReceiver;
+import com.unlock.gate.MainActivity;
+import com.unlock.gate.R;
 import com.unlock.gate.models.Post;
 
 import java.lang.reflect.Type;

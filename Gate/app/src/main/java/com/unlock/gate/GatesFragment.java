@@ -248,10 +248,22 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                         int len = jsonGates.length();
                         for (int i = 0; i < len; i++) {
                             JSONObject jsonGate = jsonGates.optJSONObject(i);
+
+                            String creator;
+
+                            if (jsonGate.optJSONObject("creator") != null) {
+                                creator = jsonGate.optJSONObject("creator").optString("name");
+                            } else {
+                                creator = "";
+                            }
+
                             Gate gate = new Gate(jsonGate.optString("external_id"),
                                     jsonGate.optString("name"),
                                     jsonGate.optInt("users_count"),
-                                    jsonGate.optJSONObject("creator").optString("name"));
+                                    creator,
+                                    jsonGate.optBoolean("generated"),
+                                    jsonGate.optBoolean("session"),
+                                    jsonGate.optBoolean("unlocked_perm"));
 
                             gates.add(gate);
                         }
@@ -410,10 +422,22 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                 @Override
                 public void onResponse(JSONObject response) {
                     JSONObject jsonGate = response.optJSONObject("gate");
+
+                    String creator;
+
+                    if (jsonGate.optJSONObject("creator") != null) {
+                        creator = jsonGate.optJSONObject("creator").optString("name");
+                    } else {
+                        creator = "";
+                    }
+
                     final Gate gate = new Gate(jsonGate.optString("external_id"),
                             jsonGate.optString("name"),
                             1,
-                            jsonGate.optJSONObject("creator").optString("name"));
+                            creator,
+                            jsonGate.optBoolean("generated"),
+                            jsonGate.optBoolean("session"),
+                            jsonGate.optBoolean("unlocked_perm"));
 
                     ArrayList<Gate> newGates = new ArrayList<Gate>();
                     newGates.add(gate);
