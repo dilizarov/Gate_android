@@ -210,7 +210,6 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
                                 dialog.dismiss();
-
                                 leaveGate(gate);
                             }
 
@@ -263,6 +262,9 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                     public void run() {
                         gates.clear();
 
+                        ArrayList<Gate> generatedGates = new ArrayList<Gate>();
+                        ArrayList<Gate> personalGates = new ArrayList<Gate>();
+
                         JSONArray jsonGates = response.optJSONArray("gates");
                         int len = jsonGates.length();
                         for (int i = 0; i < len; i++) {
@@ -284,8 +286,15 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                                     jsonGate.optBoolean("session"),
                                     jsonGate.optBoolean("unlocked_perm"));
 
-                            gates.add(gate);
+                            if (gate.getGenerated()) {
+                               generatedGates.add(gate);
+                            } else {
+                                personalGates.add(gate);
+                            }
                         }
+
+                        gates.addAll(generatedGates);
+                        gates.addAll(personalGates);
 
                         if (getActivity() == null) return;
                         getActivity().runOnUiThread(new Runnable() {

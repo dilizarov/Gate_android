@@ -108,7 +108,7 @@ public class Gate implements Parcelable {
 
     //Parcelable implementation
     public Gate(Parcel in) {
-        String[] data = new String[4];
+        String[] data = new String[7];
 
         in.readStringArray(data);
 

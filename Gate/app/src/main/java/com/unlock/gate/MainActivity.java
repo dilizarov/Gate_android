@@ -648,7 +648,14 @@ public class MainActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.action_unlock_gates:
                 Intent intent = new Intent(this, HqActivity.class);
-                intent.putParcelableArrayListExtra("gates", getGates());
+                ArrayList<Gate> gates = getGates();
+                ArrayList<Gate> personalGates = new ArrayList<Gate>();
+
+                for (int i = 0; i < gates.size(); i++) {
+                    if (!gates.get(i).getGenerated()) personalGates.add(gates.get(i));
+                }
+
+                intent.putParcelableArrayListExtra("gates", personalGates);
                 startActivity(intent);
 
                 return true;
