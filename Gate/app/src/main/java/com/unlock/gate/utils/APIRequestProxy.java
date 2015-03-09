@@ -33,6 +33,7 @@ public class APIRequestProxy {
     private final String KEYS_ENDPOINT = "keys.json";
 
     private final String FEED_TAG = "feed_requests";
+    private final String GENERATED_GATES_TAG = "generated_gates_request";
 	
 	private RequestQueue mRequestQueue;
 
@@ -366,8 +367,26 @@ public class APIRequestProxy {
         mRequestQueue.add(request);
     }
 
+    public void processCoordinatesForGates(JSONObject params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "generated_gates/process.json";
+
+        addAPIKeyToParams(params);
+        addAuthToParams(params);
+
+        JsonObjectRequest request = new JsonObjectRequest(Method.POST, url, params, listener, errorListener);
+
+        request.setTag(GENERATED_GATES_TAG);
+        request.setRetryPolicy(retryPolicy);
+
+        mRequestQueue.add(request);
+    }
+
     public void cancelAllFeedRequests() {
         mRequestQueue.cancelAll(FEED_TAG);
+    }
+
+    public void cancelAllGeneratedGatesRequests() {
+        mRequestQueue.cancelAll(GENERATED_GATES_TAG);
     }
 
 }

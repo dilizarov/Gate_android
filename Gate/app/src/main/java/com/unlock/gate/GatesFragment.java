@@ -1,6 +1,7 @@
 package com.unlock.gate;
 
 import android.animation.ValueAnimator;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
@@ -25,6 +26,7 @@ import com.unlock.gate.adapters.GatesListAdapter;
 import com.unlock.gate.models.Gate;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.Butter;
+import com.unlock.gate.utils.FusedLocationHandler;
 import com.unlock.gate.utils.RegexConstants;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
@@ -55,6 +57,8 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     private PullToRefreshLayout mPullToRefreshLayout;
     private Button viewAggregate;
 
+    private boolean loading;
+
     private TextView noGatesMessage;
     private LinearLayout progressBarHolder;
 
@@ -82,6 +86,11 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     @Override
     public void onResume() {
         super.onResume();
+
+        // If we've gone through one successful cycle of load, we can begin reloading on resume.
+        if (!loading) {
+            adaptNewGatesToList();
+        }
 
         DefaultHeaderTransformer transformer = (DefaultHeaderTransformer) mPullToRefreshLayout
                 .getHeaderTransformer();
@@ -250,6 +259,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
     }
 
     private void requestGatesAndPopulateListView(final boolean refreshing) {
+        loading = true;
 
         JSONObject params = new JSONObject();
 
@@ -286,7 +296,7 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                                     jsonGate.optBoolean("session"),
                                     jsonGate.optBoolean("unlocked_perm"));
 
-                            if (gate.getGenerated()) {
+                            if (gate.getGenerated() && !gate.getUnlockedPerm()) {
                                generatedGates.add(gate);
                             } else {
                                 personalGates.add(gate);
@@ -307,6 +317,8 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                                 }
 
                                 adaptNewGatesToList();
+
+                                loading = false;
                             }
                         });
                     }
@@ -332,6 +344,8 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
                 }
 
                 Butter.down(getActivity(), volleyError.getMessage());
+
+                loading = false;
             }
         };
 
@@ -553,35 +567,140 @@ public class GatesFragment extends ListFragment implements OnRefreshListener {
 
     public void addGatesToArrayList(final ArrayList<Gate> newGates) {
 
-        // gateItems is a sorted array. newGates will be a very small array.
-        // Ultimately, this shouldn't take long at all, but if for some reason we see it
-        // lagging, then we could speed this up with another algorithm.
-
         int len = newGates.size();
-        int startingPoint = 0;
-        boolean reachedEnd = false;
+
+        ArrayList<Gate> generatedGates = new ArrayList<Gate>();
+        ArrayList<Gate> personalGates = new ArrayList<Gate>();
+
+        for (int i = 0; i < gates.size(); i++) {
+            Gate gate = gates.get(i);
+            if (gate.getGenerated() && !gate.getUnlockedPerm()) generatedGates.add(gates.get(i));
+            else personalGates.add(gates.get(i));
+        }
+
+        int startingPointGen = 0;
+        int startingPointPer = 0;
+        boolean reachedEndGen = false;
+        boolean reachedEndPer = false;
+
         for (int i = 0; i < len; i++) {
             Gate gate = newGates.get(i);
 
-            int length = gates.size();
+            ArrayList<Gate> listUsed = (gate.getGenerated() && !gate.getUnlockedPerm()) ? generatedGates : personalGates;
+
+            int length = listUsed.size();
 
             if (length == 0) {
-                gates.add(gate);
+                listUsed.add(gate);
                 continue;
             }
 
-            for (int j = startingPoint; j < length; j++) {
-                String name = gates.get(j).getName();
+            for (int j = (gate.getGenerated() && !gate.getUnlockedPerm()) ? startingPointGen : startingPointPer; j < length; j++) {
+                String name = listUsed.get(j).getName();
                 if (name.compareToIgnoreCase(gate.getName()) > 0) {
-                    gates.add(j, gate);
-                    startingPoint = j + 1;
+                    listUsed.add(j, gate);
+                    if (gate.getGenerated() && !gate.getUnlockedPerm()) startingPointGen = j + 1;
+                    else startingPointPer = j + 1;
                     break;
-                } else if (reachedEnd || j == length - 1) {
-                    gates.add(gate);
-                    reachedEnd = true;
+                } else if (((gate.getGenerated() && !gate.getUnlockedPerm()) ? reachedEndGen : reachedEndPer) || j == length - 1) {
+                    listUsed.add(gate);
+                    if (gate.getGenerated() && !gate.getUnlockedPerm()) reachedEndGen = true;
+                    else reachedEndPer = true;
                     break;
                 }
             }
+        }
+
+        gates.clear();
+        gates.addAll(generatedGates);
+        gates.addAll(personalGates);
+    }
+
+    public void requestGeneratedGates(Location l) {
+        try {
+
+            JSONObject params = new JSONObject();
+            params.put("lat", l.getLatitude());
+            params.put("long", l.getLongitude());
+
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(final JSONObject response) {
+
+                    new Thread(new Runnable() {
+
+                        public void run() {
+                            gates.clear();
+
+                            ArrayList<Gate> generatedGates = new ArrayList<Gate>();
+                            ArrayList<Gate> personalGates = new ArrayList<Gate>();
+
+                            JSONArray jsonGates = response.optJSONArray("gates");
+                            int len = jsonGates.length();
+
+                            boolean successfulFetchCheck = false;
+                            for (int i = 0; i < len; i++) {
+                                JSONObject jsonGate = jsonGates.optJSONObject(i);
+
+                                String creator;
+
+                                if (jsonGate.optJSONObject("creator") != null) {
+                                    creator = jsonGate.optJSONObject("creator").optString("name");
+                                } else {
+                                    creator = "";
+                                }
+
+                                Gate gate = new Gate(jsonGate.optString("external_id"),
+                                        jsonGate.optString("name"),
+                                        jsonGate.optInt("users_count"),
+                                        creator,
+                                        jsonGate.optBoolean("generated"),
+                                        jsonGate.optBoolean("session"),
+                                        jsonGate.optBoolean("unlocked_perm"));
+
+                                if (gate.getGenerated() && !gate.getUnlockedPerm()) {
+                                    generatedGates.add(gate);
+
+                                    // When at least one has been fetched, we can begin dissecting Activity States.
+                                    if (gate.getAttachedToSession() && !successfulFetchCheck) {
+                                        FusedLocationHandler.getInstance().successfullyFetchedGeneratedGates();
+                                        successfulFetchCheck = true;
+                                    }
+                                } else {
+                                    personalGates.add(gate);
+                                }
+                            }
+
+                            gates.addAll(generatedGates);
+                            gates.addAll(personalGates);
+
+                            if (getActivity() == null) return;
+
+                            if (!((MainActivity) getActivity()).isPaused() && !loading) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        adaptNewGatesToList();
+                                    }
+                                });
+
+                            }
+                        }
+
+                    }).start();
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                }
+            };
+
+            APIRequestManager.getInstance().cancelAllGeneratedGatesRequests();
+            APIRequestManager.getInstance().doRequest().processCoordinatesForGates(params, listener, errorListener);
+
+        } catch (JSONException ex) {
+            ex.printStackTrace();
         }
     }
 

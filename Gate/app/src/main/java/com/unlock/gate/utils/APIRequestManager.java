@@ -18,7 +18,11 @@ public class APIRequestManager {
     public void cancelAllFeedRequests() {
         mRequestProxy.cancelAllFeedRequests();
     }
-	
+
+    public void cancelAllGeneratedGatesRequests() {
+        mRequestProxy.cancelAllGeneratedGatesRequests();
+    }
+
 	// This method should be called first to do singleton initialization
 	public static synchronized APIRequestManager getInstance(Context context) {
 		if (instance == null) {

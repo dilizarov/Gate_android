@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.location.LocationManager;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -21,7 +22,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,6 +70,8 @@ public class MainActivity extends ActionBarActivity {
     private IntentFilter[] mNdefExchangeFilters;
     private boolean mWriteMode = false;
     private ProgressDialog progressDialog;
+
+    private boolean paused;
 
     // This will keep tabs on NFC and fire off when it is turned on/off/etc.
     // Made for the case when one turns NFC on/off through status bar.
@@ -148,13 +150,15 @@ public class MainActivity extends ActionBarActivity {
              }, 500);
         }
 
-        FusedLocationHandler.getInstance().connect();
+        FusedLocationHandler.getInstance().connect(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         configureNFCDispatch();
+
+        paused = false;
 
         if (mNfcAdapter != null) {
             IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
@@ -166,11 +170,17 @@ public class MainActivity extends ActionBarActivity {
     public void onPause() {
         super.onPause();
 
+        paused = true;
+
         if (mNfcAdapter != null) {
             this.unregisterReceiver(mReceiver);
 
             if (mNfcAdapter.isEnabled()) mNfcAdapter.disableForegroundDispatch(this);
         }
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -247,12 +257,16 @@ public class MainActivity extends ActionBarActivity {
 
             grantAccessToGates(grantedGateIds, gatekeeperId, gatekeeperName);
         } else if (intent.getBooleanExtra("mainActivityNotification", false)) {
-            if (intent.getStringExtra("gate_id") == "") showFeed(null, false);
-            else {
-                String name = intent.getStringExtra("gate_name");
-                if (name == "") name = "Feed";
-                Gate gate = new Gate(intent.getStringExtra("gate_id"), name);
-                showFeed(gate, false);
+            if (intent.getStringExtra("notification_type").equals("42")) {
+                if (intent.getStringExtra("gate_id") == "") showFeed(null, false);
+                else {
+                    String name = intent.getStringExtra("gate_name");
+                    if (name == "") name = "Feed";
+                    Gate gate = new Gate(intent.getStringExtra("gate_id"), name);
+                    showFeed(gate, false);
+                }
+            } else if (intent.getStringExtra("notification_type").equals("252")) {
+                pager.setCurrentItem(1, false);
             }
         } else if (intent.getBooleanExtra("gpsTurnedOffNotification", false)) {
             new MaterialDialog.Builder(this)
@@ -513,6 +527,8 @@ public class MainActivity extends ActionBarActivity {
                     SharedPreferences.Editor editor = mSessionPreferences.edit();
                     editor.clear().apply();
 
+                    FusedLocationHandler.getInstance().stopLocationUpdates();
+
                     Intent intent = new Intent(MainActivity.this, LoginRegisterActivity.class);
                     startActivity(intent);
                     finish();
@@ -524,8 +540,6 @@ public class MainActivity extends ActionBarActivity {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e("WHAT IS GOING ON", error.toString());
-
                     VolleyErrorHandler volleyError = new VolleyErrorHandler(error);
                     progressDialog.dismiss();
 
@@ -562,8 +576,12 @@ public class MainActivity extends ActionBarActivity {
 
     private void configureNFC() {
         if (mNfcAdapter != null) {
+            // The solution to an AndroidStudio bug was to just use ((Object this).getClass()
+            // Instead of getClass(). While I don't think one should edit their source code
+            // due to a bug in the IDE, it feels very nice knowing none of my files
+            // show that red squiggly line underneath them :).
             mNfcPendingIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+                    new Intent(this, ((Object) this).getClass()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
             IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 
@@ -679,6 +697,11 @@ public class MainActivity extends ActionBarActivity {
                         dialog.dismiss();
                     }
                 }).show();
+    }
+
+    public void requestGeneratedGates(Location l) {
+        GatesFragment gatesFragment = (GatesFragment) adapter.getRegisteredFragment(1);
+        gatesFragment.requestGeneratedGates(l);
     }
 
     @Override

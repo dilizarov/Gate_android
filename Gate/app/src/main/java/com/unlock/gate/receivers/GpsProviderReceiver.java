@@ -20,10 +20,12 @@ public class GpsProviderReceiver extends WakefulBroadcastReceiver {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            FusedLocationHandler.getInstance().revokeSuccessfulFetch();
             FusedLocationHandler.getInstance().startLocationUpdates();
+            FusedLocationHandler.getInstance().startActivityUpdates();
         } else {
             FusedLocationHandler.getInstance().stopLocationUpdates();
-
+            FusedLocationHandler.getInstance().stopActivityUpdates();
             // If it is the first time they turn off GPS, send them a notification explaining that generated gates
             // will stay available, but the next time they turn GPS back on, they arne't guaranteed to stay available.
             SharedPreferences gpsPref = context.getSharedPreferences(context.getString(R.string.gps_shared_preferences_key), context.MODE_PRIVATE);

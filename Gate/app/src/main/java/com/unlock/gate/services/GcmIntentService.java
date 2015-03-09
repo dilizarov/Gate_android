@@ -65,8 +65,10 @@ public class GcmIntentService extends IntentService {
 
                 notification_type = Integer.parseInt(extras.getString("notification_type"));
 
+                // TODO Rename what all of these do because this ain't right
                 switch (notification_type) {
                     case POST_CREATED_NOTIFICATION:
+                    case GATES_UNLOCKED_NOTIFICATION:
                         sendToMainActivityNotification(extras);
                         break;
                     case COMMENT_CREATED_NOTIFICATION:
@@ -100,12 +102,18 @@ public class GcmIntentService extends IntentService {
                 .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(extras.getString("extended_text"))
                 )
-                .setLights(Color.WHITE, NOTIF_LIGHT_INTERVAL, NOTIF_LIGHT_INTERVAL)
-                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+                .setLights(Color.WHITE, NOTIF_LIGHT_INTERVAL, NOTIF_LIGHT_INTERVAL);
+
+        if (notification_type == POST_CREATED_NOTIFICATION) {
+            mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+        } else if (notification_type == GATES_UNLOCKED_NOTIFICATION) {
+            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+        }
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("mainActivityNotification", true);
 
+        intent.putExtra("notification_type", extras.getString("notification_type"));
         intent.putExtra("gate_id", extras.getString("gate_id", ""));
         intent.putExtra("gate_name", extras.getString("gate_name", ""));
 
@@ -116,9 +124,15 @@ public class GcmIntentService extends IntentService {
         mBuilder.setContentIntent(contentIntent);
 
         final Notification notification = mBuilder.build();
-        notification.tickerText = extras.getString("title") + "\n" +
-                                  extras.getString("summary") + "\n" +
-                                  extras.getString("post_body");
+
+        if (notification_type == POST_CREATED_NOTIFICATION) {
+            notification.tickerText = extras.getString("title") + "\n" +
+                    extras.getString("summary") + "\n" +
+                    extras.getString("post_body");
+        } else if (notification_type == GATES_UNLOCKED_NOTIFICATION) {
+            notification.tickerText = extras.getString("title") + "\n" +
+                    extras.getString("extended_text");
+        }
 
         mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
     }
