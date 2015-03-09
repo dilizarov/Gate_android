@@ -15,10 +15,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.unlock.gate.CommentsActivity;
-import com.unlock.gate.receivers.GcmBroadcastReceiver;
 import com.unlock.gate.MainActivity;
 import com.unlock.gate.R;
 import com.unlock.gate.models.Post;
+import com.unlock.gate.receivers.GcmBroadcastReceiver;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -31,6 +31,8 @@ public class GcmIntentService extends IntentService {
     private static final int COMMENT_CREATED_NOTIFICATION = 126;
     private static final int POST_LIKED_NOTIFICATION = 168;
     private static final int COMMENT_LIKED_NOTIFICATION = 210;
+    private static final int GATES_UNLOCKED_NOTIFICATION = 252;
+    private static final int FIRST_TIME_GPS_TURNED_OFF = 5000;
 
     private static final int GATE_NOTIFICATION_ID = 1;
 
@@ -71,6 +73,15 @@ public class GcmIntentService extends IntentService {
                     case POST_LIKED_NOTIFICATION:
                     case COMMENT_LIKED_NOTIFICATION:
                         sendToCommentsActivityNotification(extras);
+                        break;
+                }
+            } else if (extras.containsKey("notification_type")) {
+
+                notification_type = Integer.parseInt(extras.getString("notification_type"));
+
+                switch (notification_type) {
+                    case FIRST_TIME_GPS_TURNED_OFF:
+                        sendFirstTimeGpsTurnedOffNotification();
                         break;
                 }
             }
@@ -165,5 +176,33 @@ public class GcmIntentService extends IntentService {
         }
 
         mNotificationManager.notify(GATE_NOTIFICATION_ID, notification);
+    }
+
+    private void sendFirstTimeGpsTurnedOffNotification() {
+        mBuilder.setSmallIcon(R.drawable.actionbar_logo)
+                .setContentTitle("Message from Gate")
+                .setContentText("Gate sent you a one-time message")
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                .bigText("Gate sent you a one-time message about GPS dismissal"))
+                .setLights(Color.WHITE, NOTIF_LIGHT_INTERVAL, NOTIF_LIGHT_INTERVAL)
+                .setDefaults(Notification.
+                        DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("gpsTurnedOffNotification", true);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 424242, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mBuilder.setContentIntent(contentIntent);
+
+        final Notification notification = mBuilder.build();
+        notification.tickerText = "Message from Gate" + "\n" +
+                "Gate sent you a one-time message about GPS dismissal";
+
+        // We will generate a separate Gate notification for this, as this is important enough and only happens once.
+        mNotificationManager.notify(GATE_NOTIFICATION_ID + 1, notification);
     }
 }

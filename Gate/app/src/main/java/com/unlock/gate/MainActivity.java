@@ -9,9 +9,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.LocationManager;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -35,6 +37,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.unlock.gate.models.Gate;
 import com.unlock.gate.utils.APIRequestManager;
 import com.unlock.gate.utils.Butter;
+import com.unlock.gate.utils.FusedLocationHandler;
 import com.unlock.gate.utils.NfcUtils;
 import com.unlock.gate.utils.VolleyErrorHandler;
 
@@ -117,7 +120,35 @@ public class MainActivity extends ActionBarActivity {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         configureNFC();
 
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        final SharedPreferences gpsPref = getSharedPreferences(getString(R.string.gps_shared_preferences_key), MODE_PRIVATE);
+        if (!gpsPref.getBoolean("knowsGpsUsage", false)) {
+            String gpsStatus = "\n\nGPS is currently ";
+            gpsStatus += locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ? "enabled" : "disabled";
+
+            final String finalGpsStatus = gpsStatus;
+
+             new Handler().postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
+                     new MaterialDialog.Builder(MainActivity.this)
+                             .title("Gate and Location Services")
+                             .content("Gate uses your location to unlock Gates near you. This feature requires GPS.\n\nFor much better accuracy, Gate recommends you also enable Wi-Fi inside buildings." + finalGpsStatus)
+                             .positiveText("OK")
+                             .cancelable(false)
+                             .callback(new MaterialDialog.ButtonCallback() {
+                                 @Override
+                                 public void onPositive(MaterialDialog dialog) {
+                                     dialog.dismiss();
+                                     gpsPref.edit().putBoolean("knowsGpsUsage", true).commit();
+                                 }
+                             }).show();
+                 }
+             }, 500);
+        }
+
+        FusedLocationHandler.getInstance().connect();
     }
 
     @Override
@@ -223,6 +254,20 @@ public class MainActivity extends ActionBarActivity {
                 Gate gate = new Gate(intent.getStringExtra("gate_id"), name);
                 showFeed(gate, false);
             }
+        } else if (intent.getBooleanExtra("gpsTurnedOffNotification", false)) {
+            new MaterialDialog.Builder(this)
+                    .title("One-time Message")
+                    .content("When GPS is disabled, Gates generated for you will be kept available." +
+                             "Those Gates are not guaranteed to stay available when GPS is enabled." +
+                            "\n\nYou can also unlock a Gate permanently by selecting the option in it's settings.")
+                    .cancelable(false)
+                    .positiveText("OK")
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            dialog.dismiss();
+                        }
+                    }).show();
         } else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
             String post = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (post != null) {

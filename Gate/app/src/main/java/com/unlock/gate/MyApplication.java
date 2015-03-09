@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.unlock.gate.models.Gate;
 import com.unlock.gate.utils.APIRequestManager;
+import com.unlock.gate.utils.FusedLocationHandler;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ public class MyApplication extends Application {
 		mContext = this;
         updatedGates = new ArrayList<Gate>();
 		APIRequestManager.getInstance(getApplicationContext());
+        FusedLocationHandler.getInstance(getApplicationContext());
 	}
 	
 	public static Context getContext() {

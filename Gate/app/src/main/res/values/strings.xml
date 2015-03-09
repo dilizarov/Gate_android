@@ -5,6 +5,7 @@
     <string name="app_name">Gate</string>
     <string name="action_settings">Settings</string>
     <string name="session_shared_preferences_key">com.unlock.gate.CURRENT_SESSION_PREF</string>
+    <string name="gps_shared_preferences_key">com.unlock.gate.GPS_PREF</string>
     <string name="user_auth_token_key">UserAuthToken</string>
     <string name="user_id_key">UserID</string>
     <string name="user_email_key">UserEmail</string>
