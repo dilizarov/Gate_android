@@ -193,7 +193,9 @@ public class GcmIntentService extends IntentService {
     }
 
     private void sendFirstTimeGpsTurnedOffNotification() {
-        mBuilder.setSmallIcon(R.drawable.actionbar_logo)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        builder.setSmallIcon(R.drawable.actionbar_logo)
                 .setContentTitle("Message from Gate")
                 .setContentText("Gate sent you a one-time message")
                 .setAutoCancel(true)
@@ -208,11 +210,11 @@ public class GcmIntentService extends IntentService {
 
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 424242, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 424243, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        mBuilder.setContentIntent(contentIntent);
+        builder.setContentIntent(contentIntent);
 
-        final Notification notification = mBuilder.build();
+        final Notification notification = builder.build();
         notification.tickerText = "Message from Gate" + "\n" +
                 "Gate sent you a one-time message about GPS dismissal";
 

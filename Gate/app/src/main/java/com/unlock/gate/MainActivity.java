@@ -273,7 +273,7 @@ public class MainActivity extends ActionBarActivity {
                     .title("One-time Message")
                     .content("When GPS is disabled, Gates generated for you will be kept available." +
                              "Those Gates are not guaranteed to stay available when GPS is enabled." +
-                            "\n\nYou can also unlock a Gate permanently by selecting the option in it's settings.")
+                            "\n\nYou can unlock a Gate permanently by selecting the option in it's settings.")
                     .cancelable(false)
                     .positiveText("OK")
                     .callback(new MaterialDialog.ButtonCallback() {
